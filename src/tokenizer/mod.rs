@@ -1,15 +1,21 @@
 pub mod tokenizer;
+mod test;
+pub mod errors;
 
 /// Token types
-pub enum Token {
+#[derive(Debug, PartialEq)]
+pub enum Token<'a> {
     Keyword(Keyword),
-    Identifier(String),
-    Literal(Literal),
+    Identifier(&'a str),
+    Literal(Literal<'a>),
     Operator(Operator),
-    Comment(Comment),
+    Comment(Comment<'a>),
+    Delimiter(Delimiter),
+    EndOfFile,
 }
 
 /// Keywords
+#[derive(Debug, PartialEq)]
 pub enum Keyword {
     Import,
     From,
@@ -23,6 +29,7 @@ pub enum Keyword {
     Static,
     Final,
     If,
+    Else,
     For,
     In,
     While,
@@ -33,16 +40,18 @@ pub enum Keyword {
 }
 
 /// Literals
-pub enum Literal {
+#[derive(Debug, PartialEq)]
+pub enum Literal<'a> {
     IntegerLiteral(i32),
     FloatLiteral(f32),
     DoubleIntegerLiteral(i64),
     DoubleFloatLiteral(f64),
-    StringLiteral(String),
+    StringLiteral(&'a str),
     CharLiteral(char),
     BoolLiteral(bool),
 }
 
+#[derive(Debug, PartialEq)]
 pub enum Operator {
     Plus,     // +
     Minus,    // -
@@ -72,8 +81,21 @@ pub enum Operator {
     Increment, // ++
     Decrement, // --
 
+    CommaComma, // ..
+
     Assign, // =
 
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Comment<'a> {
+    DocComment(&'a str), // `/// ...`
+    LineComment,        // `// ...`
+    BlockComment,       // `/* ... */`
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Delimiter {
     Comma,      // ,
     Dot,        // .
     Colon,      // :
@@ -89,10 +111,4 @@ pub enum Operator {
 
     At,        // @
     Backslash, // \
-}
-
-pub enum Comment {
-    DocComment(String), // `/// ...`
-    LineComment,        // `// ...`
-    BlockComment,       // `/* ... */`
 }
