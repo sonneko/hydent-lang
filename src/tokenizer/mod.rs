@@ -111,4 +111,5 @@ pub enum Delimiter {
 
     At,        // @
     Backslash, // \
+    Sharp,     // #
 }

@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 
-use crate::tokenizer::Literal;
-use super::{Comment, Delimiter, Keyword, Operator, Token};
 use super::errors::TokenizeErr;
+use super::{Comment, Delimiter, Keyword, Operator, Token};
+use crate::tokenizer::Literal;
 
 pub type Return<T> = Result<T, TokenizeErr>;
 
@@ -27,15 +27,14 @@ impl<'a> Tokenizer<'a> {
     /// Returns a vector of tokens
     ///
     /// ```
+    /// use app::Tokenizer;
     /// let mut tokenizer = Tokenizer::new("let x = 10;");
     /// let tokens = tokenizer.tokenize();
-    /// assert_eq!(tokens.len(), 5);
+    /// assert_eq!(tokens.unwrap().len(), 6);
     /// ```
     pub fn tokenize(mut self) -> Return<Vec<Token<'a>>> {
-        let mut previous_index;
 
         loop {
-            previous_index = self.current_char;
             if self
                 .input
                 .get(self.current_char..self.current_char + 1)
@@ -49,17 +48,16 @@ impl<'a> Tokenizer<'a> {
                 continue;
             } else if self.check_comment()? {
                 continue;
-            } else if self.check_delimiter() {
-                continue;
             } else if self.check_operator() {
+                continue;
+            } else if self.check_delimiter() {
                 continue;
             } else if self.check_literal()? {
                 continue;
             } else if self.check_identifier() {
                 continue;
-            }
-            if previous_index == self.current_char {
-                return Err(TokenizeErr::UnknownToken(previous_index));
+            } else {
+                return Err(TokenizeErr::UnknownToken(self.current_char));
             }
         }
         self.tokens.push(Token::EndOfFile);
@@ -68,7 +66,11 @@ impl<'a> Tokenizer<'a> {
 
     #[inline]
     fn next(&mut self, target: &str) -> bool {
-        if self.input[self.current_char..].starts_with(target) {
+        if self
+            .input
+            .get(self.current_char..)
+            .map_or(false, |s| s.starts_with(target))
+        {
             self.current_char += target.len();
             true
         } else {
@@ -78,8 +80,12 @@ impl<'a> Tokenizer<'a> {
 
     fn next_token(&mut self, target: &str) -> bool {
         if self.next(target) {
-            if let Some(' ' | '\t' | '\n') = self.peek_char().unwrap_or(" ").chars().next() {
-                self.current_char += 1;
+            if let Some(target) = self.peek_char() {
+                let target = target;
+                if !(target.is_alphanumeric() || target == '_') {
+                    return true;
+                }
+            } else {
                 return true;
             }
             self.current_char -= target.len();
@@ -87,13 +93,21 @@ impl<'a> Tokenizer<'a> {
         return false;
     }
 
-    fn peek_char(&mut self) -> Option<&str> {
-        self.input.get(self.current_char..self.current_char + 1)
+    fn peek_char(&mut self) -> Option<char> {
+        self.input
+            .get(self.current_char..)
+            .and_then(|s| s.chars().next())
     }
 
     fn skip_whitespace(&mut self) -> bool {
         let starts_index = self.current_char;
-        while self.next(" ") || self.next("\n") || self.next("\t") {}
+        while let Some(next_char) = self.peek_char() {
+            if next_char.is_whitespace() {
+                self.current_char += next_char.len_utf8();
+            } else {
+                break;
+            }
+        }
         self.current_char != starts_index
     }
 
@@ -147,41 +161,58 @@ impl<'a> Tokenizer<'a> {
     }
 
     fn check_literal(&mut self) -> Return<bool> {
-        if let Some("\"") = self.peek_char() {
+        if let Some('"') = self.peek_char() {
             self.current_char += 1;
             let starts_index = self.current_char;
             loop {
-                if let Some("\"") = self.peek_char() {
+                if let Some('"') = self.peek_char() {
                     break;
                 }
                 if self.peek_char().is_none() {
                     return Err(TokenizeErr::StringLiteralNotClosed(starts_index));
                 }
-                self.current_char += 1;
-                if let Some("\n") = self.peek_char() {
+                if let Some('\n') = self.peek_char() {
                     return Err(TokenizeErr::StringLiteralNotClosed(starts_index));
                 }
+                self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Literal(Literal::StringLiteral(
                 &self.input[starts_index..self.current_char],
             )));
             self.current_char += 1;
             Ok(true)
-        } else if let Some("'") = self.peek_char() {
+        } else if let Some('\'') = self.peek_char() {
             self.current_char += 1;
             let starts_index = self.current_char;
-            self.current_char += 1;
             loop {
-                if let Some("'") = self.peek_char() {
+                if let Some('\'') = self.peek_char() {
                     break;
-                }
-                if self.peek_char().is_none() {
+                } else if self.peek_char().is_none() {
                     return Err(TokenizeErr::CharLiteralNotClosed(starts_index));
-                }
-                self.current_char += 1;
-                if let Some("\n") = self.peek_char() {
+                } else if let Some('\n') = self.peek_char() {
                     return Err(TokenizeErr::CharLiteralNotClosed(starts_index));
+                } else if let Some('\\') = self.peek_char() {
+                    self.current_char += 1;
+                    if self.peek_char().is_none() {
+                        return Err(TokenizeErr::CharLiteralNotClosed(starts_index));
+                    }
+                    self.current_char += self.peek_char().unwrap().len_utf8();
+                    if Some('\\') == self.peek_char() {
+                        if let Some('\'') = self.peek_char() {
+                            self.current_char += 1;
+                            self.tokens.push(Token::Literal(Literal::CharLiteral(
+                                self.input[starts_index + 1..self.current_char - 1]
+                                    .chars()
+                                    .next()
+                                    .unwrap(),
+                            )));
+                            return Ok(true);
+                        } else {
+                            return Err(TokenizeErr::CharLiteralNotClosed(starts_index));
+                        }
+                    }
                 }
+                self.current_char += self.peek_char().unwrap().len_utf8();
             }
             let c = &self.input[starts_index..self.current_char];
             if c.chars().count() != 1 {
@@ -192,25 +223,21 @@ impl<'a> Tokenizer<'a> {
             )));
             self.current_char += 1;
             Ok(true)
-        } else if self
-            .peek_char()
-            .map(|c| c.chars().next().map(|c| c.is_digit(10)).unwrap_or(false))
-            .unwrap_or(false)
-        {
+        } else if self.peek_char().map(|c| c.is_digit(10)).unwrap_or(false) {
             let starts_index = self.current_char;
             loop {
                 let next = self.peek_char();
                 if next.is_none() {
                     break;
                 }
-                let next = next.unwrap().chars().next();
+                let next = next;
                 if next.is_none() {
                     break;
                 } else if next.unwrap().is_digit(10) {
                     self.current_char += 1;
                 } else if next.unwrap() == '.' {
                     self.current_char += 1;
-                    if let Some(".") = self.peek_char() {
+                    if let Some('.') = self.peek_char() {
                         self.current_char -= 1;
                         break;
                     }
@@ -221,14 +248,10 @@ impl<'a> Tokenizer<'a> {
             let num_string = &self.input[starts_index..self.current_char];
             if num_string.contains('.') {
                 let float = num_string.parse::<f64>();
-                let float64 = float
-                    .clone()
-                    .map(|float| float as f32)
-                    .map(|float| float as f64);
                 if float.is_err() {
                     return Err(TokenizeErr::InvalidFloatLiteral(self.current_char));
                 }
-                if float != float64 {
+                if num_string.len() > 7 {
                     let double = num_string.parse::<f64>();
                     if double.is_err() {
                         return Err(TokenizeErr::InvalidFloatLiteral(self.current_char));
@@ -261,10 +284,10 @@ impl<'a> Tokenizer<'a> {
                     .push(Token::Literal(Literal::IntegerLiteral(int.unwrap() as i32)));
                 Ok(true)
             }
-        } else if self.next("true") {
+        } else if self.next_token("true") {
             self.tokens.push(Token::Literal(Literal::BoolLiteral(true)));
             Ok(true)
-        } else if self.next("false") {
+        } else if self.next_token("false") {
             self.tokens
                 .push(Token::Literal(Literal::BoolLiteral(false)));
             Ok(true)
@@ -359,6 +382,8 @@ impl<'a> Tokenizer<'a> {
             Delimiter::At
         } else if self.next("\\") {
             Delimiter::Backslash
+        } else if self.next("#") {
+            Delimiter::Sharp
         } else {
             return false;
         };
@@ -373,7 +398,6 @@ impl<'a> Tokenizer<'a> {
         if first_char.is_none() {
             return false;
         }
-        let first_char = first_char.unwrap().chars().next();
         if let Some('a'..='z' | 'A'..='Z' | '_') = first_char {
             self.current_char += 1;
         } else {
@@ -381,10 +405,6 @@ impl<'a> Tokenizer<'a> {
         }
         loop {
             let next = self.peek_char();
-            if next.is_none() {
-                break;
-            }
-            let next = next.unwrap().chars().next();
             if next.is_none() {
                 break;
             } else if let Some('a'..='z' | 'A'..='Z' | '_' | '0'..='9') = next {
@@ -403,13 +423,13 @@ impl<'a> Tokenizer<'a> {
         if self.next("///") {
             let starts_index = self.current_char;
             loop {
-                if let Some("\n") = self.peek_char() {
+                if let Some('\n') = self.peek_char() {
                     break;
                 }
                 if self.peek_char().is_none() {
                     break;
                 }
-                self.current_char += 1;
+                self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Comment(Comment::DocComment(
                 &self.input[starts_index..self.current_char],
@@ -417,22 +437,23 @@ impl<'a> Tokenizer<'a> {
             return Ok(true);
         } else if self.next("//") {
             loop {
-                if let Some("\n") = self.peek_char() {
+                if let Some('\n') = self.peek_char() {
+                    self.next("\n");
                     break;
                 }
                 if self.peek_char().is_none() {
                     break;
                 }
-                self.current_char += 1;
+                self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Comment(Comment::LineComment));
             return Ok(true);
         } else if self.next("/*") {
             while !self.next("*/") {
-                self.current_char += 1;
                 if self.peek_char().is_none() {
                     return Err(TokenizeErr::BlockCommentNotClosed(self.current_char));
                 }
+                self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Comment(Comment::BlockComment));
             return Ok(true);
