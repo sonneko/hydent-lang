@@ -1,0 +1,116 @@
+<grammer> ::= <top_level>
+
+<top_level> ::= { <top_level_statement> } 
+
+<top_level_statement> ::= 
+        <import_declaration>
+      | <static_variable_declaration>
+      | <class_declaration>
+      | <function_declaration>
+      | <protocol_declaration>
+      | <module_declaration>
+      | <annotation>
+      | <type_alias_declaration>
+
+# import { identify1, identify2 } from "std";
+<import_declaration> ::= "import" "{"  { <IDENTIFIER> "," } <IDENTIFIER> "}" "from" <STRING_LITERAL> ";"
+
+# pub static name = 21;
+# static name = "ss";
+<static_variable_declaration> ::= <docs_comments> <is_public> "static" <IDENTIFIER> "=" <expression> ";"
+
+# pub class MyClass { /* ... */ }
+# class MyClass { /* ... */ }
+<class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> "{" { <function_declaration> | <field_declaration> } "}" 
+
+# fn my_func( /* ... */ ): /* ... */ { /* ... */ }
+# pub fn my_func( /* ... */ ): /* ... */ { /* ... */ }
+<function_declaration> ::= <docs_comments> <is_public> "fn" <IDENTIFIER> "(" <params_with_types>  ")" <block_expression>
+
+# protocol MyProtocol { /* ... */ }
+# pub protocol MyProtocol { /* ... */ }
+<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> "{" ( <function_declaration> | <virtual_function_declaration> ) "}"
+
+# module your_module_name { /* ... */ }
+# pub module your_module_name { /* ... */ }
+<module_declaration> ::= <docs_comments> <is_public> "module" "{" <top_level> "}"
+
+# @cfg /* ... */
+<annotation> ::= "@" <IDENTIFIER> { <literal> }
+
+# type YourTypeName = Vec<Token>;
+<type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> "=" <type_literal> ";"
+
+<if_expression> ::= "if" <expression> <block_expression> { "else" "if" <expression> <block_expression> } ( "else" <block_expression> )?
+
+<match_expression> ::= "match" <expression> "{" { <match_arm> } "}"
+<match_arm> ::= <pattern> "=>" <expression>
+
+# loop loop_times { /* ... */ }
+# loop { /* ... */ }
+<loop_expression> ::= "loop" <expression>? <block_expression>
+
+# while /* ... */ { /* ... */ }
+<while_expression> ::= "while" <expression> <block_expression>
+
+# for item in vector { /* ... */ }
+<for_statement> ::= "for" <IDENTIFIER> "in" <expression> <block_expression>
+
+# let result = for vector {
+#    |> Some(item) => item + 2
+#    |> item => item * 2
+# }
+<for_expression> ::= "for" <expression> "{" { <pipeline> } "}"
+<pipeline> :== "|>" <pattern> "=>" <expression>
+
+
+<expression> ::= 
+      <block_expression>
+    | <if_expression>
+    | <match_expression>
+    | <loop_expression>
+    | <while_expression>
+    | <for_expression>
+    | <expression> <BINARY_OPERATOR> <expression>
+    | <UNARY_OPERATOR> <expression>
+
+<statement> ::= 
+      <if_expression>
+    | <match_expression>
+    | <loop_expression>
+    | <while_expression>
+    | <for_statement>
+    | "ignore" <expression> ";"
+
+# final your_field_name: Vec<Token>;
+# mut your_field_name: Vec<Token>;
+<field_declaration> ::= ( "final" | "mut" ) <IDENTIFIER> ":" <type_literal> ";"
+
+# fn my_virtual( /* ... */ ): /* ... */ ;
+<virtual_function_declaration> ::= "fn" <IDENTIFIER> "(" <params_with_types> ")" ":" <type_literal> ";"
+
+# name: type
+<param_with_type> ::= <IDENTIFIER> ":" <type_literal>
+
+# name1: type, name2: type, ... name10: type
+<params_with_types> ::= { <param_with_type> "," } <param_with_type>
+
+# { /* ... */ }
+<block_expression> ::= "{" { <statement> } | <expression> "}"
+
+# pub
+<is_public> ::= "pub" | "";
+
+<literal> ::= <STRING_LITERAL> | <CHAR_LITERAL> | <NUM_LITERAL> | <BOOL_LITERAL>
+
+<type_literal> ::= 
+
+# /// # title h1 
+# /// This is paragraph.
+# /// $returns: return the result of ...
+# /// $params(param1): number of ...
+# @test
+# fn ...
+<docs_comments> ::= { <DOCS_COMMENT> } { <annotation> }
+
+<pattern> ::= 
