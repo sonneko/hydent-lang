@@ -6,6 +6,8 @@
         <import_declaration>
       | <static_variable_declaration>
       | <class_declaration>
+      | <enum_declaration>
+      | <struct_declaration>
       | <function_declaration>
       | <protocol_declaration>
       | <module_declaration>
@@ -13,7 +15,7 @@
       | <type_alias_declaration>
 
 # import { identify1, identify2 } from "std";
-<import_declaration> ::= "import" "{"  { <IDENTIFIER> "," } <IDENTIFIER> "}" "from" <STRING_LITERAL> ";"
+<import_declaration> ::= "import" ( "{"  { <IDENTIFIER> "," } <IDENTIFIER> "}" ) | "*" "as" <IDENTIFIER> "from" <STRING_LITERAL> ";"
 
 # pub static name = 21;
 # static name = "ss";
@@ -21,30 +23,34 @@
 
 # pub class MyClass { /* ... */ }
 # class MyClass { /* ... */ }
-<class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> "{" { <function_declaration> | <field_declaration> } "}" 
+<class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> <generics> <implements_prptocol> "{" { <function_declaration> | <field_declaration> | <type_alias_declaration> } "}" 
+
+<enum_declaration> ::= <docs_comments> <is_public> "enum" <IDENTIFIER> <generics> <implements_prptocol> "{" { ( <IDENTIFIER> ( "(" <type_literal> { "," <type_literal> } ")" )? ) | <function_declaration> } "}"
+
+<struct_declaration> ::= <docs_comments> <is_public> "struct" <IDENTIFIER> "{" <IDENTIFIER> ":" <type_literal> { "," <IDENTIFIER> ":" <type_literal> } "}"
 
 # fn my_func( /* ... */ ): /* ... */ { /* ... */ }
 # pub fn my_func( /* ... */ ): /* ... */ { /* ... */ }
-<function_declaration> ::= <docs_comments> <is_public> "fn" <IDENTIFIER> "(" <params_with_types>  ")" <block_expression>
+<function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( ":" <type_literal> )? "panics"? <block_expression>
 
 # protocol MyProtocol { /* ... */ }
 # pub protocol MyProtocol { /* ... */ }
-<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> "{" ( <function_declaration> | <virtual_function_declaration> ) "}"
+<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> "{" ( <function_declaration> | <virtual_function_declaration> | <type_alias_declaration> ) "}"
 
 # module your_module_name { /* ... */ }
 # pub module your_module_name { /* ... */ }
-<module_declaration> ::= <docs_comments> <is_public> "module" "{" <top_level> "}"
+<module_declaration> ::= <docs_comments> <is_public> "module" <IDENTIFIER> "{" <top_level> "}"
 
 # @cfg /* ... */
 <annotation> ::= "@" <IDENTIFIER> { <literal> }
 
 # type YourTypeName = Vec<Token>;
-<type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> "=" <type_literal> ";"
+<type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> <generics>? "=" <type_literal> ";"
 
 <if_expression> ::= "if" <expression> <block_expression> { "else" "if" <expression> <block_expression> } ( "else" <block_expression> )?
 
 <match_expression> ::= "match" <expression> "{" { <match_arm> } "}"
-<match_arm> ::= <pattern> "=>" <expression>
+<match_arm> ::= <pattern> ( "if" <expression> ) "=>" <expression>
 
 # loop loop_times { /* ... */ }
 # loop { /* ... */ }
@@ -61,8 +67,21 @@
 #    |> item => item * 2
 # }
 <for_expression> ::= "for" <expression> "{" { <pipeline> } "}"
-<pipeline> :== "|>" <pattern> "=>" <expression>
+<pipeline> ::= "|>" <pattern> "=>" <expression>
 
+<if_let_expression> ::= "if" "let" <pattern> "=" <expression> <block_expression>
+<while_let_expression> ::= "while" "let" <pattern> "=" <expression> <block_expression>
+
+# pipe "hello" { /* ... */ }
+<pipe_expression> ::= "pipe" <expression> "{" { "|>" <pattern> ("if" <expression>)? "=>" <block_expression> | <expression> } "}"
+
+<closer> ::= "(" ( <param_with_type> | <IDENTIFIER> { "," <param_with_type> | <IDENTIFIER> } )? ")" "->" <block_expression>
+
+# std::io::println
+<accesser> :== <IDENTIFIER> { "::" <IDENTIFIER> } 
+
+# 10, my_variable, true
+<params> ::= ( <expression> { "," <expression> } )?
 
 <expression> ::= 
       <block_expression>
@@ -71,8 +90,23 @@
     | <loop_expression>
     | <while_expression>
     | <for_expression>
-    | <expression> <BINARY_OPERATOR> <expression>
-    | <UNARY_OPERATOR> <expression>
+    | <pipe_expression>
+    | <expression> <BINARY_OPERATOR> <expression> # TODO: make it concrete
+    | <UNARY_OPERATOR> <expression> # TODO: make it concrete
+    | <accesser>
+    | <literal>
+    | "try"? <accesser> "(" <params> ")"
+    | "try"? <accesser> "." <IDENTIFIER> "(" <params> ")"
+    | <accesser> "." <IDENTIFIER> 
+    | "await" <expression>
+    | "(" ( <expression> { "," <expression> } )? ")"
+    | <accesser> "{" ( (<IDENTIFIER> ":" <expression>) | <IDENTIFIER> { "," ( <IDENTIFIER> ":" <expression> ) | <IDENTIFIER> } )? "}"
+    | <closer>
+    | <if_let_expression>
+    | <while_let_expression>
+    | "[" (<expression> { "," <expression> } )? "]"
+    | <expression> "[" <expression> "]"
+    | <expression> "as" <type_literal>
 
 <statement> ::= 
       <if_expression>
@@ -80,17 +114,22 @@
     | <loop_expression>
     | <while_expression>
     | <for_statement>
-    | "ignore" <expression> ";"
+    | "ignore"? <expression> ";"
+    | "let" | "const" <pattern> ( ":" <type_literal> ) ( <ASSIGMENT_OPERATOR> <expression> )? ";"
+    | "return" <expression> ";"
+    | "break" <expression> ";"
+    | "continue" ";"
+    | <accesser> <ASSIGMENT_OPERATOR> <expression> ";"
 
 # final your_field_name: Vec<Token>;
 # mut your_field_name: Vec<Token>;
 <field_declaration> ::= ( "final" | "mut" ) <IDENTIFIER> ":" <type_literal> ";"
 
 # fn my_virtual( /* ... */ ): /* ... */ ;
-<virtual_function_declaration> ::= "fn" <IDENTIFIER> "(" <params_with_types> ")" ":" <type_literal> ";"
+<virtual_function_declaration> ::= "async" "fn" <IDENTIFIER> <generics>? "(" <params_with_types> ")" ( ":" <type_literal> ) "panics"? ";"
 
 # name: type
-<param_with_type> ::= <IDENTIFIER> ":" <type_literal>
+<param_with_type> ::= "mut"? (<IDENTIFIER> ":" <type_literal> ( "=" <expression> )? ) | "this"
 
 # name1: type, name2: type, ... name10: type
 <params_with_types> ::= { <param_with_type> "," } <param_with_type>
@@ -104,6 +143,18 @@
 <literal> ::= <STRING_LITERAL> | <CHAR_LITERAL> | <NUM_LITERAL> | <BOOL_LITERAL>
 
 <type_literal> ::= 
+      <accesser> ( "<" { <type_literal> "," } <type_literal>  ">" )?
+    | "Bool"
+    | "Int"
+    | "DoubleInt"
+    | "Float"
+    | "DoubleFloat"
+    | "Char"
+    | "Usize"
+    | "Any"
+    | "(" ( <type_literal> { "," <type_literal> } )? ")"
+    | "Never"
+    | "Void"
 
 # /// # title h1 
 # /// This is paragraph.
@@ -114,3 +165,17 @@
 <docs_comments> ::= { <DOCS_COMMENT> } { <annotation> }
 
 <pattern> ::= 
+      <IDENTIFIER> 
+    | "_"
+    | <accesser> "(" <pattern> { "," <pattern> } ")"
+    | "(" ( <pattern> { "," <pattern> } )? ")"
+    | <accesser> "{" { (<IDENTIFIER> ":" <pattern>) | (<IDENTIFIER>) } "}"
+    | <literal>
+    | <CHAR_LITERAL> ".." | "..=" <CHAR_LITERAL>
+    | <NUM_LITERAL> ".." | "..=" <NUM_LITERAL>
+    | <IDENTIFIER> "@" <pattern>
+# TODO: add [ first, second, ... last ] like pattern
+
+<generics> ::= "<" <IDENTIFIER> ":" <type_literal> { "&" <type_literal> } { "," <IDENTIFIER> ":" <type_literal> { "&" <type_literal> } } ">"
+
+<implements_prptocol> ::= ( ":" <accesser> { "," <accesser> } )?
