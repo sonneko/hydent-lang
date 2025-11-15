@@ -27,7 +27,10 @@
 
 <enum_declaration> ::= <docs_comments> <is_public> "enum" <IDENTIFIER> <generics> <implements_prptocol> "{" { ( <IDENTIFIER> ( "(" <type_literal> { "," <type_literal> } ")" )? ) | <function_declaration> } "}"
 
-<struct_declaration> ::= <docs_comments> <is_public> "struct" <IDENTIFIER> "{" <IDENTIFIER> ":" <type_literal> { "," <IDENTIFIER> ":" <type_literal> } "}"
+<struct_declaration> ::= <docs_comments> <is_public> "struct" <IDENTIFIER> 
+    "{" <IDENTIFIER> ":" <type_literal> { "," <IDENTIFIER> ":" <type_literal> } "}"
+    | "(" <type_literal> { "," <type_literal> } ")"
+    | ";"
 
 # fn my_func( /* ... */ ): /* ... */ { /* ... */ }
 # pub fn my_func( /* ... */ ): /* ... */ { /* ... */ }
@@ -35,7 +38,7 @@
 
 # protocol MyProtocol { /* ... */ }
 # pub protocol MyProtocol { /* ... */ }
-<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> "{" ( <function_declaration> | <virtual_function_declaration> | <type_alias_declaration> ) "}"
+<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> <implements_protocol> "{" ( <function_declaration> | <virtual_function_declaration> | <type_alias_declaration> ) "}"
 
 # module your_module_name { /* ... */ }
 # pub module your_module_name { /* ... */ }
@@ -78,12 +81,16 @@
 <closer> ::= "(" ( <param_with_type> | <IDENTIFIER> { "," <param_with_type> | <IDENTIFIER> } )? ")" "->" <block_expression>
 
 # std::io::println
-<accesser> :== <IDENTIFIER> { "::" <IDENTIFIER> } 
+<accesser> ::= <IDENTIFIER> { "::" <IDENTIFIER> } 
 
 # 10, my_variable, true
 <params> ::= ( <expression> { "," <expression> } )?
 
-<expression> ::= 
+<expression> ::= <term>  { <ADD_LEVEL_BINARY_OPERATOR> <term> }
+
+<term> ::= <factor> { <MULTI_LEVEL_BINARY_OPERATOR> <factor> }
+<factor> ::= <UNARY_OPERATOR>? <primary>
+<primary> ::= 
       <block_expression>
     | <if_expression>
     | <match_expression>
@@ -91,8 +98,6 @@
     | <while_expression>
     | <for_expression>
     | <pipe_expression>
-    | <expression> <BINARY_OPERATOR> <expression> # TODO: make it concrete
-    | <UNARY_OPERATOR> <expression> # TODO: make it concrete
     | <accesser>
     | <literal>
     | "try"? <accesser> "(" <params> ")"
