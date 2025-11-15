@@ -14,15 +14,10 @@
       | <annotation>
       | <type_alias_declaration>
 
-# import { identify1, identify2 } from "std";
 <import_declaration> ::= "import" ( "{"  { <IDENTIFIER> "," } <IDENTIFIER> "}" ) | "*" "as" <IDENTIFIER> "from" <STRING_LITERAL> ";"
 
-# pub static name = 21;
-# static name = "ss";
 <static_variable_declaration> ::= <docs_comments> <is_public> "static" <IDENTIFIER> "=" <expression> ";"
 
-# pub class MyClass { /* ... */ }
-# class MyClass { /* ... */ }
 <class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> <generics> <implements_prptocol> "{" { <function_declaration> | <field_declaration> | <type_alias_declaration> } "}" 
 
 <enum_declaration> ::= <docs_comments> <is_public> "enum" <IDENTIFIER> <generics> <implements_prptocol> "{" { ( <IDENTIFIER> ( "(" <type_literal> { "," <type_literal> } ")" )? ) | <function_declaration> } "}"
@@ -32,22 +27,14 @@
     | "(" <type_literal> { "," <type_literal> } ")"
     | ";"
 
-# fn my_func( /* ... */ ): /* ... */ { /* ... */ }
-# pub fn my_func( /* ... */ ): /* ... */ { /* ... */ }
 <function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( ":" <type_literal> )? "panics"? <block_expression>
 
-# protocol MyProtocol { /* ... */ }
-# pub protocol MyProtocol { /* ... */ }
 <protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> <implements_protocol> "{" ( <function_declaration> | <virtual_function_declaration> | <type_alias_declaration> ) "}"
 
-# module your_module_name { /* ... */ }
-# pub module your_module_name { /* ... */ }
 <module_declaration> ::= <docs_comments> <is_public> "module" <IDENTIFIER> "{" <top_level> "}"
 
-# @cfg /* ... */
 <annotation> ::= "@" <IDENTIFIER> { <literal> }
 
-# type YourTypeName = Vec<Token>;
 <type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> <generics>? "=" <type_literal> ";"
 
 <if_expression> ::= "if" <expression> <block_expression> { "else" "if" <expression> <block_expression> } ( "else" <block_expression> )?
@@ -55,35 +42,24 @@
 <match_expression> ::= "match" <expression> "{" { <match_arm> } "}"
 <match_arm> ::= <pattern> ( "if" <expression> ) "=>" <expression>
 
-# loop loop_times { /* ... */ }
-# loop { /* ... */ }
 <loop_expression> ::= "loop" <expression>? <block_expression>
 
-# while /* ... */ { /* ... */ }
 <while_expression> ::= "while" <expression> <block_expression>
 
-# for item in vector { /* ... */ }
 <for_statement> ::= "for" <IDENTIFIER> "in" <expression> <block_expression>
 
-# let result = for vector {
-#    |> Some(item) => item + 2
-#    |> item => item * 2
-# }
 <for_expression> ::= "for" <expression> "{" { <pipeline> } "}"
 <pipeline> ::= "|>" <pattern> "=>" <expression>
 
 <if_let_expression> ::= "if" "let" <pattern> "=" <expression> <block_expression>
 <while_let_expression> ::= "while" "let" <pattern> "=" <expression> <block_expression>
 
-# pipe "hello" { /* ... */ }
 <pipe_expression> ::= "pipe" <expression> "{" { "|>" <pattern> ("if" <expression>)? "=>" <block_expression> | <expression> } "}"
 
 <closer> ::= "(" ( <param_with_type> | <IDENTIFIER> { "," <param_with_type> | <IDENTIFIER> } )? ")" "->" <block_expression>
 
-# std::io::println
 <accesser> ::= <IDENTIFIER> { "::" <IDENTIFIER> } 
 
-# 10, my_variable, true
 <params> ::= ( <expression> { "," <expression> } )?
 
 <expression> ::= <term>  { <ADD_LEVEL_BINARY_OPERATOR> <term> }
@@ -126,23 +102,16 @@
     | "continue" ";"
     | <accesser> <ASSIGMENT_OPERATOR> <expression> ";"
 
-# final your_field_name: Vec<Token>;
-# mut your_field_name: Vec<Token>;
 <field_declaration> ::= ( "final" | "mut" ) <IDENTIFIER> ":" <type_literal> ";"
 
-# fn my_virtual( /* ... */ ): /* ... */ ;
 <virtual_function_declaration> ::= "async" "fn" <IDENTIFIER> <generics>? "(" <params_with_types> ")" ( ":" <type_literal> ) "panics"? ";"
 
-# name: type
 <param_with_type> ::= "mut"? (<IDENTIFIER> ":" <type_literal> ( "=" <expression> )? ) | "this"
 
-# name1: type, name2: type, ... name10: type
 <params_with_types> ::= { <param_with_type> "," } <param_with_type>
 
-# { /* ... */ }
 <block_expression> ::= "{" { <statement> } | <expression> "}"
 
-# pub
 <is_public> ::= "pub" | "";
 
 <literal> ::= <STRING_LITERAL> | <CHAR_LITERAL> | <NUM_LITERAL> | <BOOL_LITERAL>
@@ -161,12 +130,6 @@
     | "Never"
     | "Void"
 
-# /// # title h1 
-# /// This is paragraph.
-# /// $returns: return the result of ...
-# /// $params(param1): number of ...
-# @test
-# fn ...
 <docs_comments> ::= { <DOCS_COMMENT> } { <annotation> }
 
 <pattern> ::= 
@@ -184,3 +147,4 @@
 <generics> ::= "<" <IDENTIFIER> ":" <type_literal> { "&" <type_literal> } { "," <IDENTIFIER> ":" <type_literal> { "&" <type_literal> } } ">"
 
 <implements_prptocol> ::= ( ":" <accesser> { "," <accesser> } )?
+
