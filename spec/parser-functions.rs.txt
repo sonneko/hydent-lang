@@ -1,0 +1,334 @@
+    /// ```ebnf
+    /// <grammer> ::= <top_level>
+    /// ```
+    fn parse_grammer(&mut self) -> Return<AST::Grammer> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <top_level> ::= { <top_level_statement> } 
+    /// ```
+    fn parse_top_level(&mut self) -> Return<AST::TopLevel> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <top_level_statement> ::= 
+    ///        <import_declaration>
+    ///      | <static_variable_declaration>
+    ///      | <class_declaration>
+    ///      | <enum_declaration>
+    ///      | <struct_declaration>
+    ///      | <function_declaration>
+    ///      | <protocol_declaration>
+    ///      | <module_declaration>
+    ///      | <annotation>
+    ///      | <type_alias_declaration>
+    /// ```
+    fn parse_top_level_statement(&mut self) -> Return<AST::TopLevelStatement> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <import_declaration> ::= "import" ( "{"  { <IDENTIFIER> "," } <IDENTIFIER> "}" ) | "*" "as" <IDENTIFIER> "from" <STRING_LITERAL> ";"
+    /// ```
+    fn parse_import_declaration(&mut self) -> Return<AST::ImportDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <static_variable_declaration> ::= <docs_comments> <is_public> "static" <IDENTIFIER> "=" <expression> ";"
+    /// ```
+    fn parse_static_variable_declaration(&mut self) -> Return<AST::StaticVariableDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> <generics> <implements_protocol> "{" { <function_declaration> | <field_declaration> | <type_alias_declaration> } "}" 
+    /// ```
+    fn parse_class_declaration(&mut self) -> Return<AST::ClassDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <enum_declaration> ::= <docs_comments> <is_public> "enum" <IDENTIFIER> <generics> <implements_protocol> "{" { ( <IDENTIFIER> ( "(" <type_literal> { "," <type_literal> } ")" )? ) | <function_declaration> } "}"
+    /// ```
+    fn parse_enum_declaration(&mut self) -> Return<AST::EnumDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <struct_declaration> ::= ( <docs_comments> <is_public> "struct" <IDENTIFIER> )
+    ///    ( "{" { <field_declaration> } "}" )
+    ///    | ("(" <type_literal> { "," <type_literal> } ")")
+    ///    | ";"
+    /// ```
+    fn parse_struct_declaration(&mut self) -> Return<AST::StructDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( ":" <type_literal> )? "panics"? <block_expression>?
+    /// ```
+    fn parse_function_declaration(&mut self) -> Return<AST::FunctionDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> <implements_protocol> "{" ( <function_declaration> | <type_alias_declaration> ) "}"
+    /// ```
+    fn parse_protocol_declaration(&mut self) -> Return<AST::ProtocolDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <module_declaration> ::= <docs_comments> <is_public> "module" <IDENTIFIER> "{" <top_level> "}"
+    /// ```
+    fn parse_module_declaration(&mut self) -> Return<AST::ModuleDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <annotation> ::= "@" <IDENTIFIER> { <literal> }
+    /// ```
+    fn parse_annotation(&mut self) -> Return<AST::Annotation> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> <generics>? "=" <type_literal> ";"
+    /// ```
+    fn parse_type_alias_declaration(&mut self) -> Return<AST::TypeAliasDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <if_expression> ::= "if" <expression> <block_expression> { "else" "if" <expression> <block_expression> } ( "else" <block_expression> )?
+    /// ```
+    fn parse_if_expression(&mut self) -> Return<AST::IfExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <match_expression> ::= "match" <expression> "{" { <match_arm> } "}"
+    /// ```
+    fn parse_match_expression(&mut self) -> Return<AST::MatchExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <match_arm> ::= <pattern> ( "if" <expression> ) "=>" <expression>
+    /// ```
+    fn parse_match_arm(&mut self) -> Return<AST::MatchArm> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <loop_expression> ::= "loop" <expression>? <block_expression>
+    /// ```
+    fn parse_loop_expression(&mut self) -> Return<AST::LoopExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <while_expression> ::= "while" <expression> <block_expression>
+    /// ```
+    fn parse_while_expression(&mut self) -> Return<AST::WhileExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <for_statement> ::= "for" <pattern> "in" <expression> <block_expression>
+    /// ```
+    fn parse_for_statement(&mut self) -> Return<AST::ForStatement> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <for_expression> ::= "for" <expression> "{" { <pipeline> } "}"
+    /// ```
+    fn parse_for_expression(&mut self) -> Return<AST::ForExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <pipeline> ::= "|>" <pattern> "=>" <expression>
+    /// ```
+    fn parse_pipeline(&mut self) -> Return<AST::Pipeline> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <if_let_expression> ::= "if" "let" <pattern> "=" <expression> <block_expression>
+    /// ```
+    fn parse_if_let_expression(&mut self) -> Return<AST::IfLetExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <while_let_expression> ::= "while" "let" <pattern> "=" <expression> <block_expression>
+    /// ```
+    fn parse_while_let_expression(&mut self) -> Return<AST::WhileLetExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <pipe_expression> ::= "pipe" <expression> "{" { "|>" <pattern> ("if" <expression>)? "=>" <block_expression> | <expression> } "}"
+    /// ```
+    fn parse_pipe_expression(&mut self) -> Return<AST::PipeExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <closer> ::= "(" ( <param_with_type> | <IDENTIFIER> { "," <param_with_type> | <IDENTIFIER> } )? ")" "->" <block_expression>
+    /// ```
+    fn parse_closer(&mut self) -> Return<AST::Closer> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <accesser> ::= <IDENTIFIER> { "::" <IDENTIFIER> } 
+    /// ```
+    fn parse_accesser(&mut self) -> Return<AST::Accesser> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <params> ::= ( <expression> { "," <expression> } )?
+    /// ```
+    fn parse_params(&mut self) -> Return<AST::Params> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <expression> ::= <logical_or_expr>
+    /// ```
+    fn parse_expression(&mut self) -> Return<AST::Expression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <logical_or_expr> ::= <logical_and_expr> "||" <logical_and_expr> 
+    /// ```
+    fn parse_logical_or_expr(&mut self) -> Return<AST::LogicalOrExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <logical_and_expr> ::= <bitwise_or_expr> "&&" <bitwise_or_expr>
+    /// ```
+    fn parse_logical_and_expr(&mut self) -> Return<AST::LogicalAndExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <bitwise_or_expr> ::= <bitwise_xor_expr> "|" <bitwise_xor_expr> 
+    /// ```
+    fn parse_bitwise_or_expr(&mut self) -> Return<AST::BitwiseOrExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <bitwise_xor_expr> ::= <bitwise_and_expr> "^" <bitwise_and_expr> 
+    /// ```
+    fn parse_bitwise_xor_expr(&mut self) -> Return<AST::BitwiseXorExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <bitwise_and_expr> ::= <equality_expr> "&" <equality_expr>
+    /// ```
+    fn parse_bitwise_and_expr(&mut self) -> Return<AST::BitwiseAndExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <equality_expr> ::= <relational_expr> ("==" | "!=") <relational_expr>
+    /// ```
+    fn parse_equality_expr(&mut self) -> Return<AST::EqualityExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <relational_expr> ::= <shift_expr>  ("<" | "<=" | ">" | ">=") <shift_expr> 
+    /// ```
+    fn parse_relational_expr(&mut self) -> Return<AST::RelationalExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <shift_expr> ::= <additive_expr>  ("<<" | ">>") <additive_expr> 
+    /// ```
+    fn parse_shift_expr(&mut self) -> Return<AST::ShiftExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <additive_expr> ::= <multiplicative_expr>  ("+" | "-") <multiplicative_expr> 
+    /// ```
+    fn parse_additive_expr(&mut self) -> Return<AST::AdditiveExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <multiplicative_expr> ::= <power_expr> ("*" | "/" | "%") <power_expr> 
+    /// ```
+    fn parse_multiplicative_expr(&mut self) -> Return<AST::MultiplicativeExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <power_expr> ::= <prefix_expr>  "**" <power_expr> 
+    /// ```
+    fn parse_power_expr(&mut self) -> Return<AST::PowerExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <prefix_expr> ::= (("!" | "~") <prefix_expr>) | <primary_expr>
+    /// ```
+    fn parse_prefix_expr(&mut self) -> Return<AST::PrefixExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <primary_expr> ::= 
+    ///      <block_expression>
+    ///    | <if_expression>
+    ///    | <match_expression>
+    ///    | <loop_expression>
+    ///    | <while_expression>
+    ///    | <for_expression>
+    ///    | <pipe_expression>
+    ///    | <accesser>
+    ///    | <literal>
+    ///    | "try"? <accesser> "(" <params> ")"
+    ///    | "try"? <accesser> "." <IDENTIFIER> "(" <params> ")"
+    ///    | <accesser> "." <IDENTIFIER> 
+    ///    | "await" <expression>
+    ///    | "(" ( <expression> { "," <expression> } )? ")"
+    ///    | <accesser> "{" ( ((<IDENTIFIER> ":" <expression>) | <IDENTIFIER>) { "," ( <IDENTIFIER> ":" <expression> ) | <IDENTIFIER> } )? "}"
+    ///    | <closer>
+    ///    | <if_let_expression>
+    ///    | <while_let_expression>
+    ///    | "[" (<expression> { "," <expression> } )? "]"
+    ///    | <expression> "[" <expression> "]"
+    ///    | <expression> "as" <type_literal>
+    ///    | "(" <expression> ")"
+    /// ```
+    fn parse_primary_expr(&mut self) -> Return<AST::PrimaryExpr> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <statement> ::= 
+    ///      <if_expression>
+    ///    | <match_expression>
+    ///    | <loop_expression>
+    ///    | <while_expression>
+    ///    | <for_statement>
+    ///    | "ignore"? <expression> ";"
+    ///    | "let" | "const" <pattern> ( ":" <type_literal> ) ( <ASSIGMENT_OPERATOR> <expression> )? ";"
+    ///    | "return" <expression> ";"
+    ///    | "break" <expression> ";"
+    ///    | "continue" ";"
+    ///    | <accesser> <ASSIGMENT_OPERATOR> <expression> ";"
+    /// ```
+    fn parse_statement(&mut self) -> Return<AST::Statement> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <field_declaration> ::= ( "final" | "mut" ) <IDENTIFIER> ":" <type_literal> ";"
+    /// ```
+    fn parse_field_declaration(&mut self) -> Return<AST::FieldDeclaration> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <param_with_type> ::= "mut"? (<IDENTIFIER> ":" <type_literal> ( "=" <expression> )? ) | "this"
+    /// ```
+    fn parse_param_with_type(&mut self) -> Return<AST::ParamWithType> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <params_with_types> ::= { <param_with_type> "," } <param_with_type>
+    /// ```
+    fn parse_params_with_types(&mut self) -> Return<AST::ParamsWithTypes> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <block_expression> ::= "{" { <statement> } | <expression> "}"
+    /// ```
+    fn parse_block_expression(&mut self) -> Return<AST::BlockExpression> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <is_public> ::= "pub" | "";
+    /// ```
+    fn parse_is_public(&mut self) -> Return<AST::IsPublic> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <literal> ::= <STRING_LITERAL> | <CHAR_LITERAL> | <NUM_LITERAL> | <BOOL_LITERAL>
+    /// ```
+    fn parse_literal(&mut self) -> Return<AST::Literal> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <type_literal> ::= 
+    ///      <accesser> ( "<" { <type_literal> "," } <type_literal>  ">" )?
+    ///    | "impl" <type_literal>
+    ///    | "typeof" <expression>
+    ///    | "Bool"
+    ///    | "Int"
+    ///    | "DoubleInt"
+    ///    | "Float"
+    ///    | "DoubleFloat"
+    ///    | "Char"
+    ///    | "Usize"
+    ///    | "Any"
+    ///    | "(" ( <type_literal> { "," <type_literal> } )? ")"
+    ///    | "Never"
+    ///    | "Void"
+    /// ```
+    fn parse_type_literal(&mut self) -> Return<AST::TypeLiteral> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <docs_comments> ::= { <DOCS_COMMENT> } { <annotation> }
+    /// ```
+    fn parse_docs_comments(&mut self) -> Return<AST::DocsComments> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <pattern> ::= 
+    ///      <IDENTIFIER> 
+    ///    | "_"
+    ///    | <accesser> "(" <pattern> { "," <pattern> } ")"
+    ///    | "(" ( <pattern> { "," <pattern> } )? ")"
+    ///    | <accesser> "{" { (<IDENTIFIER> ":" <pattern>) | (<IDENTIFIER>) } "}"
+    ///    | <accesser>
+    ///    | <literal>
+    ///    | <CHAR_LITERAL> ".." | "..=" <CHAR_LITERAL>
+    ///    | <NUM_LITERAL> ".." | "..=" <NUM_LITERAL>
+    ///    | <IDENTIFIER> "@" <pattern>
+    /// ```
+    fn parse_pattern(&mut self) -> Return<AST::Pattern> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <generics> ::= "<" <IDENTIFIER> ":" <type_literal> { "&" <type_literal> } { "," <IDENTIFIER> ":" (<type_literal> { "&" <type_literal> })? } ">"
+    /// ```
+    fn parse_generics(&mut self) -> Return<AST::Generics> { unimlemented!(); }
+
+    /// ```ebnf
+    /// <implements_protocol> ::= ( ":" <accesser> { "," <accesser> } )?
+    /// ```
+    fn parse_implements_protocol(&mut self) -> Return<AST::ImplementsProtocol> { unimlemented!(); }
