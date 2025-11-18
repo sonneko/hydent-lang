@@ -32,8 +32,8 @@ impl<'a> Tokenizer<'a> {
     /// let tokens = tokenizer.tokenize();
     /// assert_eq!(tokens.unwrap().len(), 6);
     /// ```
+    #[rustfmt::skip]
     pub fn tokenize(mut self) -> Return<Vec<Token<'a>>> {
-
         loop {
             if self
                 .input
@@ -42,21 +42,14 @@ impl<'a> Tokenizer<'a> {
             {
                 break;
             }
-            if self.skip_whitespace() {
-                continue;
-            } else if self.check_keyword() {
-                continue;
-            } else if self.check_comment()? {
-                continue;
-            } else if self.check_operator() {
-                continue;
-            } else if self.check_delimiter() {
-                continue;
-            } else if self.check_literal()? {
-                continue;
-            } else if self.check_identifier() {
-                continue;
-            } else {
+            if self.skip_whitespace() { continue; } else
+            if self.check_keyword() { continue; } else
+            if self.check_comment()? { continue; } else
+            if self.check_operator() { continue; } else
+            if self.check_delimiter() { continue; } else
+            if self.check_literal()? { continue; } else
+            if self.check_identifier() { continue; }
+            else {
                 return Err(TokenizeErr::UnknownToken(self.current_char));
             }
         }
@@ -78,6 +71,7 @@ impl<'a> Tokenizer<'a> {
         }
     }
 
+    #[inline]
     fn next_token(&mut self, target: &str) -> bool {
         if self.next(target) {
             if let Some(target) = self.peek_char() {
@@ -93,6 +87,7 @@ impl<'a> Tokenizer<'a> {
         return false;
     }
 
+    #[inline]
     fn peek_char(&mut self) -> Option<char> {
         self.input
             .get(self.current_char..)
@@ -111,51 +106,58 @@ impl<'a> Tokenizer<'a> {
         self.current_char != starts_index
     }
 
+    #[rustfmt::skip]
     fn check_keyword(&mut self) -> bool {
-        let keyword = if self.next_token("import") {
-            Keyword::Import
-        } else if self.next_token("from") {
-            Keyword::From
-        } else if self.next_token("fn") {
-            Keyword::Fn
-        } else if self.next_token("const") {
-            Keyword::Const
-        } else if self.next_token("let") {
-            Keyword::Let
-        } else if self.next_token("try") {
-            Keyword::Try
-        } else if self.next_token("class") {
-            Keyword::Class
-        } else if self.next_token("return") {
-            Keyword::Return
-        } else if self.next_token("pub") {
-            Keyword::Pub
-        } else if self.next_token("static") {
-            Keyword::Static
-        } else if self.next_token("final") {
-            Keyword::Final
-        } else if self.next_token("if") {
-            Keyword::If
-        } else if self.next_token("else") {
-            Keyword::Else
-        } else if self.next_token("for") {
-            Keyword::For
-        } else if self.next_token("in") {
-            Keyword::In
-        } else if self.next_token("while") {
-            Keyword::While
-        } else if self.next_token("break") {
-            Keyword::Break
-        } else if self.next_token("continue") {
-            Keyword::Continue
-        } else if self.next_token("match") {
-            Keyword::Match
-        } else if self.next_token("protocol") {
-            Keyword::Protocol
-        } else {
+        let keyword = 
+        if self.next_token("DoubleFloat") { Keyword::DoubleFloat } else
+        if self.next_token("DoubleInt") { Keyword::DoubleInt } else
+        if self.next_token("protocol") { Keyword::Protocol } else
+        if self.next_token("continue") { Keyword::Continue } else
+        if self.next_token("import") { Keyword::Import } else
+        if self.next_token("static") { Keyword::Static } else
+        if self.next_token("struct") { Keyword::Struct } else
+        if self.next_token("extern") { Keyword::Extern } else
+        if self.next_token("panics") { Keyword::Panics } else
+        if self.next_token("module") { Keyword::Module } else
+        if self.next_token("return") { Keyword::Return } else
+        if self.next_token("ignore") { Keyword::Ignore } else
+        if self.next_token("typeof") { Keyword::Typeof } else
+        if self.next_token("class") { Keyword::Class } else
+        if self.next_token("async") { Keyword::Async } else
+        if self.next_token("match") { Keyword::Match } else
+        if self.next_token("while") { Keyword::While } else
+        if self.next_token("await") { Keyword::Await } else
+        if self.next_token("break") { Keyword::Break } else
+        if self.next_token("const") { Keyword::Const } else
+        if self.next_token("final") { Keyword::Final } else
+        if self.next_token("Float") { Keyword::Float } else
+        if self.next_token("Usize") { Keyword::Usize } else
+        if self.next_token("Never") { Keyword::Never } else
+        if self.next_token("from") { Keyword::From } else
+        if self.next_token("enum") { Keyword::Enum } else
+        if self.next_token("type") { Keyword::Type } else
+        if self.next_token("else") { Keyword::Else } else
+        if self.next_token("loop") { Keyword::Loop } else
+        if self.next_token("pipe") { Keyword::Pipe } else
+        if self.next_token("this") { Keyword::This } else
+        if self.next_token("impl") { Keyword::Impl } else
+        if self.next_token("Bool") { Keyword::Bool } else
+        if self.next_token("Char") { Keyword::Char } else
+        if self.next_token("Void") { Keyword::Void } else
+        if self.next_token("for") { Keyword::For } else
+        if self.next_token("let") { Keyword::Let } else
+        if self.next_token("try") { Keyword::Try } else
+        if self.next_token("mut") { Keyword::Mut } else
+        if self.next_token("pub") { Keyword::Pub } else
+        if self.next_token("Int") { Keyword::Int } else
+        if self.next_token("Any") { Keyword::Any } else
+        if self.next_token("as") { Keyword::As } else
+        if self.next_token("fn") { Keyword::Fn } else
+        if self.next_token("if") { Keyword::If } else
+        if self.next_token("in") { Keyword::In }
+        else {
             return false;
         };
-
         self.tokens.push(Token::Keyword(keyword));
         true
     }
@@ -247,38 +249,19 @@ impl<'a> Tokenizer<'a> {
             }
             let num_string = &self.input[starts_index..self.current_char];
             if num_string.contains('.') {
+                // TOOD: implement DoubleFloat checking logic
                 let float = num_string.parse::<f64>();
                 if float.is_err() {
                     return Err(TokenizeErr::InvalidFloatLiteral(self.current_char));
-                }
-                if num_string.len() > 7 {
-                    let double = num_string.parse::<f64>();
-                    if double.is_err() {
-                        return Err(TokenizeErr::InvalidFloatLiteral(self.current_char));
-                    }
-                    self.tokens
-                        .push(Token::Literal(Literal::DoubleFloatLiteral(double.unwrap())));
-                    return Ok(true);
                 }
                 self.tokens
                     .push(Token::Literal(Literal::FloatLiteral(float.unwrap() as f32)));
                 Ok(true)
             } else {
+                // TODO: implement DoubleInt checking logic
                 let int = num_string.parse::<i64>();
-                let int64 = int.clone().map(|int| int as i32).map(|int| int as i64);
                 if int.is_err() {
                     return Err(TokenizeErr::InvalidIntegerLiteral(self.current_char));
-                }
-                if int != int64 {
-                    let double = num_string.parse::<i64>();
-                    if double.is_err() {
-                        return Err(TokenizeErr::InvalidIntegerLiteral(self.current_char));
-                    }
-                    self.tokens
-                        .push(Token::Literal(Literal::DoubleIntegerLiteral(
-                            double.unwrap(),
-                        )));
-                    return Ok(true);
                 }
                 self.tokens
                     .push(Token::Literal(Literal::IntegerLiteral(int.unwrap() as i32)));
@@ -296,98 +279,65 @@ impl<'a> Tokenizer<'a> {
         }
     }
 
+    #[rustfmt::skip]
     fn check_operator(&mut self) -> bool {
-        let operator = if self.next("**=") {
-            Operator::PowAssign
-        } else if self.next("+=") {
-            Operator::AddAssign
-        } else if self.next("-=") {
-            Operator::SubAssign
-        } else if self.next("*=") {
-            Operator::MulAssign
-        } else if self.next("/=") {
-            Operator::DivAssign
-        } else if self.next("%=") {
-            Operator::ModAssign
-        } else if self.next("==") {
-            Operator::Equal
-        } else if self.next("!=") {
-            Operator::NotEqual
-        } else if self.next(">=") {
-            Operator::GreaterEqual
-        } else if self.next("<=") {
-            Operator::LessEqual
-        } else if self.next("&&") {
-            Operator::And
-        } else if self.next("||") {
-            Operator::Or
-        } else if self.next("++") {
-            Operator::Increment
-        } else if self.next("--") {
-            Operator::Decrement
-        } else if self.next("**") {
-            Operator::Pow
-        } else if self.next("..") {
-            Operator::CommaComma
-        } else if self.next("+") {
-            Operator::Plus
-        } else if self.next("-") {
-            Operator::Minus
-        } else if self.next("*") {
-            Operator::Multiply
-        } else if self.next("/") {
-            Operator::Divide
-        } else if self.next("%") {
-            Operator::Modulo
-        } else if self.next(">") {
-            Operator::Greater
-        } else if self.next("<") {
-            Operator::Less
-        } else if self.next("!") {
-            Operator::Not
-        } else if self.next("=") {
-            Operator::Assign
-        } else {
+        let operator = 
+        if self.next("..=") { Operator::RangeInclusive     } else
+        if self.next("=>") { Operator::FatArrow           } else
+        if self.next("|>") { Operator::Pipe               } else
+        if self.next("->") { Operator::Arrow              } else
+        if self.next("::") { Operator::NamespaceResolver  } else
+        if self.next("||") { Operator::LogicalOr          } else
+        if self.next("&&") { Operator::LogicalAnd         } else
+        if self.next("==") { Operator::Equality           } else
+        if self.next("!=") { Operator::Inequality         } else
+        if self.next("<=") { Operator::LessThanOrEqual    } else
+        if self.next(">=") { Operator::GreaterThanOrEqual } else
+        if self.next("<<") { Operator::ShiftLeft          } else
+        if self.next(">>") { Operator::ShiftRight         } else
+        if self.next("**") { Operator::PowerOf            } else
+        if self.next("..") { Operator::RangeExclusive     } else
+        if self.next("+=") { Operator::AddAssign          } else
+        if self.next("-=") { Operator::SubtractAssign     } else
+        if self.next("*=") { Operator::MultiplyAssign     } else
+        if self.next("/=") { Operator::DivideAssign       } else
+        if self.next("*") { Operator::Multiply           } else
+        if self.next("=") { Operator::Assignment         } else
+        if self.next(":") { Operator::Colon              } else
+        if self.next("@") { Operator::At                 } else
+        if self.next("|") { Operator::Or                 } else
+        if self.next("^") { Operator::Xor                } else
+        if self.next("&") { Operator::And                } else
+        if self.next("<") { Operator::LessThan           } else
+        if self.next(">") { Operator::GreaterThan        } else
+        if self.next("+") { Operator::Add                } else
+        if self.next("-") { Operator::Subtract           } else
+        if self.next("/") { Operator::Divide             } else
+        if self.next("%") { Operator::Remainder          } else
+        if self.next("!") { Operator::Not                } else
+        if self.next("~") { Operator::BitwiseNot         } else
+        if self.next(".") { Operator::MemberAccess       } else
+        if self.next("_") { Operator::Wildcard           } else {
             return false;
         };
-
         self.tokens.push(Token::Operator(operator));
         true
     }
 
+    #[rustfmt::skip]
     fn check_delimiter(&mut self) -> bool {
-        let deleimiter = if self.next(",") {
-            Delimiter::Comma
-        } else if self.next(".") {
-            Delimiter::Dot
-        } else if self.next("::") {
-            Delimiter::ColonColon
-        } else if self.next(":") {
-            Delimiter::Colon
-        } else if self.next(";") {
-            Delimiter::Semicolon
-        } else if self.next("(") {
-            Delimiter::LeftParen
-        } else if self.next(")") {
-            Delimiter::RightParen
-        } else if self.next("{") {
-            Delimiter::LeftBrace
-        } else if self.next("}") {
-            Delimiter::RightBrace
-        } else if self.next("[") {
-            Delimiter::LeftBracket
-        } else if self.next("]") {
-            Delimiter::RightBracket
-        } else if self.next("@") {
-            Delimiter::At
-        } else if self.next("\\") {
-            Delimiter::Backslash
-        } else if self.next("#") {
-            Delimiter::Sharp
-        } else {
+        let deleimiter = 
+        if self.next(";") {Delimiter::Semicolon    } else
+        if self.next("{") {Delimiter::LeftBrace    } else
+        if self.next("}") {Delimiter::RightBrace   } else
+        if self.next("(") {Delimiter::LeftParen    } else
+        if self.next(")") {Delimiter::RightParen   } else
+        if self.next(",") {Delimiter::Comma        } else
+        if self.next("[") {Delimiter::LeftBracket  } else
+        if self.next("]") {Delimiter::RightBracket }
+        else {
             return false;
         };
-
         self.tokens.push(Token::Delimiter(deleimiter));
         true
     }

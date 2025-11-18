@@ -1,6 +1,6 @@
-pub mod tokenizer;
-mod test;
 pub mod errors;
+mod test;
+pub mod tokenizer;
 
 /// Token types
 #[derive(Debug, PartialEq)]
@@ -17,26 +17,52 @@ pub enum Token<'a> {
 /// Keywords
 #[derive(Debug, PartialEq)]
 pub enum Keyword {
+    DoubleFloat,
+    DoubleInt,
+    Protocol,
+    Continue,
     Import,
-    From,
-    Fn,
+    Static,
+    Struct,
+    Extern,
+    Panics,
+    Module,
+    Return,
+    Ignore,
+    Typeof,
+    Class,
+    Async,
+    Match,
+    While,
+    Await,
+    Break,
     Const,
+    Final,
+    Float,
+    Usize,
+    Never,
+    From,
+    Enum,
+    Type,
+    Else,
+    Loop,
+    Pipe,
+    This,
+    Impl,
+    Bool,
+    Char,
+    Void,
+    For,
     Let,
     Try,
-    Class,
-    Return,
+    Mut,
     Pub,
-    Static,
-    Final,
+    Int,
+    Any,
+    As,
+    Fn,
     If,
-    Else,
-    For,
     In,
-    While,
-    Break,
-    Continue,
-    Match,
-    Protocol,
 }
 
 /// Literals
@@ -44,7 +70,7 @@ pub enum Keyword {
 pub enum Literal<'a> {
     IntegerLiteral(i32),
     FloatLiteral(f32),
-    DoubleIntegerLiteral(i64),
+    DoubleIntegerLiteral(i64), // TODO: implement parsing DoubleInt and DoubleFloat literal logic in tokenizer.rs
     DoubleFloatLiteral(f64),
     StringLiteral(&'a str),
     CharLiteral(char),
@@ -53,63 +79,59 @@ pub enum Literal<'a> {
 
 #[derive(Debug, PartialEq)]
 pub enum Operator {
-    Plus,     // +
-    Minus,    // -
-    Multiply, // *
-    Pow,      // **
-    Divide,   // /
-    Modulo,   // %
+    RangeInclusive,     // ..=
+    FatArrow,           // =>
+    Pipe,               // |>
+    Arrow,              // ->
+    NamespaceResolver,  // ::
+    LogicalOr,          // ||
+    LogicalAnd,         // &&
+    Equality,           // ==
+    Inequality,         // !=
+    LessThanOrEqual,    // <=
+    GreaterThanOrEqual, // >=
+    ShiftLeft,          // <<
+    ShiftRight,         // >>
+    PowerOf,            // **
+    RangeExclusive,     // ..
+    AddAssign,          // +=
+    SubtractAssign,     // -=
+    MultiplyAssign,     // *=
+    DivideAssign,       // /=    
+    Multiply,           // *
+    Assignment,         // =
+    Colon,              // :
+    At,                 // @
+    Or,                 // |
+    Xor,                // ^
+    And,                // &
+    LessThan,           // <
+    GreaterThan,        // >
+    Add,                // +
+    Subtract,           // -
+    Divide,             // /
+    Remainder,          // %
+    Not,                // !
+    BitwiseNot,         // ~
+    MemberAccess,       // .
+    Wildcard,           // _
+}
 
-    AddAssign, // +=
-    SubAssign, // -=
-    MulAssign, // *=
-    PowAssign, // **=
-    DivAssign, // /=
-    ModAssign, // %=
-
-    Equal,        // ==
-    NotEqual,     // !=
-    Greater,      // >
-    Less,         // <
-    GreaterEqual, // >=
-    LessEqual,    // <=
-
-    And, // &&
-    Or,  // ||
-    Not, // !
-
-    Increment, // ++
-    Decrement, // --
-
-    CommaComma, // ..
-
-    Assign, // =
-
+#[derive(Debug, PartialEq)]
+pub enum Delimiter {
+    Semicolon,    // ;
+    LeftBrace,    // {
+    RightBrace,   // }
+    LeftParen,    // (
+    RightParen,   // )
+    Comma,        // ,
+    LeftBracket,  // [
+    RightBracket, // ]
 }
 
 #[derive(Debug, PartialEq)]
 pub enum Comment<'a> {
     DocComment(&'a str), // `/// ...`
-    LineComment,        // `// ...`
-    BlockComment,       // `/* ... */`
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Delimiter {
-    Comma,      // ,
-    Dot,        // .
-    Colon,      // :
-    ColonColon, // ::
-    Semicolon,  // ;
-
-    LeftParen,    // (
-    RightParen,   // )
-    LeftBrace,    // {
-    RightBrace,   // }
-    LeftBracket,  // [
-    RightBracket, // ]
-
-    At,        // @
-    Backslash, // \
-    Sharp,     // #
+    LineComment,         // `// ...`
+    BlockComment,        // `/* ... */`
 }

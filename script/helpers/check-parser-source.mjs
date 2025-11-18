@@ -9,13 +9,9 @@ const PARSER_SOURCECODE_PATH = process.cwd() + "/src/parser/parser.rs";
  */
 export function checkParseFunctionsIsImplemented(parseFunctions) {
     const parserSource = readFileSync(PARSER_SOURCECODE_PATH, "utf-8");
-    const isOk = parseFunctions.every(func => {
-        if (parserSource.includes(func.substring(0, func.indexOf("unimplemented!()")))) {
-            return true;
-        } else {
-            console.error(`not found: \n${func.substring(func.indexOf("fn parse_"), func.indexOf("("))}`);
-            return false;
+    parseFunctions.forEach(func => {
+        if (!parserSource.includes(func.substring(0, func.indexOf("unimplemented!()")))) {
+            throw new Error(`not found function ${func.substring(func.indexOf("fn parse_"), func.indexOf("("))}` + "\nnot all functions are implemented.");
         }
     });
-    if (!isOk) { throw new Error("not all functions are implemented.") }
 }
