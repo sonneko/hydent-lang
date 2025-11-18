@@ -1,8 +1,8 @@
-### Shun言語リファレンス (Shun Language Reference)
+### Aya言語リファレンス (Aya Language Reference)
 
 #### 1. 概要 (Introduction)
 
-Shunは、安全性、パフォーマンス、そして優れた開発者体験の両立を目指して設計された、静的型付きインタプリタ/コンパイラ言語です。LLVMバックエンドによるJITコンパイルを実行します。
+Ayaは、安全性、パフォーマンス、そして優れた開発者体験の両立を目指して設計された、静的型付きインタプリタ/コンパイラ言語です。LLVMバックエンドによるJITコンパイルを実行します。
 
 *   **設計哲学**:
     *   **構文 (Syntax)**: TypeScriptに類似した、親しみやすく直感的な構文を採用。
@@ -16,7 +16,7 @@ Shunは、安全性、パフォーマンス、そして優れた開発者体験�
     *   `///`: ドキュメンテーションコメント。Markdown形式で記述され、開発者のための自由な説明を提供します。コンパイラからは無視されますが、ドキュメント生成ツールによって解釈されます。
 
 *   **キーワード**:
-    `fn`, `class`, `protocol`, `enum`, `impl`, `let`, `const`, `mut`, `final`, `if`, `else`, `match`, `while`, `for`, `in`, `return`, `pub`, `static`, `namespace`, `import`, `from`, `try`, `panic`, `self`, `Self`. プリミティブ型 (`Int`, `Float`, `Bool`, `Char`) およびリテラル (`true`, `false`, `None`) も予約されています。
+    `fn`, `class`, `protocol`, `enum`, `impl`, `let`, `const`, `mut`, `final`, `if`, `else`, `match`, `while`, `for`, `in`, `return`, `pub`, `static`, `namespace`, `import`, `from`, `try`, `panic`, `self`, `Self`. プリミティブ型 (`Int`, `Float`, `Bool`, `Char`) およびリテラル (`true`, `false`) も予約されています。
 
 *   **識別子と命名規則**:
     *   型名 (クラス, プロトコル, enum): `UpperCamelCase`
@@ -67,7 +67,7 @@ Shunは、安全性、パフォーマンス、そして優れた開発者体験�
 
 #### 5. 式 (Expressions)
 
-Shunは式ベースの言語です。多くの構文が値を返します。
+Ayaは式ベースの言語です。多くの構文が値を返します。
 
 *   **制御フロー式**:
     *   `if condition { ... } else { ... }`: `if` は式であり、各ブロックの最後の式がその値を返します。
@@ -100,7 +100,7 @@ Shunは式ベースの言語です。多くの構文が値を返します。
 
 ---
 
-### 9. 構文のBNF (BNF Grammar for Shun)
+### 9. 構文のBNF (BNF Grammar for Aya)
 
 ```bnf
 <program> ::= { <top_level_item> }
@@ -141,7 +141,7 @@ Shunは式ベースの言語です。多くの構文が値を返します。
 <type_list> ::= <type> { "," <type> }
 
 (* ---- Statements ---- *)
-(* Note: Shun is expression-oriented, so statements are a subset of expressions or declarations *)
+(* Note: Aya is expression-oriented, so statements are a subset of expressions or declarations *)
 
 <statement> ::= <declaration> | <let_statement> | <expression_statement>
 <let_statement> ::= "let" [ "mut" ] <identifier> [ ":" <type> ] "=" <expression> ";"
