@@ -31,7 +31,7 @@ $<struct_body> ::= <struct_block_body> | <struct_tuple_body> | ";"
 $<struct_block_body> ::= "{" { <field_declaration> } "}"
 $<struct_tuple_body> ::= "(" <type_literal_list> ")"
 
-$<function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( ":" <type_literal> )? "panics"? <block_expression>?
+$<function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( "->" <type_literal> )? "panics"? <block_expression>?
 
 $<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> <implements_protocol> "{" { <protocol_member> } "}"
 $<protocol_member> ::= <function_declaration> | <type_alias_declaration>
@@ -62,9 +62,9 @@ $<if_let_expression> ::= "if" "let" <pattern> "=" <expression> <block_expression
 $<while_let_expression> ::= "while" "let" <pattern> "=" <expression> <block_expression>
 
 $<pipe_expression> ::= "pipe" <expression> "{" { <pipe_arm> } "}"
-$<pipe_arm> ::= "|>" <pattern> ("if" <expression>)? "=>" <block_expression> | <expression>
+$<pipe_arm> ::= "|>" <pattern> ("if" <expression>)? "=>" <expression>
 
-$<closer> ::= "(" <closer_params>? ")" "->" <block_expression>
+$<closer> ::= "(" <closer_params>? ")" "->" <expression>
 $<closer_params> ::= <closer_param_item> { "," <closer_param_item> }
 $<closer_param_item> ::= <param_with_type> | <IDENTIFIER>
 
@@ -83,8 +83,8 @@ $<relational_expr> ::= <shift_expr> { ("<" | "<=" | ">" | ">=") <shift_expr> }
 $<shift_expr> ::= <additive_expr> { ("<<" | ">>") <additive_expr> }
 $<additive_expr> ::= <multiplicative_expr> { ("+" | "-") <multiplicative_expr> }
 $<multiplicative_expr> ::= <power_expr> { ("*" | "/" | "%") <power_expr> }
-$<power_expr> ::= <prefix_expr> { "**" <power_expr> }
-$<prefix_expr> ::= (("!" | "~") <prefix_expr>) | <primary_expr>
+$<power_expr> ::= <prefix_expr> { "**" <prefix_expr> }
+$<prefix_expr> ::= (("!" | "~" | "-") <prefix_expr>) | <primary_expr>
 $<primary_expr> ::=
       <block_expression>
     | <if_expression>
@@ -145,7 +145,7 @@ $<param_with_type> ::= "mut"? ( <IDENTIFIER> ":" <type_literal> ( "=" <expressio
 $<params_with_types> ::= <param_with_types_list>?
 $<param_with_types_list> ::= <param_with_type> { "," <param_with_type> }
 
-$<block_expression> ::= "{" { <statement> } <expression>? "}"
+$<block_expression> ::= "{" { <statement> } | <expression> "}"
 
 $<is_public> ::= "pub" | "";
 
@@ -214,3 +214,5 @@ $<accesser_list> ::= <accesser> { "," <accesser> }
 # <BOOL_LITERAL>: true or false
 # <DOCS_COMMENT>: documentation comment like /// # This is title. \n it's content.
 # <ASSIGNMENT_OPERATOR>: = -= += *= /= %= **=
+
+# TODO: add your_variable_name++ like grammer.
