@@ -1,4 +1,4 @@
-$<grammer> ::= <top_level>
+$<ast> ::= <top_level>
 
 $<top_level> ::= { <top_level_statement> }
 

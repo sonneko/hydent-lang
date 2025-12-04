@@ -1,7 +1,7 @@
     /// ```ebnf
-    /// <grammer> ::= <top_level>
+    /// <ast> ::= <top_level>
     /// ```
-    fn parse_grammer(&mut self) -> Return<AST::Grammer> { unimplemented!(); }
+    fn parse_ast(&mut self) -> Return<AST::Ast> { unimplemented!(); }
 
     /// ```ebnf
     /// <top_level> ::= { <top_level_statement> }
@@ -84,7 +84,7 @@
     fn parse_struct_tuple_body(&mut self) -> Return<AST::StructTupleBody> { unimplemented!(); }
 
     /// ```ebnf
-    /// <function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( ":" <type_literal> )? "panics"? <block_expression>?
+    /// <function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( "->" <type_literal> )? "panics"? <block_expression>?
     /// ```
     fn parse_function_declaration(&mut self) -> Return<AST::FunctionDeclaration> { unimplemented!(); }
 
@@ -179,12 +179,12 @@
     fn parse_pipe_expression(&mut self) -> Return<AST::PipeExpression> { unimplemented!(); }
 
     /// ```ebnf
-    /// <pipe_arm> ::= "|>" <pattern> ("if" <expression>)? "=>" <block_expression> | <expression>
+    /// <pipe_arm> ::= "|>" <pattern> ("if" <expression>)? "=>" <expression>
     /// ```
     fn parse_pipe_arm(&mut self) -> Return<AST::PipeArm> { unimplemented!(); }
 
     /// ```ebnf
-    /// <closer> ::= "(" <closer_params>? ")" "->" <block_expression>
+    /// <closer> ::= "(" <closer_params>? ")" "->" <expression>
     /// ```
     fn parse_closer(&mut self) -> Return<AST::Closer> { unimplemented!(); }
 
@@ -264,12 +264,12 @@
     fn parse_multiplicative_expr(&mut self) -> Return<AST::MultiplicativeExpr> { unimplemented!(); }
 
     /// ```ebnf
-    /// <power_expr> ::= <prefix_expr> { "**" <power_expr> }
+    /// <power_expr> ::= <prefix_expr> { "**" <prefix_expr> }
     /// ```
     fn parse_power_expr(&mut self) -> Return<AST::PowerExpr> { unimplemented!(); }
 
     /// ```ebnf
-    /// <prefix_expr> ::= (("!" | "~") <prefix_expr>) | <primary_expr>
+    /// <prefix_expr> ::= (("!" | "~" | "-") <prefix_expr>) | <primary_expr>
     /// ```
     fn parse_prefix_expr(&mut self) -> Return<AST::PrefixExpr> { unimplemented!(); }
 
@@ -411,7 +411,7 @@
     fn parse_param_with_types_list(&mut self) -> Return<AST::ParamWithTypesList> { unimplemented!(); }
 
     /// ```ebnf
-    /// <block_expression> ::= "{" { <statement> } <expression>? "}"
+    /// <block_expression> ::= "{" { <statement> } | <expression> "}"
     /// ```
     fn parse_block_expression(&mut self) -> Return<AST::BlockExpression> { unimplemented!(); }
 

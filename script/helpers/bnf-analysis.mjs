@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { assert } from "console";
 
-const GRAMMER_FILE_PATH = `${process.cwd()}/spec/grammer.bnf`;
+const GRAMMER_FILE_PATH = `${process.cwd()}/assets/grammer.bnf`;
 
 
 /**
