@@ -1,25 +1,26 @@
-use std::fmt::Debug;
-
 use super::errors::TokenizeErr;
 use super::{Comment, Delimiter, Keyword, Operator, Token};
+use crate::common::span::Span;
 use crate::tokenizer::Literal;
+use crate::common::symbol::SymbolFactory;
 
 pub type Return<T> = Result<T, TokenizeErr>;
 
-#[derive(Debug)]
-pub struct Tokenizer<'a> {
-    tokens: Vec<Token<'a>>,
+pub struct Tokenizer<'a, 'sym> {
+    tokens: Vec<Token>,
     current_char: usize,
     input: &'a str,
+    symbol_factory: &'sym SymbolFactory<'sym>,
 }
 
-impl<'a> Tokenizer<'a> {
+impl<'a, 'sym> Tokenizer<'a, 'sym> {
     /// Create a new tokenizer
-    pub fn new(input: &'a str) -> Tokenizer<'a> {
+    pub fn new(input: &'a str, symbol_factory: &mut SymbolFactory) -> Tokenizer<'a, 'sym> {
         Self {
             tokens: Vec::new(),
             current_char: 0,
             input,
+            symbol_factory,
         }
     }
 
@@ -33,7 +34,7 @@ impl<'a> Tokenizer<'a> {
     /// assert_eq!(tokens.unwrap().len(), 6);
     /// ```
     #[rustfmt::skip]
-    pub fn tokenize(mut self) -> Return<Vec<Token<'a>>> {
+    pub fn tokenize(mut self) -> Return<Vec<Token>> {
         loop {
             if self
                 .input
@@ -179,7 +180,7 @@ impl<'a> Tokenizer<'a> {
                 self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Literal(Literal::StringLiteral(
-                &self.input[starts_index..self.current_char],
+                Span::new(starts_index, self.current_char)
             )));
             self.current_char += 1;
             Ok(true)
@@ -364,7 +365,7 @@ impl<'a> Tokenizer<'a> {
             }
         }
         self.tokens.push(Token::Identifier(
-            &self.input[starts_index..self.current_char],
+            self.symbol_factory.from_range(starts_index, self.current_char)
         ));
         true
     }
@@ -382,7 +383,7 @@ impl<'a> Tokenizer<'a> {
                 self.current_char += self.peek_char().unwrap().len_utf8();
             }
             self.tokens.push(Token::Comment(Comment::DocComment(
-                &self.input[starts_index..self.current_char],
+                Span::new(starts_index, self.current_char)
             )));
             return Ok(true);
         } else if self.next("//") {

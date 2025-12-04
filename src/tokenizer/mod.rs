@@ -2,20 +2,23 @@ pub mod errors;
 mod test;
 pub mod tokenizer;
 
+use crate::common::span::Span;
+use crate::common::symbol::Symbol;
+
 /// Token types
-#[derive(Debug, PartialEq)]
-pub enum Token<'a> {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Token {
     Keyword(Keyword),
-    Identifier(&'a str),
-    Literal(Literal<'a>),
+    Identifier(Symbol),
+    Literal(Literal),
     Operator(Operator),
-    Comment(Comment<'a>),
+    Comment(Comment),
     Delimiter(Delimiter),
     EndOfFile,
 }
 
 /// Keywords
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Keyword {
     DoubleFloat,
     DoubleInt,
@@ -66,18 +69,18 @@ pub enum Keyword {
 }
 
 /// Literals
-#[derive(Debug, PartialEq)]
-pub enum Literal<'a> {
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Literal {
     IntegerLiteral(i32),
     FloatLiteral(f32),
     DoubleIntegerLiteral(i64), // TODO: implement parsing DoubleInt and DoubleFloat literal logic in tokenizer.rs
     DoubleFloatLiteral(f64),
-    StringLiteral(&'a str),
+    StringLiteral(Span),
     CharLiteral(char),
     BoolLiteral(bool),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operator {
     RangeInclusive,     // ..=
     FatArrow,           // =>
@@ -117,7 +120,7 @@ pub enum Operator {
     Wildcard,           // _
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Delimiter {
     Semicolon,    // ;
     LeftBrace,    // {
@@ -129,9 +132,9 @@ pub enum Delimiter {
     RightBracket, // ]
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Comment<'a> {
-    DocComment(&'a str), // `/// ...`
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum Comment {
+    DocComment(Span), // `/// ...`
     LineComment,         // `// ...`
     BlockComment,        // `/* ... */`
 }
