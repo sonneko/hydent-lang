@@ -1,15 +1,17 @@
 pub mod errors;
 pub mod parser;
 
+use crate::common::{span::Span, symbol::Symbol};
+
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Identifier<'a>(&'a str);
+pub struct Identifier(pub Symbol);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StringLiteral<'a>(&'a str);
+pub struct StringLiteral(pub Span);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct CharLiteral(char);
+pub struct CharLiteral(pub char);
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum NumLiteral {
@@ -108,9 +110,9 @@ pub enum IsMut {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct DocsComments<'a> {
-    comments: Vec<&'a str>,
-    annotation: Vec<Annotation<'a>>,
+pub struct DocsComments<'ast> {
+    pub comments: &'ast [Span],
+    pub annotation: &'ast [Annotation<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -126,432 +128,432 @@ pub enum AssignmentOperator {
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Grammer<'a> {
-    top_level: TopLevel<'a>
+pub struct Ast<'ast> {
+    pub top_level: TopLevel<'ast>
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TopLevel<'a> {
-	children: Vec<TopLevelStatement<'a>>
+pub struct TopLevel<'ast> {
+	pub children: &'ast [TopLevelStatement<'ast>]
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum TopLevelStatement<'a> {
-    ImportDeclaration(ImportDeclaration<'a>),
-    StaticVariableDeclaration(StaticVariableDeclaration<'a>),
-    ClassDeclaration(ClassDeclaration<'a>),
-    EnumDeclaration(EnumDeclaration<'a>),
-    StructDeclaration(StructDeclaration<'a>),
-    FunctionDeclaration(FunctionDeclaration<'a>),
-    ProtocolDeclaration(ProtocolDeclaration<'a>),
-    ModuleDeclaration(ModuleDeclaration<'a>),
-    Annotation(Annotation<'a>),
-    TypeAliasDeclaration(TypeAliasDeclaration<'a>),
+pub enum TopLevelStatement<'ast> {
+    ImportDeclaration(ImportDeclaration<'ast>),
+    StaticVariableDeclaration(StaticVariableDeclaration<'ast>),
+    ClassDeclaration(ClassDeclaration<'ast>),
+    EnumDeclaration(EnumDeclaration<'ast>),
+    StructDeclaration(StructDeclaration<'ast>),
+    FunctionDeclaration(FunctionDeclaration<'ast>),
+    ProtocolDeclaration(ProtocolDeclaration<'ast>),
+    ModuleDeclaration(ModuleDeclaration<'ast>),
+    Annotation(Annotation<'ast>),
+    TypeAliasDeclaration(TypeAliasDeclaration<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum ImportDeclaration<'a> {
-	ImportSpecific(ImportSpecific<'a>, &'a str),
-    ImportAllAs(ImportAllAs<'a>, &'a str),
+pub enum ImportDeclaration<'ast> {
+	ImportSpecific(ImportSpecific<'ast>, Span),
+    ImportAllAs(ImportAllAs, Span),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ImportSpecific<'a>(IdentifierList<'a>);
+pub struct ImportSpecific<'ast>(pub IdentifierList<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ImportAllAs<'a>(Identifier<'a>);
+pub struct ImportAllAs(pub Identifier);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StaticVariableDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    expression: Expression<'a>,
+pub struct StaticVariableDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ClassDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    generics: Generics<'a>,
-    implements_protocol: ImplementsProtocol<'a>,
-    function_declarations: Vec<FunctionDeclaration<'a>>,
-    field_declarations: Vec<FieldDeclaration<'a>>,
-    type_alias_declarations: Vec<TypeAliasDeclaration<'a>>,
+pub struct ClassDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub generics: Generics<'ast>,
+    pub implements_protocol: ImplementsProtocol<'ast>,
+    pub function_declarations: &'ast [FunctionDeclaration<'ast>],
+    pub field_declarations: &'ast [FieldDeclaration<'ast>],
+    pub type_alias_declarations: &'ast [TypeAliasDeclaration<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct EnumDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    generics: Generics<'a>,
-    implements_protocol: ImplementsProtocol<'a>,
-    enum_members: Vec<EnumMember<'a>>,
+pub struct EnumDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub generics: Generics<'ast>,
+    pub implements_protocol: ImplementsProtocol<'ast>,
+    pub enum_members: &'ast [EnumMember<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum EnumMember<'a> {
-    EnumVariant(EnumVariant<'a>),
-    FunctionDeclaration(FunctionDeclaration<'a>),
+pub enum EnumMember<'ast> {
+    EnumVariant(EnumVariant<'ast>),
+    FunctionDeclaration(FunctionDeclaration<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct EnumVariant<'a>(Option<TypeLiteralList<'a>>);
+pub struct EnumVariant<'ast>(pub Option<TypeLiteralList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    struct_body: StructBody<'a>,
+pub struct StructDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub struct_body: StructBody<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum StructBody<'a> {
-	StructBlockBody(StructBlockBody<'a>),
-	StructTupleBody(StructTupleBody<'a>),
+pub enum StructBody <'ast>{
+	StructBlockBody(StructBlockBody<'ast>),
+	StructTupleBody(StructTupleBody<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructBlockBody<'a> (Vec<FieldDeclaration<'a>>);
+pub struct StructBlockBody<'ast> (pub &'ast [FieldDeclaration<'ast>]);
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructTupleBody<'a> (TypeLiteralList<'a>);
+pub struct StructTupleBody<'ast>(pub TypeLiteralList<'ast>);
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct FunctionDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_extern: IsExtern,
-    is_public: IsPublic,
-    is_async: IsAsync,
-    identifier: Identifier<'a>,
-    generics: Generics<'a>,
-    params_with_types: ParamsWithTypes<'a>,
-    return_type_literal: Option<TypeLiteral<'a>>,
-    can_panics: CanPanics,
-    block_expression: Option<BlockExpression<'a>>,
+pub struct FunctionDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_extern: IsExtern,
+    pub is_public: IsPublic,
+    pub is_async: IsAsync,
+    pub identifier: Identifier,
+    pub generics: Generics<'ast>,
+    pub params_with_types: ParamsWithTypes<'ast>,
+    pub return_type_literal: Option<TypeLiteral<'ast>>,
+    pub can_panics: CanPanics,
+    pub block_expression: Option<BlockExpression<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ProtocolDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    generics: Generics<'a>,
-    implements_protocol: ImplementsProtocol<'a>,
-    protocol_members: Vec<ProtocolMember<'a>>,
+pub struct ProtocolDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub generics: Generics<'ast>,
+    pub implements_protocol: ImplementsProtocol<'ast>,
+    pub protocol_members: &'ast [ProtocolMember<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum ProtocolMember<'a> {
-	FunctionDeclaration(FunctionDeclaration<'a>),
-    TypeAliasDeclaration(TypeAliasDeclaration<'a>),
+pub enum ProtocolMember<'ast> {
+	FunctionDeclaration(FunctionDeclaration<'ast>),
+    TypeAliasDeclaration(TypeAliasDeclaration<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ModuleDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    top_level: TopLevel<'a>,
+pub struct ModuleDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub top_level: TopLevel<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Annotation<'a> {
-    identifier: Identifier<'a>,
-    literals: Vec<Literal<'a>>,	
+pub struct Annotation<'ast> {
+    pub identifier: Identifier,
+    pub literals: &'ast [Literal],	
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TypeAliasDeclaration<'a> {
-	docs_comments: Vec<DocsComments<'a>>,
-    is_public: IsPublic,
-    identifier: Identifier<'a>,
-    generics: Generics<'a>,
-    type_literal: TypeLiteral<'a>,
+pub struct TypeAliasDeclaration<'ast> {
+	pub docs_comments: &'ast [DocsComments<'ast>],
+    pub is_public: IsPublic,
+    pub identifier: Identifier,
+    pub generics: Generics<'ast>,
+    pub type_literal: TypeLiteral<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct IfExpression<'a> {
-    expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct IfExpression<'ast> {
+    pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ElseIfClause<'a> {
-    expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct ElseIfClause<'ast> {
+    pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ElseClause<'a> {
-	block_expression: BlockExpression<'a>,
+pub struct ElseClause<'ast> {
+	pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct MatchExpression<'a> {
-    expression: Expression<'a>,
-    match_arms: Vec<MatchArm<'a>>,
+pub struct MatchExpression<'ast> {
+    pub expression: Expression<'ast>,
+    pub match_arms: &'ast [MatchArm<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct MatchArm<'a> {
-    pattern: Pattern<'a>,
-    guard_if: Option<IfExpression<'a>>,
-    expression: Expression<'a>,
+pub struct MatchArm <'ast>{
+    pub pattern: Pattern<'ast>,
+    pub guard_if: Option<IfExpression<'ast>>,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LoopExpression<'a> {
-	loop_times: Option<Expression<'a>>,
-    block_expression: BlockExpression<'a>,
+pub struct LoopExpression<'ast> {
+	pub loop_times: Option<Expression<'ast>>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct WhileExpression<'a> {
-	expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct WhileExpression <'ast>{
+	pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ForStatement<'a> {
-	pattern: Pattern<'a>,
-    expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct ForStatement <'ast>{
+	pub pattern: Pattern<'ast>,
+    pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ForExpression<'a> {
-	expression: Expression<'a>,
-    pipeline_arms: Vec<PipelineArm<'a>>,
+pub struct ForExpression<'ast> {
+	pub expression: Expression<'ast>,
+    pub pipeline_arms: &'ast [PipelineArm<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PipelineArm<'a> {
-	pattern: Pattern<'a>,
-    expression: Expression<'a>,
+pub struct PipelineArm <'ast>{
+	pub pattern: Pattern<'ast>,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct IfLetExpression<'a> {
-	pattern: Pattern<'a>,
-    expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct IfLetExpression <'ast>{
+	pub pattern: Pattern<'ast>,
+    pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct WhileLetExpression<'a> {
-	pattern: Pattern<'a>,
-    expression: Expression<'a>,
-    block_expression: BlockExpression<'a>,
+pub struct WhileLetExpression<'ast> {
+	pub pattern: Pattern<'ast>,
+    pub expression: Expression<'ast>,
+    pub block_expression: BlockExpression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PipeExpression<'a> {
-	expression: Expression<'a>,
-    pipe_arms: Vec<PipeArm<'a>>,
+pub struct PipeExpression<'ast> {
+	pub expression: Expression<'ast>,
+    pub pipe_arms: &'ast [PipeArm<'ast>],
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PipeArm<'a> {
-    pattern: Pattern<'a>,
-	guard_if: Expression<'a>,
-    expression: Expression<'a>,
+pub struct PipeArm<'ast> {
+    pub pattern: Pattern<'ast>,
+	pub guard_if: Expression<'ast>,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Closer<'a> {
-	closer_params: Option<CloserParams<'a>>,
-    block_expression: Expression<'a>,
+pub struct Closer<'ast> {
+	pub closer_params: Option<CloserParams<'ast>>,
+    pub block_expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct CloserParams<'a>(Vec<CloserParamItem<'a>>);
+pub struct CloserParams<'ast>(pub &'ast [CloserParamItem<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum CloserParamItem<'a> {
-	ParamWithType(ParamWithType<'a>),
-    Identifier(Identifier<'a>),
+pub enum CloserParamItem<'ast> {
+	ParamWithType(ParamWithType<'ast>),
+    Identifier(Identifier),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Accesser<'a>(Vec<Identifier<'a>>);
+pub struct Accesser<'ast>(pub &'ast [Identifier]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Params<'a>(Option<ExpressionList<'a>>);
+pub struct Params<'ast>(pub Option<ExpressionList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Expression<'a>(LogicalOrExpr<'a>);
+pub struct Expression<'ast>(pub LogicalOrExpr<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LogicalOrExpr<'a>(Vec<LogicalAndExpr<'a>>);
+pub struct LogicalOrExpr<'ast>(pub &'ast [LogicalAndExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LogicalAndExpr<'a>(Vec<BitwiseOrExpr<'a>>);
+pub struct LogicalAndExpr<'ast>(pub &'ast [BitwiseOrExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseOrExpr<'a>(Vec<BitwiseXorExpr<'a>>);
+pub struct BitwiseOrExpr<'ast>(pub &'ast [BitwiseXorExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseXorExpr<'a>(Vec<BitwiseAndExpr<'a>>);
+pub struct BitwiseXorExpr<'ast>(pub &'ast [BitwiseAndExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseAndExpr<'a>(Vec<EqualityExpr<'a>>);
+pub struct BitwiseAndExpr<'ast>(pub &'ast [EqualityExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct EqualityExpr<'a> {
-	left: RelationalExpr<'a>,
-    operator: EqualityOperator,
-    right: RelationalExpr<'a>,
+pub struct EqualityExpr<'ast> {
+	pub left: RelationalExpr<'ast>,
+    pub operator: EqualityOperator,
+    pub right: RelationalExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct RelationalExpr<'a> {
-    left: ShiftExpr<'a>,
-    operator: RelationalOperator,
-    right: ShiftExpr<'a>,
+pub struct RelationalExpr<'ast> {
+    pub left: ShiftExpr<'ast>,
+    pub operator: RelationalOperator,
+    pub right: ShiftExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ShiftExpr<'a> {
-	left: AdditiveExpr<'a>,
-    operator: ShiftOperator,
-    right: AdditiveExpr<'a>,
+pub struct ShiftExpr<'ast> {
+	pub left: AdditiveExpr<'ast>,
+    pub operator: ShiftOperator,
+    pub right: AdditiveExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct AdditiveExpr<'a> {
-    left: MultiplicativeExpr<'a>,
-    oprator: AdditiveOperator,
-    right: MultiplicativeExpr<'a>,
+pub struct AdditiveExpr<'ast> {
+    pub left: MultiplicativeExpr<'ast>,
+    pub oprator: AdditiveOperator,
+    pub right: MultiplicativeExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct MultiplicativeExpr<'a> {
-	left: PowerExpr<'a>,
-    operator: MultiplicativeOperator,
-    right: PowerExpr<'a>,
+pub struct MultiplicativeExpr<'ast> {
+	pub left: PowerExpr<'ast>,
+    pub operator: MultiplicativeOperator,
+    pub right: PowerExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PowerExpr<'a>(Vec<PrefixExpr<'a>>);
+pub struct PowerExpr<'ast>(pub &'ast [PrefixExpr<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PrefixExpr<'a> {
-	operators: Vec<PrefixOperator>,
-    expression: PrimaryExpr<'a>,
+pub struct PrefixExpr<'ast> {
+	pub operators: &'ast [PrefixOperator],
+    pub expression: PrimaryExpr<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum PrimaryExpr<'a> {
-	BlockExpression(BlockExpression<'a>),
-    IfExpression(IfExpression<'a>),
-    MatchExpression(MatchExpression<'a>),
-    LoopExpression(LoopExpression<'a>),
-    WhileExpression(WhileExpression<'a>),
-    ForExpression(ForExpression<'a>),
-    PipeExpression(PipeExpression<'a>),
-    Accesser(Accesser<'a>),
-    Literal(Literal<'a>),
-    FunctionCall(FunctionCall<'a>),
-    MethodCall(MethodCall<'a>),
-    FieldAccess(FieldAccess<'a>),
-    AwaitExpression(Expression<'a>),
-    TupleOrGroupedExpression(TupleOrGroupedExpression<'a>),
-    StructLiteral(StructLiteral<'a>),
-    Closer(Closer<'a>),
-    IfLetExpression(IfLetExpression<'a>),
-    WhileLetExpression(WhileLetExpression<'a>),
-    ArrayLiteral(ArrayLiteral<'a>),
-    IndexAccess(IndexAccess<'a>),
-    CastExpression(CastExpression<'a>),
+pub enum PrimaryExpr<'ast> {
+	BlockExpression(BlockExpression<'ast>),
+    IfExpression(IfExpression<'ast>),
+    MatchExpression(MatchExpression<'ast>),
+    LoopExpression(LoopExpression<'ast>),
+    WhileExpression(WhileExpression<'ast>),
+    ForExpression(ForExpression<'ast>),
+    PipeExpression(PipeExpression<'ast>),
+    Accesser(Accesser<'ast>),
+    Literal(Literal),
+    FunctionCall(FunctionCall<'ast>),
+    MethodCall(MethodCall<'ast>),
+    FieldAccess(FieldAccess<'ast>),
+    AwaitExpression(Expression<'ast>),
+    TupleOrGroupedExpression(TupleOrGroupedExpression<'ast>),
+    StructLiteral(StructLiteral<'ast>),
+    Closer(Closer<'ast>),
+    IfLetExpression(IfLetExpression<'ast>),
+    WhileLetExpression(WhileLetExpression<'ast>),
+    ArrayLiteral(ArrayLiteral<'ast>),
+    IndexAccess(IndexAccess<'ast>),
+    CastExpression(CastExpression<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct FunctionCall<'a> {
-	is_try: IsTry,
-    accesser: Accesser<'a>,
-    params: Params<'a>,
+pub struct FunctionCall<'ast> {
+	pub is_try: IsTry,
+    pub accesser: Accesser<'ast>,
+    pub params: Params<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct MethodCall<'a> {
-	is_try: IsTry,
-    accesser: Accesser<'a>,
-    identifier: Identifier<'a>,
-    params: Params<'a>,
+pub struct MethodCall<'ast> {
+	pub is_try: IsTry,
+    pub accesser: Accesser<'ast>,
+    pub identifier: Identifier,
+    pub params: Params<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct FieldAccess<'a> {
-	accesser: Accesser<'a>,
-    identifier: Identifier<'a>,
+pub struct FieldAccess<'ast> {
+	pub accesser: Accesser<'ast>,
+    pub identifier: Identifier,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TupleOrGroupedExpression<'a>(Option<ExpressionList<'a>>);
+pub struct TupleOrGroupedExpression<'ast>(pub Option<ExpressionList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructLiteral<'a> {
-	accesser: Accesser<'a>,
-    struct_literal_fields: Option<StructLiteralFields<'a>>,
+pub struct StructLiteral<'ast> {
+	pub accesser: Accesser<'ast>,
+    pub struct_literal_fields: Option<StructLiteralFields<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructLiteralFields<'a>(Vec<StructFieldInit<'a>>);
+pub struct StructLiteralFields<'ast>(pub &'ast [StructFieldInit<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructFieldInit<'a> {
-	field_name: Identifier<'a>,
-    expression: Option<Expression<'a>>,
+pub struct StructFieldInit<'ast> {
+	pub field_name: Identifier,
+    pub expression: Option<Expression<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ArrayLiteral<'a>(Option<ExpressionList<'a>>);
+pub struct ArrayLiteral<'ast>(pub Option<ExpressionList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct IndexAccess<'a> {
-	container: Expression<'a>,
-    index: Expression<'a>,
+pub struct IndexAccess<'ast> {
+	pub container: Expression<'ast>,
+    pub index: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct CastExpression<'a> {
-	target: Expression<'a>,
-    type_literal: TypeLiteral<'a>,
+pub struct CastExpression<'ast> {
+	pub target: Expression<'ast>,
+    pub type_literal: TypeLiteral<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum Statement<'a> {
-	IfExpression(IfExpression<'a>),
-    MatchExpression(MatchExpression<'a>),
-    LoopExpression(LoopExpression<'a>),
-    WhileExpression(WhileExpression<'a>),
-    ForStatement(ForStatement<'a>),
-    ExpressionStatement(ExpressionStatement<'a>),
-    VariableDeclaration(VariableDeclaration<'a>),
-    ReturnStatement(Expression<'a>),
-    BreakStatement(Expression<'a>),
+pub enum Statement<'ast> {
+	IfExpression(IfExpression<'ast>),
+    MatchExpression(MatchExpression<'ast>),
+    LoopExpression(LoopExpression<'ast>),
+    WhileExpression(WhileExpression<'ast>),
+    ForStatement(ForStatement<'ast>),
+    ExpressionStatement(ExpressionStatement<'ast>),
+    VariableDeclaration(VariableDeclaration<'ast>),
+    ReturnStatement(Expression<'ast>),
+    BreakStatement(Expression<'ast>),
     ContinueStatement,
-    AssignmentStatement(AssignmentStatement<'a>),
+    AssignmentStatement(AssignmentStatement<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ExpressionStatement<'a> {
-	is_ignore: IsIgnore,
-    expression: Expression<'a>,
+pub struct ExpressionStatement<'ast> {
+	pub is_ignore: IsIgnore,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct VariableDeclaration<'a> {
-	variable_declaration_keyword: VariableDeclarationKeyword,
-    pattern: Pattern<'a>,
-    type_literal: Option<TypeLiteral<'a>>,
-    variable_declaration_assignment: VariableDeclarationAssignment<'a>,
+pub struct VariableDeclaration<'ast> {
+	pub variable_declaration_keyword: VariableDeclarationKeyword,
+    pub pattern: Pattern<'ast>,
+    pub type_literal: Option<TypeLiteral<'ast>>,
+    pub variable_declaration_assignment: VariableDeclarationAssignment<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -561,32 +563,32 @@ pub enum VariableDeclarationKeyword {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct VariableDeclarationAssignment<'a> {
-	assignment_operator: AssignmentOperator,
-    expression: Expression<'a>,
+pub struct VariableDeclarationAssignment<'ast> {
+	pub assignment_operator: AssignmentOperator,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct AssignmentStatement<'a> {
-	accesser: Accesser<'a>,
-    assignment_operator: AssignmentOperator,
-    expression: Expression<'a>,
+pub struct AssignmentStatement<'ast> {
+	pub accesser: Accesser<'ast>,
+    pub assignment_operator: AssignmentOperator,
+    pub expression: Expression<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct FieldDeclaration<'a> {
-    field_declaration_keyword: FieldDeclarationKeyword,
-	identifier: Identifier<'a>,
-    type_literal: TypeLiteral<'a>,
+pub struct FieldDeclaration<'ast> {
+    pub field_declaration_keyword: FieldDeclarationKeyword,
+	pub identifier: Identifier,
+    pub type_literal: TypeLiteral<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum ParamWithType<'a> {
+pub enum ParamWithType<'ast> {
 	Param {
         is_mut: IsMut,
-        identifier: Identifier<'a>,
-        type_literal: TypeLiteral<'a>,
-        default_value: Option<Expression<'a>>,
+        identifier: Identifier,
+        type_literal: TypeLiteral<'ast>,
+        default_value: Option<Expression<'ast>>,
     },
     This {
         is_mut: IsMut,
@@ -594,15 +596,15 @@ pub enum ParamWithType<'a> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ParamsWithTypes<'a>(Option<ParamWithType<'a>>);
+pub struct ParamsWithTypes<'ast>(pub Option<ParamWithType<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ParamWithTypesList<'a>(Vec<ParamsWithTypes<'a>>);
+pub struct ParamWithTypesList<'ast>(pub &'ast [ParamsWithTypes<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum BlockExpression<'a> {
-    StatementList(Vec<Statement<'a>>),
-    Expression(Expression<'a>),
+pub enum BlockExpression<'ast> {
+    StatementList(&'ast [Statement<'ast>]),
+    Expression(Expression<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -612,22 +614,22 @@ pub enum IsPublic {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum Literal<'a> {
-	StringLiteral(StringLiteral<'a>),
+pub enum Literal {
+	StringLiteral(StringLiteral),
     CharLiteral(CharLiteral),
     NumLiteral(NumLiteral),
     BoolLiteral(BoolLiteral),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum TypeLiteral<'a> {
+pub enum TypeLiteral<'ast> {
 	Identifier {
-        accesser: Accesser<'a>,
-        generics: Option<Generics<'a>>,
+        accesser: Accesser<'ast>,
+        generics: Option<Generics<'ast>>,
     },
-    ImplType(Box<TypeLiteral<'a>>),
-    TupleType(TupleType<'a>),
-    TypeOf(Expression<'a>),
+    ImplType(&'ast TypeLiteral<'ast>),
+    TupleType(TupleType<'ast>),
+    TypeOf(Expression<'ast>),
     Bool,
     Int,
     DoubleInt,
@@ -641,46 +643,46 @@ pub enum TypeLiteral<'a> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericTypeArgs<'a>(TypeLiteralList<'a>);
+pub struct GenericTypeArgs<'ast>(pub TypeLiteralList<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TupleType<'a>(Option<TypeLiteralList<'a>>);
+pub struct TupleType<'ast>(pub Option<TypeLiteralList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum Pattern<'a> {
-	Identifier(Identifier<'a>),
+pub enum Pattern<'ast> {
+	Identifier(Identifier),
     Wild,
-    TupleStructPattern(TupleStructPattern<'a>),
-    TuplePattern(TuplePattern<'a>),
-    StructPattern(StructPattern<'a>),
-    Accesser(Accesser<'a>),
-    Literal(Literal<'a>),
+    TupleStructPattern(TupleStructPattern<'ast>),
+    TuplePattern(TuplePattern<'ast>),
+    StructPattern(StructPattern<'ast>),
+    Accesser(Accesser<'ast>),
+    Literal(Literal),
     RangePattern(RangePattern),
-    BindingPattern(BindingPattern<'a>),
+    BindingPattern(BindingPattern<'ast>),
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TupleStructPattern<'a> {
-	accesser: Accesser<'a>,
-    pattern_list: Option<PatternList<'a>>,
+pub struct TupleStructPattern<'ast> {
+	pub accesser: Accesser<'ast>,
+    pub pattern_list: Option<PatternList<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TuplePattern<'a>(Option<PatternList<'a>>);
+pub struct TuplePattern<'ast>(pub Option<PatternList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructPattern<'a> {
-	accesser: Accesser<'a>,
-    struct_pattern_fields: Option<StructPatternFields<'a>>,
+pub struct StructPattern<'ast> {
+	pub accesser: Accesser<'ast>,
+    pub struct_pattern_fields: Option<StructPatternFields<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructPatternFields<'a>(Vec<StructPatternField<'a>>);
+pub struct StructPatternFields<'ast>(pub &'ast [StructPatternField<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructPatternField<'a> {
-	identifier: Identifier<'a>,
-    pattern: Option<Pattern<'a>>,
+pub struct StructPatternField<'ast> {
+	pub identifier: Identifier,
+    pub pattern: Option<Pattern<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -704,40 +706,40 @@ pub enum RangeOp {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BindingPattern<'a> {
-	identifier: Identifier<'a>,
-    pattern: Box<Pattern<'a>>,
+pub struct BindingPattern<'ast> {
+	pub identifier: Identifier,
+    pub pattern: &'ast Pattern<'ast>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Generics<'a>(GenericParamDefList<'a>);
+pub struct Generics<'ast>(pub GenericParamDefList<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericParamDefList<'a>(Vec<GenericParamDef<'a>>);
+pub struct GenericParamDefList<'ast>(pub &'ast [GenericParamDef<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericParamDef<'a> {
-	identifier: Identifier<'a>,
-    generic_bound: Option<GenericBound<'a>>,
+pub struct GenericParamDef<'ast> {
+	pub identifier: Identifier,
+    pub generic_bound: Option<GenericBound<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericBound<'a>(Vec<TypeLiteral<'a>>);
+pub struct GenericBound<'ast>(pub &'ast [TypeLiteral<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ImplementsProtocol<'a>(Option<AccesserList<'a>>);
+pub struct ImplementsProtocol<'ast>(pub Option<AccesserList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct IdentifierList<'a>(Vec<Identifier<'a>>);
+pub struct IdentifierList<'ast>(pub &'ast [Identifier]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TypeLiteralList<'a>(Vec<TypeLiteral<'a>>);
+pub struct TypeLiteralList<'ast>(pub &'ast [TypeLiteral<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ExpressionList<'a>(Vec<Expression<'a>>);
+pub struct ExpressionList<'ast>(pub &'ast [Expression<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PatternList<'a>(Vec<Pattern<'a>>);
+pub struct PatternList<'ast>(pub &'ast [Pattern<'ast>]);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct AccesserList<'a>(Vec<Accesser<'a>>);
+pub struct AccesserList<'ast>(pub &'ast [Accesser<'ast>]);
