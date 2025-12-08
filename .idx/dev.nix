@@ -9,6 +9,7 @@
     pkgs.rustc
     pkgs.rustfmt
     pkgs.stdenv.cc
+    pkgs.clippy
   ];
   # Sets environment variables in the workspace
   env = {
