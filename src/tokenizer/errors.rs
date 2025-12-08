@@ -1,5 +1,10 @@
+//! This module defines the error types that can occur during the tokenization phase of the Aya compiler.
+//! It includes the `TokenizeErr` enum, which enumerates various issues like unclosed literals
+//! or invalid characters, and provides a `Debug` implementation for formatted error messages.
+
 use std::fmt::Debug;
 
+/// Represents the different types of errors that can occur during tokenization.
 #[derive(PartialEq)]
 pub enum TokenizeErr {
     StringLiteralNotClosed(usize),
@@ -11,7 +16,10 @@ pub enum TokenizeErr {
     BlockCommentNotClosed(usize),
 }
 
+
+/// Implements the `Debug` trait for `TokenizeErr` to provide user-friendly error messages.
 impl Debug for TokenizeErr {
+    /// Implements the `Debug` trait for `TokenizeErr` to provide user-friendly error messages.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             TokenizeErr::StringLiteralNotClosed(index) => {

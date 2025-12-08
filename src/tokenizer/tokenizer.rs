@@ -1,21 +1,28 @@
+//! This module implements the tokenizer for the Aya programming language.
+//!
+//! The `Tokenizer` is responsible for taking a raw source code string and
+//! breaking it down into a stream of meaningful tokens, such as keywords,
+//! identifiers, literals, operators, and delimiters. This is the first phase
+//! of the compiler's frontend.
+
 use super::errors::TokenizeErr;
 use super::{Comment, Delimiter, Keyword, Operator, Token};
-use crate::common::span::Span;
+use crate::compiler::span::Span;
 use crate::tokenizer::Literal;
-use crate::common::symbol::SymbolFactory;
+use crate::compiler::symbol::SymbolFactory;
 
 pub type Return<T> = Result<T, TokenizeErr>;
 
-pub struct Tokenizer<'a, 'sym> {
+pub struct Tokenizer<'src, 'symbol> {
     tokens: Vec<Token>,
     current_char: usize,
-    input: &'a str,
-    symbol_factory: &'sym SymbolFactory<'sym>,
+    input: &'src str,
+    symbol_factory: &'symbol SymbolFactory<'symbol>,
 }
 
-impl<'a, 'sym> Tokenizer<'a, 'sym> {
+impl<'src, 'symbol> Tokenizer<'src, 'symbol> {
     /// Create a new tokenizer
-    pub fn new(input: &'a str, symbol_factory: &mut SymbolFactory) -> Tokenizer<'a, 'sym> {
+    pub fn new(input: &'src str, symbol_factory: &mut SymbolFactory<'_>) -> Tokenizer<'src, 'symbol> {
         Self {
             tokens: Vec::new(),
             current_char: 0,
