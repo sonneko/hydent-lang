@@ -103,97 +103,221 @@ Ayaは式ベースの言語です。多くの構文が値を返します。
 ### 9. 構文のBNF (BNF Grammar for Aya)
 
 ```bnf
-<program> ::= { <top_level_item> }
+<ast> ::= <top_level>
 
-<top_level_item> ::= <import_statement> | <namespace_block> | <declaration>
+<top_level> ::= { <top_level_statement> }
 
-<import_statement> ::= "import" ( <identifier> | "{" <comma_separated_identifiers> "}" ) "from" <string_literal> ";"
+<top_level_statement> ::=
+        <import_declaration>
+      | <static_variable_declaration>
+      | <class_declaration>
+      | <enum_declaration>
+      | <struct_declaration>
+      | <function_declaration>
+      | <protocol_declaration>
+      | <module_declaration>
+      | <annotation>
+      | <type_alias_declaration>
 
-<declaration> ::= <function_decl> | <class_decl> | <protocol_decl> | <enum_decl> | <static_decl>
+<import_declaration> ::= "import" ( <import_specific> | <import_all_as> ) "from" <STRING_LITERAL> ";"
+<import_specific> ::= "{" <identifier_list> "}"
+<import_all_as> ::= "*" "as" <IDENTIFIER>
 
-<visibility> ::= "pub" | ""
+<static_variable_declaration> ::= <docs_comments> <is_public> "static" <IDENTIFIER> "=" <expression> ";"
 
-(* ---- Declarations ---- *)
+<class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> <generics> <implements_protocol> "{" { <function_declaration> | <field_declaration> | <type_alias_declaration> } "}"
 
-<function_decl> ::= { <directive> } { <attribute> } <visibility> [ "try" ] "fn" <identifier> [ <generic_params> ] "(" [ <param_list> ] ")" [ "->" <type> ] <block_expr>
+<enum_declaration> ::= <docs_comments> <is_public> "enum" <IDENTIFIER> <generics> <implements_protocol> "{" { <enum_member> } "}"
+<enum_member> ::= <enum_variant> | <function_declaration>
+<enum_variant> ::= <IDENTIFIER> ( "(" <type_literal_list> ")" )?
 
-<param_list> ::= <param> { "," <param> }
-<param> ::= <identifier> ":" <type>
+<struct_declaration> ::= <docs_comments> <is_public> "struct" <IDENTIFIER> <struct_body>
+<struct_body> ::= <struct_block_body> | <struct_tuple_body> | ";"
+<struct_block_body> ::= "{" { <field_declaration> } "}"
+<struct_tuple_body> ::= "(" <type_literal_list> ")"
 
-<class_decl> ::= { <directive> } { <attribute> } <visibility> "class" <identifier> [ <generic_params> ] [ ":" <type> ] "{" { <class_member> } "}"
+<function_declaration> ::= <docs_comments> "extern"? <is_public> "async"? "fn" <IDENTIFIER> <generics> "(" <params_with_types>  ")" ( "->" <type_literal> )? "panics"? <block_expression>?
 
-<class_member> ::= <field_decl> | <function_decl> | <static_const_decl>
+<protocol_declaration> ::= <docs_comments> <is_public> "protocol" <IDENTIFIER> <implements_protocol> "{" { <protocol_member> } "}"
+<protocol_member> ::= <function_declaration> | <type_alias_declaration>
 
-<field_decl> ::= { <directive> } <visibility> [ "final" ] <identifier> ":" <type> ";"
+<module_declaration> ::= <docs_comments> <is_public> "module" <IDENTIFIER> "{" <top_level> "}"
 
-<static_const_decl> ::= "static" <const_decl> ";"
+<annotation> ::= "@" <IDENTIFIER> { <literal> }
 
-<const_decl> ::= "const" <identifier> [ ":" <type> ] "=" <expression>
+<type_alias_declaration> ::= <docs_comments> <is_public> "type" <IDENTIFIER> <generics>? "=" <type_literal> ";"
 
-<static_decl> ::= "static" <identifier> [ ":" <type> ] "=" <expression>
+<if_expression> ::= "if" <expression> <block_expression> { <else_if_clause> } <else_clause>?
+<else_if_clause> ::= "else" "if" <expression> <block_expression>
+<else_clause> ::= "else" <block_expression>
 
-<protocol_decl> ::= { <directive> } <visibility> "protocol" <identifier> [ <generic_params> ] "{" { <function_signature> } "}"
-<function_signature> ::= <visibility> "fn" <identifier> "(" [ <param_list> ] ")" [ "->" <type> ] ";"
+<match_expression> ::= "match" <expression> "{" { <match_arm> } "}"
+<match_arm> ::= <pattern> ( "if" <expression> )? "=>" <expression>
 
-(* ---- Types ---- *)
+<loop_expression> ::= "loop" <expression>? <block_expression>
 
-<type> ::= <type_identifier> [ "<" <type_list> ">" ]
-<type_list> ::= <type> { "," <type> }
+<while_expression> ::= "while" <expression> <block_expression>
 
-(* ---- Statements ---- *)
-(* Note: Aya is expression-oriented, so statements are a subset of expressions or declarations *)
+<for_statement> ::= "for" <pattern> "in" <expression> <block_expression>
 
-<statement> ::= <declaration> | <let_statement> | <expression_statement>
-<let_statement> ::= "let" [ "mut" ] <identifier> [ ":" <type> ] "=" <expression> ";"
-<expression_statement> ::= <expression> ";"
+<for_expression> ::= "for" <expression> "{" { <pipeline_arm> } "}"
+<pipeline_arm> ::= "|>" <pattern> "=>" <expression>
 
-(* ---- Expressions ---- *)
+<if_let_expression> ::= "if" "let" <pattern> "=" <expression> <block_expression>
+<while_let_expression> ::= "while" "let" <pattern> "=" <expression> <block_expression>
 
-<expression> ::= <assignment_expr>
+<pipe_expression> ::= "pipe" <expression> "{" { <pipe_arm> } "}"
+<pipe_arm> ::= "|>" <pattern> ("if" <expression>)? "=>" <expression>
 
-<assignment_expr> ::= <logical_or_expr> [ "=" <assignment_expr> ]
+<closer> ::= "(" <closer_params>? ")" "->" <expression>
+<closer_params> ::= <closer_param_item> { "," <closer_param_item> }
+<closer_param_item> ::= <param_with_type> | <IDENTIFIER>
 
+<accesser> ::= <IDENTIFIER> { "::" <IDENTIFIER> }
+
+<params> ::= <expression_list>?
+
+<expression> ::= <logical_or_expr>
 <logical_or_expr> ::= <logical_and_expr> { "||" <logical_and_expr> }
-<logical_and_expr> ::= <equality_expr> { "&&" <equality_expr> }
-<equality_expr> ::= <comparison_expr> { ( "==" | "!=" ) <comparison_expr> }
-<comparison_expr> ::= <term_expr> { ( "<" | ">" | "<=" | ">=" ) <term_expr> }
-<term_expr> ::= <factor_expr> { ( "+" | "-" ) <factor_expr> }
-<factor_expr> ::= <unary_expr> { ( "*" | "/" ) <unary_expr> }
+<logical_and_expr> ::= <bitwise_or_expr> { "&&" <bitwise_or_expr> }
+<bitwise_or_expr> ::= <bitwise_xor_expr> { "|" <bitwise_xor_expr> }
+<bitwise_xor_expr> ::= <bitwise_and_expr> { "^" <bitwise_and_expr> }
+<bitwise_and_expr> ::= <equality_expr> { "&" <equality_expr> }
+<equality_expr> ::= <relational_expr> { ("==" | "!=") <relational_expr> }
+<relational_expr> ::= <shift_expr> { ("<" | "<=" | ">" | ">=") <shift_expr> }
+<shift_expr> ::= <additive_expr> { ("<<" | ">>") <additive_expr> }
+<additive_expr> ::= <multiplicative_expr> { ("+" | "-") <multiplicative_expr> }
+<multiplicative_expr> ::= <power_expr> { ("*" | "/" | "%") <power_expr> }
+<power_expr> ::= <prefix_expr> { "**" <prefix_expr> }
+<prefix_expr> ::= (("!" | "~" | "-") <prefix_expr>) | <primary_expr>
+<primary_expr> ::=
+      <block_expression>
+    | <if_expression>
+    | <match_expression>
+    | <loop_expression>
+    | <while_expression>
+    | <for_expression>
+    | <pipe_expression>
+    | <accesser>
+    | <literal>
+    | <function_call>
+    | <method_call>
+    | <field_access>
+    | "await" <expression>
+    | <tuple_or_grouped_expression>
+    | <struct_literal>
+    | <closer>
+    | <if_let_expression>
+    | <while_let_expression>
+    | <array_literal>
+    | <index_access>
+    | <cast_expression>
 
-<unary_expr> ::= ( "!" | "-" ) <unary_expr> | <postfix_expr>
+<function_call> ::= "try"? <accesser> "(" <params> ")"
+<method_call> ::= "try"? <accesser> "." <IDENTIFIER> "(" <params> ")"
+<field_access> ::= <accesser> "." <IDENTIFIER>
+<tuple_or_grouped_expression> ::= "(" <expression_list>? ")"
+<struct_literal> ::= <accesser> "{" <struct_literal_fields>? "}"
+<struct_literal_fields> ::= <struct_field_init> { "," <struct_field_init> }
+<struct_field_init> ::= ( <IDENTIFIER> ":" <expression> ) | <IDENTIFIER>
+<array_literal> ::= "[" <expression_list>? "]"
+<index_access> ::= <expression> "[" <expression> "]"
+<cast_expression> ::= <expression> "as" <type_literal>
 
-<postfix_expr> ::= <primary_expr> { <postfix_op> }
-<postfix_op> ::= "?" | <call_op> | <member_access_op>
-<call_op> ::= "(" [ <argument_list> ] ")"
-<member_access_op> ::= "." <identifier>
 
-<primary_expr> ::= <literal>
-                 | <identifier>
-                 | "(" <expression> ")"
-                 | <if_expr>
-                 | <match_expr>
-                 | <block_expr>
-                 | <return_expr>
+<statement> ::=
+      <if_expression>
+    | <match_expression>
+    | <loop_expression>
+    | <while_expression>
+    | <for_statement>
+    | <expression_statement>
+    | <variable_declaration>
+    | "return" <expression> ";"
+    | "break" <expression> ";"
+    | "continue" ";"
+    | <assignment_statement>
 
-(* ---- Control Flow and Block Expressions ---- *)
+<expression_statement> ::= "ignore"? <expression> ";"
+<variable_declaration> ::= <variable_declaration_keyword> <pattern> ( ":" <type_literal> )? <variable_declaration_assignment>? ";"
+<variable_declaration_keyword> ::= "let" | "const"
+<variable_declaration_assignment> ::= <ASSIGNMENT_OPERATOR> <expression>
+<assignment_statement> ::= <accesser> <ASSIGNMENT_OPERATOR> <expression> ";"
 
-<if_expr> ::= "if" <expression> <block_expr> [ "else" ( <if_expr> | <block_expr> ) ]
+<field_declaration> ::= ( "final" | "mut" ) <IDENTIFIER> ":" <type_literal> ";"
 
-<match_expr> ::= "match" <expression> "{" { <match_arm> } "}"
-<match_arm> ::= <pattern> "=>" <expression> ","
+<param_with_type> ::= "mut"? ( <IDENTIFIER> ":" <type_literal> ( "=" <expression> )? ) | "this"
+<params_with_types> ::= <param_with_types_list>?
+<param_with_types_list> ::= <param_with_type> { "," <param_with_type> }
 
-<block_expr> ::= "{" { <statement> } [ <expression> ] "}"
+<block_expression> ::= "{" { <statement> } | <expression> "}"
 
-<return_expr> ::= "return" [ <expression> ]
+<is_public> ::= "pub" | "";
 
-(* ---- Literals and Identifiers ---- *)
+<literal> ::= <STRING_LITERAL> | <CHAR_LITERAL> | <NUM_LITERAL> | <BOOL_LITERAL>
 
-<literal> ::= <integer_literal> | <float_literal> | <bool_literal> | <char_literal> | <string_literal> | "None"
-<identifier> ::= /* A sequence of letters, digits, and underscores, not starting with a digit */
+<type_literal> ::=
+      <accesser> <generic_type_args>?
+    | "impl" <type_literal>
+    | "typeof" <expression>
+    | "Bool"
+    | "Int"
+    | "DoubleInt"
+    | "Float"
+    | "DoubleFloat"
+    | "Char"
+    | "Usize"
+    | "Any"
+    | <tuple_type>
+    | "Never"
+    | "Void"
 
-(* ---- Directives and Attributes ---- *)
+<generic_type_args> ::= "<" <type_literal_list> ">"
+<tuple_type> ::= "(" <type_literal_list>? ")"
 
-<directive> ::= "#" <identifier> <string_literal>
-<attribute> ::= "@" <identifier> [ "(" <literal_list> ")" ]
+<docs_comments> ::= { <DOCS_COMMENT> } { <annotation> }
+
+<pattern> ::=
+      <IDENTIFIER>
+    | "_"
+    | <tuple_struct_pattern>
+    | <tuple_pattern>
+    | <struct_pattern>
+    | <accesser>
+    | <literal>
+    | <range_pattern>
+    | <binding_pattern>
+# TODO: add [ first, second, ... last ] like pattern
+
+<tuple_struct_pattern> ::= <accesser> "(" <pattern_list>? ")"
+<tuple_pattern> ::= "(" <pattern_list>? ")"
+<struct_pattern> ::= <accesser> "{" <struct_pattern_fields>? "}"
+<struct_pattern_fields> ::= <struct_pattern_field> { "," <struct_pattern_field> }
+<struct_pattern_field> ::= ( <IDENTIFIER> ":" <pattern> ) | <IDENTIFIER>
+<range_pattern> ::= ( <CHAR_LITERAL> | <NUM_LITERAL> ) <range_op> ( <CHAR_LITERAL> | <NUM_LITERAL> )
+<range_op> ::= ".." | "..="
+<binding_pattern> ::= <IDENTIFIER> "@" <pattern>
+
+<generics> ::= "<" <generic_param_def_list> ">"
+<generic_param_def_list> ::= <generic_param_def> { "," <generic_param_def> }
+<generic_param_def> ::= <IDENTIFIER> ( ":" <generic_bound> )?
+<generic_bound> ::= <type_literal> { "&" <type_literal> }
+
+<implements_protocol> ::= ( ":" <accesser_list> )?
+
+# Common List Rules
+<identifier_list> ::= <IDENTIFIER> { "," <IDENTIFIER> }
+<type_literal_list> ::= <type_literal> { "," <type_literal> }
+<expression_list> ::= <expression> { "," <expression> }
+<pattern_list> ::= <pattern> { "," <pattern> }
+<accesser_list> ::= <accesser> { "," <accesser> }
+
+# <IDENTIFIER>: identifier like es_2_d22
+# <STRING_LITERAL>: string literal like "HelloWor\n\"ld"
+# <CHAR_LITERAL>: char literal like '*' '\n' '\''
+# <NUM_LITERAL>: number literal like 243 42.234 0xff 0b00101001 423.323e+2
+# <BOOL_LITERAL>: true or false
+# <DOCS_COMMENT>: documentation comment like /// # This is title. \n it's content.
+# <ASSIGNMENT_OPERATOR>: = -= += *= /= %= **=
 
 ```
