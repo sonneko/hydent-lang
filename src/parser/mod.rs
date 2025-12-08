@@ -1,7 +1,8 @@
 pub mod errors;
 pub mod parser;
 
-use crate::common::{span::Span, symbol::Symbol};
+use crate::compiler::{span::Span, symbol::Symbol};
+use crate::compiler::arena::ArenaVec;
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -111,8 +112,8 @@ pub enum IsMut {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct DocsComments<'ast> {
-    pub comments: &'ast [Span],
-    pub annotation: &'ast [Annotation<'ast>],
+    pub comments: ArenaVec<'ast, Span>,
+    pub annotation: ArenaVec<'ast, Annotation<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -134,7 +135,7 @@ pub struct Ast<'ast> {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TopLevel<'ast> {
-	pub children: &'ast [TopLevelStatement<'ast>]
+	pub children: ArenaVec<'ast, TopLevelStatement<'ast>>
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -165,7 +166,7 @@ pub struct ImportAllAs(pub Identifier);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct StaticVariableDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub expression: Expression<'ast>,
@@ -173,24 +174,24 @@ pub struct StaticVariableDeclaration<'ast> {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ClassDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub generics: Generics<'ast>,
     pub implements_protocol: ImplementsProtocol<'ast>,
-    pub function_declarations: &'ast [FunctionDeclaration<'ast>],
-    pub field_declarations: &'ast [FieldDeclaration<'ast>],
-    pub type_alias_declarations: &'ast [TypeAliasDeclaration<'ast>],
+    pub function_declarations: ArenaVec<'ast, FunctionDeclaration<'ast>>,
+    pub field_declarations: ArenaVec<'ast, FieldDeclaration<'ast>>,
+    pub type_alias_declarations: ArenaVec<'ast, TypeAliasDeclaration<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct EnumDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub generics: Generics<'ast>,
     pub implements_protocol: ImplementsProtocol<'ast>,
-    pub enum_members: &'ast [EnumMember<'ast>],
+    pub enum_members: ArenaVec<'ast, EnumMember<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -204,7 +205,7 @@ pub struct EnumVariant<'ast>(pub Option<TypeLiteralList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct StructDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub struct_body: StructBody<'ast>,
@@ -217,7 +218,7 @@ pub enum StructBody <'ast>{
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructBlockBody<'ast> (pub &'ast [FieldDeclaration<'ast>]);
+pub struct StructBlockBody<'ast> (pub ArenaVec<'ast, FieldDeclaration<'ast>>);
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -226,7 +227,7 @@ pub struct StructTupleBody<'ast>(pub TypeLiteralList<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct FunctionDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_extern: IsExtern,
     pub is_public: IsPublic,
     pub is_async: IsAsync,
@@ -240,12 +241,12 @@ pub struct FunctionDeclaration<'ast> {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ProtocolDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub generics: Generics<'ast>,
     pub implements_protocol: ImplementsProtocol<'ast>,
-    pub protocol_members: &'ast [ProtocolMember<'ast>],
+    pub protocol_members: ArenaVec<'ast, ProtocolMember<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -256,7 +257,7 @@ pub enum ProtocolMember<'ast> {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ModuleDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub top_level: TopLevel<'ast>,
@@ -265,12 +266,12 @@ pub struct ModuleDeclaration<'ast> {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Annotation<'ast> {
     pub identifier: Identifier,
-    pub literals: &'ast [Literal],	
+    pub literals: ArenaVec<'ast, Literal>,	
 }
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct TypeAliasDeclaration<'ast> {
-	pub docs_comments: &'ast [DocsComments<'ast>],
+	pub docs_comments: ArenaVec<'ast, DocsComments<'ast>>,
     pub is_public: IsPublic,
     pub identifier: Identifier,
     pub generics: Generics<'ast>,
@@ -297,7 +298,7 @@ pub struct ElseClause<'ast> {
 #[derive(Debug, PartialEq, Clone)]
 pub struct MatchExpression<'ast> {
     pub expression: Expression<'ast>,
-    pub match_arms: &'ast [MatchArm<'ast>],
+    pub match_arms: ArenaVec<'ast, MatchArm<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -329,7 +330,7 @@ pub struct ForStatement <'ast>{
 #[derive(Debug, PartialEq, Clone)]
 pub struct ForExpression<'ast> {
 	pub expression: Expression<'ast>,
-    pub pipeline_arms: &'ast [PipelineArm<'ast>],
+    pub pipeline_arms: ArenaVec<'ast, PipelineArm<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -355,7 +356,7 @@ pub struct WhileLetExpression<'ast> {
 #[derive(Debug, PartialEq, Clone)]
 pub struct PipeExpression<'ast> {
 	pub expression: Expression<'ast>,
-    pub pipe_arms: &'ast [PipeArm<'ast>],
+    pub pipe_arms: ArenaVec<'ast, PipeArm<'ast>>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -372,7 +373,7 @@ pub struct Closer<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct CloserParams<'ast>(pub &'ast [CloserParamItem<'ast>]);
+pub struct CloserParams<'ast>(pub ArenaVec<'ast, CloserParamItem<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum CloserParamItem<'ast> {
@@ -381,7 +382,7 @@ pub enum CloserParamItem<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Accesser<'ast>(pub &'ast [Identifier]);
+pub struct Accesser<'ast>(pub ArenaVec<'ast, Identifier>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Params<'ast>(pub Option<ExpressionList<'ast>>);
@@ -390,19 +391,19 @@ pub struct Params<'ast>(pub Option<ExpressionList<'ast>>);
 pub struct Expression<'ast>(pub LogicalOrExpr<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LogicalOrExpr<'ast>(pub &'ast [LogicalAndExpr<'ast>]);
+pub struct LogicalOrExpr<'ast>(pub ArenaVec<'ast, LogicalAndExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct LogicalAndExpr<'ast>(pub &'ast [BitwiseOrExpr<'ast>]);
+pub struct LogicalAndExpr<'ast>(pub ArenaVec<'ast, BitwiseOrExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseOrExpr<'ast>(pub &'ast [BitwiseXorExpr<'ast>]);
+pub struct BitwiseOrExpr<'ast>(pub ArenaVec<'ast, BitwiseXorExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseXorExpr<'ast>(pub &'ast [BitwiseAndExpr<'ast>]);
+pub struct BitwiseXorExpr<'ast>(pub ArenaVec<'ast, BitwiseAndExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct BitwiseAndExpr<'ast>(pub &'ast [EqualityExpr<'ast>]);
+pub struct BitwiseAndExpr<'ast>(pub ArenaVec<'ast, EqualityExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct EqualityExpr<'ast> {
@@ -440,11 +441,11 @@ pub struct MultiplicativeExpr<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PowerExpr<'ast>(pub &'ast [PrefixExpr<'ast>]);
+pub struct PowerExpr<'ast>(pub ArenaVec<'ast, PrefixExpr<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct PrefixExpr<'ast> {
-	pub operators: &'ast [PrefixOperator],
+	pub operators: ArenaVec<'ast, PrefixOperator>,
     pub expression: PrimaryExpr<'ast>,
 }
 
@@ -504,7 +505,7 @@ pub struct StructLiteral<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructLiteralFields<'ast>(pub &'ast [StructFieldInit<'ast>]);
+pub struct StructLiteralFields<'ast>(pub ArenaVec<'ast, StructFieldInit<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct StructFieldInit<'ast> {
@@ -599,11 +600,11 @@ pub enum ParamWithType<'ast> {
 pub struct ParamsWithTypes<'ast>(pub Option<ParamWithType<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ParamWithTypesList<'ast>(pub &'ast [ParamsWithTypes<'ast>]);
+pub struct ParamWithTypesList<'ast>(pub ArenaVec<'ast, ParamsWithTypes<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum BlockExpression<'ast> {
-    StatementList(&'ast [Statement<'ast>]),
+    StatementList(ArenaVec<'ast, Statement<'ast>>),
     Expression(Expression<'ast>),
 }
 
@@ -677,7 +678,7 @@ pub struct StructPattern<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct StructPatternFields<'ast>(pub &'ast [StructPatternField<'ast>]);
+pub struct StructPatternFields<'ast>(pub ArenaVec<'ast, StructPatternField<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct StructPatternField<'ast> {
@@ -715,7 +716,7 @@ pub struct BindingPattern<'ast> {
 pub struct Generics<'ast>(pub GenericParamDefList<'ast>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericParamDefList<'ast>(pub &'ast [GenericParamDef<'ast>]);
+pub struct GenericParamDefList<'ast>(pub ArenaVec<'ast, GenericParamDef<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct GenericParamDef<'ast> {
@@ -724,22 +725,22 @@ pub struct GenericParamDef<'ast> {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct GenericBound<'ast>(pub &'ast [TypeLiteral<'ast>]);
+pub struct GenericBound<'ast>(pub ArenaVec<'ast, TypeLiteral<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct ImplementsProtocol<'ast>(pub Option<AccesserList<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct IdentifierList<'ast>(pub &'ast [Identifier]);
+pub struct IdentifierList<'ast>(pub ArenaVec<'ast, Identifier>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct TypeLiteralList<'ast>(pub &'ast [TypeLiteral<'ast>]);
+pub struct TypeLiteralList<'ast>(pub ArenaVec<'ast, TypeLiteral<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct ExpressionList<'ast>(pub &'ast [Expression<'ast>]);
+pub struct ExpressionList<'ast>(pub ArenaVec<'ast, Expression<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct PatternList<'ast>(pub &'ast [Pattern<'ast>]);
+pub struct PatternList<'ast>(pub ArenaVec<'ast, Pattern<'ast>>);
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct AccesserList<'ast>(pub &'ast [Accesser<'ast>]);
+pub struct AccesserList<'ast>(pub ArenaVec<'ast, Accesser<'ast>>);
