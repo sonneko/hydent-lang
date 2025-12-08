@@ -1,27 +1,13 @@
-use std::fmt::Debug;
+pub struct ParseErr;
 
-use crate::tokenizer::Token;
-
-pub enum ParseErr {
-    UnexpectedToken {
-        message: &'static str,
-        expected: Vec<Token>,
-        found: Option<Token>,
-    }
-    // INFO: add error kind here
-}
-
-impl<'a> ParseErr<'a> {
-    pub fn unexpected(expected: Vec<Token>, found: Option<Token>) -> Option<ParseErr<'a>> {
-        Some(&Self::UnexpectedToken {
-            message: "Unexpected Token",
-            expected,
-            found,
-        })
+impl ParseErr {
+    fn new() -> Self {
+        Self
     }
 }
 
-impl<'a> Debug for ParseErr<'a> {
+
+impl std::fmt::Display for ParseErr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         unimplemented!()
     }
