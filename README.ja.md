@@ -1,22 +1,22 @@
-# Aya プログラミング言語
+# Hydent プログラミング言語
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Aya-lang)
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Aya-lang)
-[![Version](https://img.shields.io/badge/version-0.1.0_(Conceptual)-informational)](https://github.com/Aya-lang)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Hydent-lang)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Hydent-lang)
+[![Version](https://img.shields.io/badge/version-0.1.0_(Conceptual)-informational)](https://github.com/Hydent-lang)
 
-**Aya**は、安全性、ハイパフォーマンス、そして保守性の高いアプリケーションを構築するために設計された、モダンな静的型付けJITコンパイル言語です。TypeScriptに触発された親しみやすく直感的な構文と、Rustから得られた堅牢な設計哲学を組み合わせています。
+**Hydent**は、安全性、ハイパフォーマンス、そして保守性の高いアプリケーションを構築するために設計された、モダンな静的型付けJITコンパイル言語です。TypeScriptに触発された親しみやすく直感的な構文と、Rustから得られた堅牢な設計哲学を組み合わせています。
 
 ## 基本哲学
 
-Ayaは、4つの基本理念の上に成り立っています。
+Hydentは、4つの基本理念の上に成り立っています。
 
-1.  **実用的な安全性 (Pragmatic Safety)**: 実行時エラーのクラス全体をコンパイル時に排除します。Ayaは`Option<T>`によるNull安全を強制し、回復可能なエラーのための`Result<T, E>`と、回復不能なパニックのためのコンパイラ追跡可能な`try fn`という、明確なデュアルモデルのエラーハンドリングシステムを提供します。
+1.  **実用的な安全性 (Pragmatic Safety)**: 実行時エラーのクラス全体をコンパイル時に排除します。Hydentは`Option<T>`によるNull安全を強制し、回復可能なエラーのための`Result<T, E>`と、回復不能なパニックのためのコンパイラ追跡可能な`try fn`という、明確なデュアルモデルのエラーハンドリングシステムを提供します。
 
 2.  **表現力豊かで親しみやすい構文 (Expressive & Familiar Syntax)**: TypeScript、Kotlin、Swiftなどの言語から来た開発者が快適に感じるクリーンな構文で、学習の障壁を下げます。可読性と定型的なコードの削減に重点を置いています。
 
-3.  **統合されたコード品質 (Integrated Code Quality)**: 言語機能は、開発者がより良いコードを書くための指針となるべきです。Ayaは、**ディレクティブ**（`#summary`, `#panics`）を用いたファーストクラスのコンパイラ認識可能なドキュメンテーションシステムを持ち、これによりセマンティックなリントが可能になり、APIの契約が文書化され、チェックされることを保証します。
+3.  **統合されたコード品質 (Integrated Code Quality)**: 言語機能は、開発者がより良いコードを書くための指針となるべきです。Hydentは、**ディレクティブ**（`#summary`, `#panics`）を用いたファーストクラスのコンパイラ認識可能なドキュメンテーションシステムを持ち、これによりセマンティックなリントが可能になり、APIの契約が文書化され、チェックされることを保証します。
 
-4.  **設計によるパフォーマンス (Performance by Design)**: LLVM IRにコンパイルし、Just-In-Time (JIT) コンパイラを使用することで、Ayaは高い実行パフォーマンスを実現します。これにより、高レベル言語の生産性を犠牲にすることなく、要求の厳しいアプリケーションにも対応できます。
+4.  **設計によるパフォーマンス (Performance by Design)**: LLVM IRにコンパイルし、Just-In-Time (JIT) コンパイラを使用することで、Hydentは高い実行パフォーマンスを実現します。これにより、高レベル言語の生産性を犠牲にすることなく、要求の厳しいアプリケーションにも対応できます。
 
 ## 機能概要
 
@@ -29,9 +29,9 @@ Ayaは、4つの基本理念の上に成り立っています。
 *   **ジェネリクス**: 型パラメータ化された関数やクラスで、柔軟かつ再利用可能なコードを記述。
 *   **コンパイラチェックされるドキュメント**: `#ディレクティブ`を使用してAPIの契約を記述し、コンパイラがそれを検証することで、ドキュメントが古くなるのを防ぎます。
 
-## Hello, Aya!
+## Hello, Hydent!
 
-Ayaのいくつかの特徴を示す短いサンプルコードです。
+Hydentのいくつかの特徴を示す短いサンプルコードです。
 
 ```zf
 import { Result, Ok, Err } from "std/result";
@@ -81,7 +81,7 @@ fn main() {
 
 ## エラーハンドリング：詳細
 
-Ayaはエラーを極めて真剣に扱い、2つの明確な経路を提供します。
+Hydentはエラーを極めて真剣に扱い、2つの明確な経路を提供します。
 
 ### 1. 回復可能なエラー (`Result<T, E>`)
 
@@ -97,7 +97,7 @@ fn process_data(): Result<Int, DataError> {
 
 ### 2. 回復不能なエラー (`try fn` & `panic`)
 
-プログラムが正しい場合は**決して**起こるべきでないプログラミングエラー（例：不変条件の破損、信頼されたインデックスでの境界外アクセス）については、Ayaは`panic`を使用します。
+プログラムが正しい場合は**決して**起こるべきでないプログラミングエラー（例：不変条件の破損、信頼されたインデックスでの境界外アクセス）については、Hydentは`panic`を使用します。
 
 `panic`する可能性のある関数は、**必ず**`try`キーワードでマークされなければなりません。`try`でマークされた`panic`する可能性のある関数は呼び出し元で`try`を使用して安全であることを示さなければいけません。これによって、`panic`の機会はコンパイル時にコールスタック全体を通して追跡可能になります。
 

@@ -1,10 +1,10 @@
-//! The main entry point for the Aya compiler.
+//! The main entry point for the Hydent compiler.
 //!
 //! This module handles the command-line interface,
 //! orchestrates the compilation process, and reports any
 //! diagnostics.
 
-/// The main entry point of the Aya compiler.
+/// The main entry point of the Hydent compiler.
 ///
 /// This function is responsible for:
 /// - Parsing command-line arguments.

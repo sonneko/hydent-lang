@@ -1,6 +1,6 @@
 //! # Arena Allocator
 //!
-//! This module provides an arena allocator for the Aya compiler. Arena allocation
+//! This module provides an arena allocator for the Hydent compiler. Arena allocation
 //! is a memory management technique where memory for a group of objects is
 //! allocated from a single large block of memory. This can be more efficient
 //! than allocating each object individually, especially for a large number of

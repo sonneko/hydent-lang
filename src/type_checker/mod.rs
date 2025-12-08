@@ -1,4 +1,4 @@
-//! This module implements the type checker for the Aya programming language.
+//! This module implements the type checker for the Hydent programming language.
 //!
 //! The type checker is responsible for ensuring the type soundness of the program.
 //! It analyzes the Abstract Syntax Tree (AST) or Intermediate Representation (IR)

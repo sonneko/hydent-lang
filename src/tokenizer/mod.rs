@@ -1,4 +1,4 @@
-//! This module defines the token types and related structures for the Aya tokenizer.
+//! This module defines the token types and related structures for the Hydent tokenizer.
 //! It includes enums for `Token`, `Keyword`, `Literal`, `Operator`, `Delimiter`, and `Comment`,
 //! along with implementations for `TokenAttribute` and `Display` traits.
 
@@ -21,7 +21,7 @@ pub enum Token {
     EndOfFile,
 }
 
-/// Represents the keywords in the Aya programming language.
+/// Represents the keywords in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Keyword {
     DoubleFloat,
@@ -72,7 +72,7 @@ pub enum Keyword {
     In,
 }
 
-/// Represents various literal values in the Aya programming language.
+/// Represents various literal values in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Literal {
     IntegerLiteral(i32),
@@ -84,7 +84,7 @@ pub enum Literal {
     BoolLiteral(bool),
 }
 
-/// Represents the operators in the Aya programming language.
+/// Represents the operators in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Operator {
     RangeInclusive,     // ..=
@@ -125,7 +125,7 @@ pub enum Operator {
     Wildcard,           // _
 }
 
-/// Represents the delimiters in the Aya programming language.
+/// Represents the delimiters in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Delimiter {
     Semicolon,    // ;
@@ -138,7 +138,7 @@ pub enum Delimiter {
     RightBracket, // ]
 }
 
-/// Represents the different types of comments in the Aya programming language.
+/// Represents the different types of comments in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Comment {
     DocComment(Span), // `/// ...`

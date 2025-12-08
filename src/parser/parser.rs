@@ -6,7 +6,7 @@ use crate::parser as AST;
 use crate::parser::errors::ParseErr;
 use crate::tokenizer::{Comment, Delimiter, Keyword, Literal, Operator, Token};
 
-/// A parser for the Aya programming language.
+/// A parser for the Hydent programming language.
 ///
 /// This struct holds the tokenizer's output and the compiler frontend context,
 /// and provides methods for parsing the token stream into an Abstract Syntax Tree (AST).
@@ -21,7 +21,7 @@ where
 
 type Return<T> = Result<T, ParseErr>;
 
-/// Implementation of the `Parser` for the Aya programming language.
+/// Implementation of the `Parser` for the Hydent programming language.
 ///
 /// This block contains the core parsing logic, including methods to
 /// consume tokens, handle parsing errors, and construct the Abstract

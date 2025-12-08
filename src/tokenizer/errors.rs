@@ -1,4 +1,4 @@
-//! This module defines the error types that can occur during the tokenization phase of the Aya compiler.
+//! This module defines the error types that can occur during the tokenization phase of the Hydent compiler.
 //! It includes the `TokenizeErr` enum, which enumerates various issues like unclosed literals
 //! or invalid characters, and provides a `Debug` implementation for formatted error messages.
 

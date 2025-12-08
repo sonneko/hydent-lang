@@ -1,22 +1,22 @@
-# Aya Programming Language
+# Hydent Programming Language
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Aya-lang)
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Aya-lang)
-[![Version](https://img.shields.io/badge/version-0.1.0_(Conceptual)-informational)](https://github.com/Aya-lang)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Hydent-lang)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Hydent-lang)
+[![Version](https://img.shields.io/badge/version-0.1.0_(Conceptual)-informational)](https://github.com/Hydent-lang)
 
-**Aya** is a modern, statically-typed, JIT-compiled language designed for building **safe, high-performance, and maintainable** applications. It combines a familiar and intuitive syntax inspired by TypeScript with the robust design philosophy gained from Rust.
+**Hydent** is a modern, statically-typed, JIT-compiled language designed for building **safe, high-performance, and maintainable** applications. It combines a familiar and intuitive syntax inspired by TypeScript with the robust design philosophy gained from Rust.
 
 ## Core Philosophy
 
-Aya is built upon four fundamental principles:
+Hydent is built upon four fundamental principles:
 
-1.  **Pragmatic Safety**: Eliminate entire classes of runtime errors at compile-time. Aya enforces Null Safety through `Option<T>` and provides a clear dual-model error handling system: `Result<T, E>` for recoverable errors and compiler-trackable `try fn` for unrecoverable panics.
+1.  **Pragmatic Safety**: Eliminate entire classes of runtime errors at compile-time. Hydent enforces Null Safety through `Option<T>` and provides a clear dual-model error handling system: `Result<T, E>` for recoverable errors and compiler-trackable `try fn` for unrecoverable panics.
 
 2.  **Expressive & Familiar Syntax**: Lower the barrier to entry with a clean syntax that feels comfortable for developers coming from languages like TypeScript, Kotlin, and Swift. The focus is on readability and reducing boilerplate code.
 
-3.  **Integrated Code Quality**: Language features should guide developers toward writing better code. Aya has a first-class, compiler-aware documentation system using **directives** (`#summary`, `#panics`), which enables semantic linting and ensures API contracts are documented and checked.
+3.  **Integrated Code Quality**: Language features should guide developers toward writing better code. Hydent has a first-class, compiler-aware documentation system using **directives** (`#summary`, `#panics`), which enables semantic linting and ensures API contracts are documented and checked.
 
-4.  **Performance by Design**: By compiling to LLVM IR and using a Just-In-Time (JIT) compiler, Aya achieves high execution performance. This makes it suitable for demanding applications without sacrificing the productivity of a high-level language.
+4.  **Performance by Design**: By compiling to LLVM IR and using a Just-In-Time (JIT) compiler, Hydent achieves high execution performance. This makes it suitable for demanding applications without sacrificing the productivity of a high-level language.
 
 ## Feature Overview
 
@@ -29,9 +29,9 @@ Aya is built upon four fundamental principles:
 * **Generics**: Write flexible and reusable code with type-parameterized functions and classes.
 * **Compiler-Checked Documentation**: Use `#directives` to describe API contracts, which the compiler verifies, preventing documentation from becoming stale.
 
-## Hello, Aya!
+## Hello, Hydent!
 
-A short code sample showcasing several features of Aya.
+A short code sample showcasing several features of Hydent.
 
 ```zf
 import { Result, Ok, Err } from "std/result";
@@ -85,7 +85,7 @@ fn main() {
 
 ## Error Handling: In Detail
 
-Aya takes errors very seriously and provides two distinct pathways.
+Hydent takes errors very seriously and provides two distinct pathways.
 
 ### 1\. Recoverable Errors (`Result<T, E>`)
 
@@ -101,7 +101,7 @@ fn process_data(): Result<Int, DataError> {
 
 ### 2\. Unrecoverable Errors (`try fn` & `panic`)
 
-For programming errors that should **never** occur if the program is correct (e.g., broken invariants, out-of-bounds access on a trusted index), Aya uses `panic`.
+For programming errors that should **never** occur if the program is correct (e.g., broken invariants, out-of-bounds access on a trusted index), Hydent uses `panic`.
 
 A function that can `panic` **must** be marked with the `try` keyword. Any call to a potentially `panic`-ing function marked with `try` must use `try` at the call site to acknowledge the safety risk. This makes the possibility of a `panic` traceable through the entire call stack at compile time.
 

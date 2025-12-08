@@ -1,4 +1,4 @@
-//! This module implements the tokenizer for the Aya programming language.
+//! This module implements the tokenizer for the Hydent programming language.
 //!
 //! The `Tokenizer` is responsible for taking a raw source code string and
 //! breaking it down into a stream of meaningful tokens, such as keywords,

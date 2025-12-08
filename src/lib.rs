@@ -1,4 +1,4 @@
-//! The main library for the Aya programming language.
+//! The main library for the Hydent programming language.
 //! This crate contains the core components of the compiler,
 //! including the tokenizer, parser, and various compiler passes.
 
