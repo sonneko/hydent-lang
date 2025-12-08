@@ -1,4 +1,4 @@
-import { toUpperCamelCase } from "./lib.mjs";
+import { toUpperCamelCase } from "./lib.js";
 
 /**
  * generate parser functions from grammer rules.

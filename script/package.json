@@ -1,0 +1,8 @@
+{
+  "name": "script",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "ajv": "^8.17.1"
+  }
+}

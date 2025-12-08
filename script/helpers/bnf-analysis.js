@@ -1,15 +1,15 @@
-import { readFileSync } from "fs";
-import { assert } from "console";
+import { readFile } from "./sys.js";
+import { assert } from "./sys.js";
 
-const GRAMMER_FILE_PATH = `${process.cwd()}/assets/grammer.bnf`;
+const GRAMMER_FILE_PATH = "/assets/grammer.bnf";
 
 
 /**
  * parse grammer from "spec/grammer.bnf" and return results.
  * @returns { { nonTerminalChars: string[], terminalChars: string[] rules: { left: string, right: string[], raw: string }[] } }
  */
-export function parseGrammerBNF() {
-    const rules = split2Rules(skipSharpComment(getGrammerFile())).map(item => ({
+export async function parseGrammerBNF() {
+    const rules = split2Rules(skipSharpComment(await getGrammerFile())).map(item => ({
         left: split2Character(item.left).map((item, index) => {
             assert(index == 0);
             return item;
@@ -43,8 +43,8 @@ export function parseGrammerBNF() {
  * Return grammer file content as string.
  * @returns {string}
  */
-function getGrammerFile() {
-    return readFileSync(GRAMMER_FILE_PATH, "utf-8");
+async function getGrammerFile() {
+    return await readFile(GRAMMER_FILE_PATH);
 }
 
 /**
