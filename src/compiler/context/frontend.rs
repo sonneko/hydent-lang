@@ -10,10 +10,10 @@ use crate::compiler::context::Mergeble;
 /// This struct encapsulates all the necessary data and utilities
 /// required during the frontend phase of compilation, such as
 /// managing source code, symbols, and AST allocation.
-pub struct CompilerFrontendContext<'src> {
-    source: SourceHolder<'src>,
-    symbol_factory: SymbolFactory<'src>,
-    arena_for_ast: Arena,
+pub struct CompilerFrontendContext<'src, 'arena> {
+    pub source: SourceHolder<'src>,
+    pub symbol_factory: SymbolFactory<'src>,
+    pub arena: &'arena Arena,
 }
 
 /// Implements the `Mergeble` trait for `CompilerFrontendContext`.
@@ -21,11 +21,11 @@ pub struct CompilerFrontendContext<'src> {
 /// This allows instances of `CompilerFrontendContext` to be merged,
 /// which is useful for combining contexts from different compilation units
 /// or parallel processing.
-impl Mergeble for CompilerFrontendContext<'_> {
+impl Mergeble for CompilerFrontendContext<'_, '_> {
     /// Merges this context with another `CompilerFrontendContext`.
     ///
     /// The specific merging logic is currently unimplemented.
-    fn merge(self, other: Self) -> Self {
+    fn merge(self, _other: Self) -> Self {
         unimplemented!()
     }
 }
@@ -35,7 +35,7 @@ impl Mergeble for CompilerFrontendContext<'_> {
 /// This provides the necessary interface for the frontend context to
 /// participate in the overall compilation pipeline, defining its next phase
 /// and how to access the source holder.
-impl CompilerContext for CompilerFrontendContext<'_> {
+impl CompilerContext for CompilerFrontendContext<'_, '_> {
     type NextFase = CompilerMiddleendContext;
 
     /// Transitions the current frontend context to the next compilation phase, which is the middle-end.
@@ -58,7 +58,7 @@ impl CompilerContext for CompilerFrontendContext<'_> {
 ///
 /// This block provides methods for constructing the frontend context,
 /// and accessing its internal components like the arena allocator.
-impl CompilerFrontendContext<'_> {
+impl<'src, 'arena> CompilerFrontendContext<'src, 'arena> {
     /// Creates a new `CompilerFrontendContext` instance.
     ///
     /// Initializes the context with a new `SourceHolder`, `SymbolFactory`,
@@ -71,21 +71,13 @@ impl CompilerFrontendContext<'_> {
     /// # Returns
     ///
     /// A new `CompilerFrontendContext` instance.
-    pub fn new(source: &str) -> Self {
+    pub fn new(source: &'src str, arena: &'arena Arena) -> CompilerFrontendContext<'src, 'arena> {
         let source_holder = SourceHolder::new(source);
         Self {
-            source: source_holder,
-            symbol_factory: SymbolFactory::new(&source_holder),
-            arena_for_ast: Arena::new(),
+            source: source_holder.clone(),
+            symbol_factory: SymbolFactory::new(source_holder),
+            arena: arena,
         }
     }
 
-    /// Returns a reference to the arena allocator used for AST nodes.
-    ///
-    /// # Returns
-    ///
-    /// A reference to the `Arena` instance.
-    pub fn arena(&self) -> Arena {
-        self.arena_for_ast
-    }
 }

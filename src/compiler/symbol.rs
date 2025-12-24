@@ -36,7 +36,7 @@ pub struct SymbolFactory<'src> {
     /// The next available symbol ID.
     now_symbol_id: u32,
     /// A reference to the source code holder.
-    source: &'src SourceHolder<'src>,
+    source: SourceHolder<'src>,
     /// The interning table, mapping string slices to their corresponding symbols.
     map: HashMap<SpanWithRef<'src>, Symbol>,
 }
@@ -55,10 +55,10 @@ impl <'src>SymbolFactory<'src> {
     /// # Arguments
     ///
     /// * `src` - A reference to the `SourceHolder` containing the source code.
-    pub fn new(src: &'src SourceHolder<'_>) -> Self {
+    pub fn new(src: SourceHolder<'src>) -> Self {
         Self {
-            source: src,
             map: HashMap::with_capacity(src.len() * 2 / RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH + 1),
+            source: src,
             now_symbol_id: 0,
         }
     }
@@ -77,16 +77,16 @@ impl <'src>SymbolFactory<'src> {
     ///
     /// The `Symbol` for the given string slice.
     #[inline]
-    pub fn from_span(&mut self, span: Span) -> Symbol {
+    pub fn from_span(&'src mut self, span: Span) -> Symbol {
         // Create a temporary `SpanWithRef` to perform the lookup.
-        let span_with_ref = span.with_ref(self.source);
+        let span_with_ref = span.with_ref(&self.source);
         if let Some(&symbol) = self.map.get(&span_with_ref) {
             symbol
         } else {
             // If the symbol is not found, create a new one.
             let symbol_id = self.now_symbol_id;
             let symbol = Symbol(symbol_id);
-            self.map.insert(span.with_ref(self.source), symbol);
+            self.map.insert(span.with_ref(&self.source), symbol);
             self.now_symbol_id += 1;
             symbol
         }
@@ -106,7 +106,7 @@ impl <'src>SymbolFactory<'src> {
     ///
     /// The `Symbol` for the given string slice.
     #[inline]
-    pub fn from_range(&mut self, begin: usize, end: usize) -> Symbol {
+    pub fn from_range(&'src mut self, begin: usize, end: usize) -> Symbol {
         self.from_span(Span::new(begin, end))
     }
 }

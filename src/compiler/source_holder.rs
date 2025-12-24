@@ -5,11 +5,10 @@
 //! of the source code and its line and column information.
 
 /// Holds the source code and provides methods for accessing it.
+#[derive(Clone)]
 pub struct SourceHolder<'src> {
     /// A reference to the source code string.
     src: &'src str,
-    /// A vector of the starting byte indices of each line.
-    line_starts: Vec<usize>,
 }
 
 /// Implementation of `SourceHolder` for managing source code.
@@ -27,11 +26,9 @@ impl<'src> SourceHolder<'src> {
     /// # Arguments
     ///
     /// * `source` - The source code string.
-    pub fn new(source: &str) -> Self {
-        let line_starts = source.match_indices('\n').map(|(i, _)| i + 1).collect();
+    pub fn new(source: &'src str) -> Self {
         Self {
             src: source,
-            line_starts
         }
     }
 
@@ -45,6 +42,19 @@ impl<'src> SourceHolder<'src> {
         self.src.len()
     }
 
+    pub fn upgrade(self) -> SourceHolderWithLineInfo<'src> {
+        let lines = self.src.match_indices("\n").map(|(i, _)| i).collect::<Vec<_>>();
+        SourceHolderWithLineInfo { src:  self.src, line_starts: lines }
+    }
+
+}
+
+pub struct SourceHolderWithLineInfo<'src> {
+    src: &'src str,
+    line_starts: Vec<usize>,
+}
+
+impl<'src> SourceHolderWithLineInfo<'src> {
     /// Extracts a slice of the source code given 1-based line and 0-based column numbers.
     ///
     /// # Panics
