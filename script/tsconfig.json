@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {   
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "preserve",
+    "target": "es2016",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true, 
+    "strict": true,
+    "incremental": true
+  }
+}
