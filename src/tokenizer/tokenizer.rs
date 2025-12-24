@@ -17,12 +17,12 @@ pub struct Tokenizer<'src, 'symbol> {
     tokens: Vec<Token>,
     current_char: usize,
     input: &'src str,
-    symbol_factory: &'symbol SymbolFactory<'symbol>,
+    symbol_factory: &'symbol mut SymbolFactory<'symbol>,
 }
 
 impl<'src, 'symbol> Tokenizer<'src, 'symbol> {
     /// Create a new tokenizer
-    pub fn new(input: &'src str, symbol_factory: &mut SymbolFactory<'_>) -> Tokenizer<'src, 'symbol> {
+    pub fn new(input: &'src str, symbol_factory: &'symbol mut SymbolFactory<'symbol>) -> Tokenizer<'src, 'symbol> {
         Self {
             tokens: Vec::new(),
             current_char: 0,
