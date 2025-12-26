@@ -36,7 +36,7 @@ impl Span {
     /// source code it refers to. This is useful for situations where you
     /// need to access the source code of a span without having to pass
     /// around a `SourceHolder` separately.
-    pub fn with_ref<'a>(self, src: &'a SourceHolder<'_>) -> SpanWithRef<'a> {
+    pub fn with_ref<'src>(self, src: SourceHolder<'src>) -> SpanWithRef<'src> {
         SpanWithRef {
             span: self,
             reference: &src.get_source_ref()[self.begin..self.end],

@@ -33,7 +33,7 @@ impl<'src> SourceHolder<'src> {
     }
 
     /// Returns a reference to the source code string.
-    pub fn get_source_ref(&self) -> &str {
+    pub fn get_source_ref(&self) -> &'src str {
         self.src
     }
 

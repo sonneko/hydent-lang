@@ -77,16 +77,16 @@ impl <'src>SymbolFactory<'src> {
     ///
     /// The `Symbol` for the given string slice.
     #[inline]
-    pub fn from_span(&'src mut self, span: Span) -> Symbol {
+    pub fn from_span(&mut self, span: Span) -> Symbol {
         // Create a temporary `SpanWithRef` to perform the lookup.
-        let span_with_ref = span.with_ref(&self.source);
+        let span_with_ref = span.with_ref(self.source.clone());
         if let Some(&symbol) = self.map.get(&span_with_ref) {
             symbol
         } else {
             // If the symbol is not found, create a new one.
             let symbol_id = self.now_symbol_id;
             let symbol = Symbol(symbol_id);
-            self.map.insert(span.with_ref(&self.source), symbol);
+            self.map.insert(span.with_ref(self.source.clone()), symbol);
             self.now_symbol_id += 1;
             symbol
         }
@@ -106,7 +106,7 @@ impl <'src>SymbolFactory<'src> {
     ///
     /// The `Symbol` for the given string slice.
     #[inline]
-    pub fn from_range(&'src mut self, begin: usize, end: usize) -> Symbol {
+    pub fn from_range(&mut self, begin: usize, end: usize) -> Symbol {
         self.from_span(Span::new(begin, end))
     }
 }
