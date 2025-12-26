@@ -2,7 +2,7 @@ pub mod errors;
 pub mod parser;
 
 use crate::compiler::{span::Span, symbol::Symbol};
-use crate::compiler::arena::{ArenaBox, ArenaVec};
+use crate::compiler::arena::{ArenaBox, ArenaIter};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Identifier(pub Symbol);
@@ -111,8 +111,8 @@ pub enum IsMut {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct DocsComments {
-    pub comments: ArenaVec<Span>,
-    pub annotation: ArenaVec<Annotation>,
+    pub comments: ArenaIter<Span>,
+    pub annotation: ArenaIter<Annotation>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -134,7 +134,7 @@ pub struct Ast {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct TopLevel {
-	pub children: ArenaVec<TopLevelStatement>
+	pub children: ArenaIter<TopLevelStatement>
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -178,9 +178,9 @@ pub struct ClassDeclaration {
     pub identifier: Identifier,
     pub generics: Generics,
     pub implements_protocol: ImplementsProtocol,
-    pub function_declarations: ArenaVec<FunctionDeclaration>,
-    pub field_declarations: ArenaVec<FieldDeclaration>,
-    pub type_alias_declarations: ArenaVec<TypeAliasDeclaration>,
+    pub function_declarations: ArenaIter<FunctionDeclaration>,
+    pub field_declarations: ArenaIter<FieldDeclaration>,
+    pub type_alias_declarations: ArenaIter<TypeAliasDeclaration>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -190,7 +190,7 @@ pub struct EnumDeclaration {
     pub identifier: Identifier,
     pub generics: Generics,
     pub implements_protocol: ImplementsProtocol,
-    pub enum_members: ArenaVec<EnumMember>,
+    pub enum_members: ArenaIter<EnumMember>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -217,7 +217,7 @@ pub enum StructBody {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct StructBlockBody (pub ArenaVec<FieldDeclaration>);
+pub struct StructBlockBody (pub ArenaIter<FieldDeclaration>);
 
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -245,7 +245,7 @@ pub struct ProtocolDeclaration {
     pub identifier: Identifier,
     pub generics: Generics,
     pub implements_protocol: ImplementsProtocol,
-    pub protocol_members: ArenaVec<ProtocolMember>,
+    pub protocol_members: ArenaIter<ProtocolMember>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -265,7 +265,7 @@ pub struct ModuleDeclaration {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Annotation {
     pub identifier: Identifier,
-    pub literals: ArenaVec<Literal>,	
+    pub literals: ArenaIter<Literal>,	
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -297,7 +297,7 @@ pub struct ElseClause {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct MatchExpression {
     pub expression: Expression,
-    pub match_arms: ArenaVec<MatchArm>,
+    pub match_arms: ArenaIter<MatchArm>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -329,7 +329,7 @@ pub struct ForStatement {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct ForExpression {
 	pub expression: Expression,
-    pub pipeline_arms: ArenaVec<PipelineArm>,
+    pub pipeline_arms: ArenaIter<PipelineArm>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -355,7 +355,7 @@ pub struct WhileLetExpression {
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PipeExpression {
 	pub expression: Expression,
-    pub pipe_arms: ArenaVec<PipeArm>,
+    pub pipe_arms: ArenaIter<PipeArm>,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -372,7 +372,7 @@ pub struct Closer {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct CloserParams(pub ArenaVec<CloserParamItem>);
+pub struct CloserParams(pub ArenaIter<CloserParamItem>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum CloserParamItem {
@@ -381,7 +381,7 @@ pub enum CloserParamItem {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct Accesser(pub ArenaVec<Identifier>);
+pub struct Accesser(pub ArenaIter<Identifier>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Params(pub Option<ExpressionList>);
@@ -390,19 +390,19 @@ pub struct Params(pub Option<ExpressionList>);
 pub struct Expression(pub LogicalOrExpr);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct LogicalOrExpr(pub ArenaVec<LogicalAndExpr>);
+pub struct LogicalOrExpr(pub ArenaIter<LogicalAndExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct LogicalAndExpr(pub ArenaVec<BitwiseOrExpr>);
+pub struct LogicalAndExpr(pub ArenaIter<BitwiseOrExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct BitwiseOrExpr(pub ArenaVec<BitwiseXorExpr>);
+pub struct BitwiseOrExpr(pub ArenaIter<BitwiseXorExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct BitwiseXorExpr(pub ArenaVec<BitwiseAndExpr>);
+pub struct BitwiseXorExpr(pub ArenaIter<BitwiseAndExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct BitwiseAndExpr(pub ArenaVec<EqualityExpr>);
+pub struct BitwiseAndExpr(pub ArenaIter<EqualityExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct EqualityExpr {
@@ -440,11 +440,11 @@ pub struct MultiplicativeExpr {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct PowerExpr(pub ArenaVec<PrefixExpr>);
+pub struct PowerExpr(pub ArenaIter<PrefixExpr>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct PrefixExpr {
-	pub operators: ArenaVec<PrefixOperator>,
+	pub operators: ArenaIter<PrefixOperator>,
     pub expression: PrimaryExpr,
 }
 
@@ -504,7 +504,7 @@ pub struct StructLiteral {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct StructLiteralFields(pub ArenaVec<StructFieldInit>);
+pub struct StructLiteralFields(pub ArenaIter<StructFieldInit>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct StructFieldInit {
@@ -599,11 +599,11 @@ pub enum ParamWithType {
 pub struct ParamsWithTypes(pub Option<ParamWithType>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct ParamWithTypesList(pub ArenaVec<ParamsWithTypes>);
+pub struct ParamWithTypesList(pub ArenaIter<ParamsWithTypes>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum BlockExpression {
-    StatementList(ArenaVec<Statement>),
+    StatementList(ArenaIter<Statement>),
     Expression(Expression),
 }
 
@@ -677,7 +677,7 @@ pub struct StructPattern {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct StructPatternFields(pub ArenaVec<StructPatternField>);
+pub struct StructPatternFields(pub ArenaIter<StructPatternField>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct StructPatternField {
@@ -715,7 +715,7 @@ pub struct BindingPattern {
 pub struct Generics(pub GenericParamDefList);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct GenericParamDefList(pub ArenaVec<GenericParamDef>);
+pub struct GenericParamDefList(pub ArenaIter<GenericParamDef>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct GenericParamDef {
@@ -724,22 +724,22 @@ pub struct GenericParamDef {
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct GenericBound(pub ArenaVec<TypeLiteral>);
+pub struct GenericBound(pub ArenaIter<TypeLiteral>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct ImplementsProtocol(pub Option<AccesserList>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct IdentifierList(pub ArenaVec<Identifier>);
+pub struct IdentifierList(pub ArenaIter<Identifier>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct TypeLiteralList(pub ArenaVec<TypeLiteral>);
+pub struct TypeLiteralList(pub ArenaIter<TypeLiteral>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct ExpressionList(pub ArenaVec<Expression>);
+pub struct ExpressionList(pub ArenaIter<Expression>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct PatternList(pub ArenaVec<Pattern>);
+pub struct PatternList(pub ArenaIter<Pattern>);
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct AccesserList(pub ArenaVec<Accesser>);
+pub struct AccesserList(pub ArenaIter<Accesser>);

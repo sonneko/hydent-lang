@@ -10,7 +10,7 @@
 //! provides methods for allocating objects and vectors within the arena.
 
 use std::{
-    alloc::{Layout, alloc}, cell::{Cell, RefCell}, marker::PhantomData, ops::Deref, ptr::NonNull
+    alloc::{Layout, alloc}, cell::{Cell, UnsafeCell}, marker::PhantomData, ops::Deref, ptr::NonNull
 };
 
 static ALIGNMENT: usize = 64;
@@ -19,36 +19,55 @@ static ALIGNMENT: usize = 64;
 pub struct Arena {
     index: Cell<usize>,
     page_index: Cell<usize>,
-    ptrs: RefCell<Vec<*mut u8>>,
+    ptrs: Box<UnsafeCell<Vec<*mut u8>>>,
 }
 
 /// A smart pointer for an object allocated in an `Arena`.
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct ArenaBox<T: Copy> {
     ptr: *mut T,
-    _marker: PhantomData<T>,
 }
 
 impl<T: Copy> Deref for ArenaBox<T> {
     type Target = T;
+
+    #[inline]
     fn deref(&self) -> &Self::Target {
         unsafe { &*self.ptr }
     }
 }
 
-impl<T: Copy> Deref for ArenaVec<T> {
-    type Target = [T];
-    fn deref(&self) -> &Self::Target {
-        unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
-    }
-}
-
 /// A list of objects allocated in an `Arena`.
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-pub struct ArenaVec<T: Copy> {
-    ptr: *mut T,
+pub struct ArenaIter<T: Copy> {
+    page: usize,
+    index: usize,
     len: usize,
+    size: usize,
+    pages_list_ptr: *const UnsafeCell<Vec<*mut u8>>,
     _marker: PhantomData<T>,
+}
+
+impl<T> Iterator for ArenaIter<T>
+where
+    T: Copy,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.len == 0 {
+            None
+        } else {
+            self.len -= 1;
+            if self.index + self.size > Arena::BLOCK_SIZE {
+                self.page += 1;
+                self.index = 0;
+            }
+            let ptr = unsafe { (*(*self.pages_list_ptr).get())[self.page].add(self.index) } as *mut T;
+            self.index += self.size;
+            Some(unsafe {*ptr })
+        }
+    }
 }
 
 impl Arena {
@@ -63,7 +82,7 @@ impl Arena {
         Self {
             index: Cell::new(0),
             page_index: Cell::new(0),
-            ptrs: RefCell::new(vec![ptr]),
+            ptrs: Box::new(UnsafeCell::new(vec![ptr])),
         }
     }
 
@@ -80,7 +99,6 @@ impl Arena {
         if std::mem::size_of::<T>() == 0 {
             return ArenaBox {
                 ptr: NonNull::dangling().as_ptr(),
-                _marker: PhantomData,
             };
         }
         assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
@@ -92,53 +110,67 @@ impl Arena {
             self.grow();
             start = 0;
         }
-        let ptr = unsafe { self.ptrs.borrow()[self.page_index.get()].add(start) } as *mut T;
+        let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(start) } as *mut T;
         self.index.set(start + size);
         unsafe {
             ptr.write(value);
         }
-        ArenaBox {
-            ptr: ptr as *mut T,
-            _marker: PhantomData,
-        }
+        ArenaBox { ptr: ptr as *mut T }
     }
 
-    pub fn alloc_slice<T>(&self, value: &[T]) -> ArenaVec<T>
+    pub fn alloc_iter<T, I>(&self, value: I) -> ArenaIter<T>
     where
         T: Copy,
+        I: Iterator<Item = T>,
     {
-        let size = std::mem::size_of::<T>() * value.len();
+        let each_size = std::mem::size_of::<T>();
         assert!(
-            size <= Self::BLOCK_SIZE,
+            each_size <= Self::BLOCK_SIZE,
             "Type T is too large for this arena"
         );
         assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
 
-        if std::mem::size_of::<T>() == 0 {
-            return ArenaVec {
-                ptr: NonNull::dangling().as_ptr(),
-                len: value.len(),
-                _marker: PhantomData,
-            };
-        }
-        let layout = Layout::from_size_align(size, std::mem::align_of::<T>()).unwrap();
-        let align = layout.align();
+        assert!(std::mem::size_of::<T>() != 0);
+
+        let each_layout = Layout::new::<T>();
+        let align = each_layout.align();
+        let size = each_layout.size();
         // indexをalignの倍数まで引き上げ
-        let mut start = (self.index.get() + align - 1) & !(align - 1);
-        if size + start > Self::BLOCK_SIZE {
-            self.grow();
-            start = 0;
+        let start = (self.index.get() + align - 1) & !(align - 1);
+        self.index.set(start);
+        let start_page = self.page_index.get();
+
+        let mut counter = 0;
+
+        for value in value {
+            if self.index.get() + size < Self::BLOCK_SIZE {
+                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(self.index.get()) } as *mut T;
+                self.index.set(self.index.get() + size);
+                unsafe {
+                    ptr.write(value);
+                }
+            } else {
+                self.grow();
+                let ptr = unsafe{(*self.ptrs.get())[self.page_index.get()]} as *mut T;
+                self.index.set(size);
+                unsafe { ptr.write(value) }
+            }
+            counter += 1;
         }
-        let ptr = unsafe { self.ptrs.borrow()[self.page_index.get()].add(start) } as *mut T;
-        self.index.set(start + size);
-        unsafe {
-            std::ptr::copy_nonoverlapping(value.as_ptr(), ptr, value.len());
-        }
-        ArenaVec {
-            ptr: ptr as *mut T,
-            len: value.len(),
+
+        ArenaIter {
+            index: start,
+            page: start_page,
+            len: counter,
+            pages_list_ptr: &*self.ptrs,
+            size,
             _marker: PhantomData,
         }
+    }
+
+    pub fn alloc_with<T: Copy>(&self, f: impl FnMut() -> Option<T>) -> ArenaIter<T> {
+        let iter = std::iter::from_fn(f);
+        self.alloc_iter(iter)
     }
 
     fn grow(&self) {
@@ -149,7 +181,7 @@ impl Arena {
                 ALIGNMENT,
             ))
         };
-        self.ptrs.borrow_mut().push(new_block_ptr);
+        unsafe{(*self.ptrs.get()).push(new_block_ptr)};
         self.page_index.set(self.page_index.get() + 1);
         self.index.set(0);
     }
@@ -157,7 +189,7 @@ impl Arena {
 
 impl Drop for Arena {
     fn drop(&mut self) {
-        for ptr in self.ptrs.borrow().iter() {
+        for ptr in unsafe{(*self.ptrs.get()).iter()} {
             unsafe {
                 let layout = Layout::from_size_align_unchecked(Self::BLOCK_SIZE, ALIGNMENT);
                 std::alloc::dealloc(*ptr, layout);

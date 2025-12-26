@@ -79,8 +79,8 @@ where
     /// An `Option<&Token>` which is `Some(&Token)` if there is a current token,
     /// or `None` if the end of the token stream has been reached.
     #[inline]
-    fn now_token(&mut self) -> Option<&Token> {
-        self.tokens.peek()
+    fn now_token(&mut self) -> Option<Token> {
+        self.tokens.peek().map(| token| *token)
     }
 
     /// Attempts to recover from a parsing error by advancing the token stream.
@@ -112,12 +112,14 @@ where
     /// <top_level> ::= { <top_level_statement> }
     /// ```
     fn parse_top_level(&mut self) -> Return<AST::TopLevel> {
-        let mut statements = Vec::new();
-        while let Ok(statement) = self.parse_top_level_statement() {
-            statements.push(statement);
-        }
         Ok(AST::TopLevel {
-            children: self.ctx.arena.alloc_slice(&statements),
+            children: self.ctx.arena.alloc_with(|| {
+                if let Ok(top_level_statement) = self.parse_top_level_statement() {
+                    Some(top_level_statement)
+                } else {
+                    None
+                }
+            })
         })
     }
 
@@ -184,7 +186,7 @@ where
             if let Some(Token::Literal(Literal::StringLiteral(import_path))) = self.now_token() {
                 Ok(AST::ImportDeclaration::ImportSpecific(
                     import_specific,
-                    *import_path,
+                    import_path,
                 ))
             } else {
                 Err(ParseErr)
@@ -194,7 +196,7 @@ where
             if let Some(Token::Literal(Literal::StringLiteral(import_path))) = self.now_token() {
                 Ok(AST::ImportDeclaration::ImportAllAs(
                     import_all_as,
-                    *import_path,
+                    import_path,
                 ))
             } else {
                 Err(ParseErr)
@@ -221,7 +223,7 @@ where
         self.next(Token::Operator(Operator::Multiply))?;
         self.next(Token::Keyword(Keyword::As))?;
         if let Some(Token::Identifier(idenftifier)) = self.now_token() {
-            Ok(AST::ImportAllAs(AST::Identifier(*idenftifier)))
+            Ok(AST::ImportAllAs(AST::Identifier(idenftifier)))
         } else {
             Err(ParseErr)
         }
@@ -241,7 +243,7 @@ where
             Ok(AST::StaticVariableDeclaration{
                 docs_comments,
                 is_public,
-                identifier: AST::Identifier(*identifier),
+                identifier: AST::Identifier(identifier),
                 expression,
             })
         } else {
@@ -254,7 +256,17 @@ where
     /// <class_declaration> ::= <docs_comments> <is_public> "class" <IDENTIFIER> <generics> <implements_protocol> "{" { <function_declaration> | <field_declaration> | <type_alias_declaration> } "}"
     /// ```
     fn parse_class_declaration(&mut self) -> Return<AST::ClassDeclaration> {
-        unimplemented!();
+        let docs_comment = self.parse_docs_comments()?;
+        let is_public = self.parse_is_public()?;
+        self.next(Token::Keyword(Keyword::Class))?;
+        if let Some(Token::Identifier(identifier)) = self.now_token() {
+            let generics = self.parse_generics()?;
+            let implements_protocol = self.parse_implements_protocol()?;
+            self.next(Token::Delimiter(Delimiter::LeftBrace))?;
+            // TODO: EBNFから変更する必要あり
+        }
+
+        Err(ParseErr)
     }
 
     /// ```ebnf
