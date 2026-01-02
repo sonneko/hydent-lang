@@ -1,8 +1,5 @@
 # Hydent Programming Language
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Hydent-lang)
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Hydent-lang)
-[![Version](https://img.shields.io/badge/version-0.1.0_(Conceptual)-informational)](https://github.com/Hydent-lang)
 
 **Hydent** is a modern, statically-typed, JIT-compiled language designed for building **safe, high-performance, and maintainable** applications. It combines a familiar and intuitive syntax inspired by TypeScript with the robust design philosophy gained from Rust.
 
