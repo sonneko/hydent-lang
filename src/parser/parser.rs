@@ -3,7 +3,7 @@ use std::iter::Peekable;
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::compiler::symbol::Symbol;
 use crate::parser::errors::ParseErr;
-use crate::parser::{self as AST};
+use crate::parser::ast::{self as AST};
 use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Token};
 
 /// A parser for the Hydent programming language.
