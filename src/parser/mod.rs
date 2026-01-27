@@ -1,7 +1,7 @@
 pub mod errors;
 pub mod parser;
 
-use crate::compiler::{span::Span, symbol::Symbol};
+use crate::compiler::{symbol::Symbol};
 use crate::compiler::arena::{ArenaBox, ArenaIter};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

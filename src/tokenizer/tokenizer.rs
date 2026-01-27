@@ -6,7 +6,7 @@
 //! of the compiler's frontend.
 
 use super::errors::TokenizeErr;
-use super::{Comment, Delimiter, Keyword, Operator, Token, Literal};
+use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Operator, Token, Literal};
 use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
 
@@ -227,10 +227,10 @@ impl<'src> Tokenizer<'src> {
 
         let slice = unsafe { std::str::from_utf8_unchecked(&self.input[start..self.current_pos]) };
         if is_float {
-            slice.parse::<f32>().map(|v| Token::Literal(Literal::FloatLiteral(v)))
+            slice.parse::<f32>().map(|v| Token::Literal(Literal::FloatLiteral(v.into())))
                 .map_err(|_| TokenizeErr::InvalidFloatLiteral(start))
         } else {
-            slice.parse::<i32>().map(|v| Token::Literal(Literal::IntegerLiteral(v)))
+            slice.parse::<i32>().map(|v| Token::Literal(Literal::IntegerLiteral(v.into())))
                 .map_err(|_| TokenizeErr::InvalidIntegerLiteral(start))
         }
     }

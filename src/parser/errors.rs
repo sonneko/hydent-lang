@@ -1,4 +1,4 @@
-use crate::tokenizer::Token;
+use crate::tokenizer::tokens::Token;
 
 pub enum ParseErr {
     UnexpectedEndOfFile,
