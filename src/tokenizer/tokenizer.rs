@@ -7,7 +7,6 @@
 
 use super::errors::TokenizeErr;
 use super::{Comment, Delimiter, Keyword, Operator, Token, Literal};
-use crate::compiler::source_holder::SourceHolder;
 use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
 
@@ -326,7 +325,6 @@ impl<'src> Tokenizer<'src> {
     fn read_operator_or_delimiter(&mut self) -> Option<Token> {
         let b = self.peek()?;
         
-        // 2~3文字の演算子を優先
         if self.consume_str(b"=>") { return Some(Token::Operator(Operator::FatArrow)); }
         if self.consume_str(b"|>") { return Some(Token::Operator(Operator::Pipe)); }
         if self.consume_str(b"->") { return Some(Token::Operator(Operator::Arrow)); }
