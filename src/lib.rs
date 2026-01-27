@@ -9,6 +9,7 @@
 
 // Each module is a pass of the compiler
 mod compiler;
+mod utility;
 
 mod cli;
 mod dependency_resolution;
