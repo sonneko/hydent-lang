@@ -8,6 +8,10 @@
 //!
 //! The `Arena` struct is the main entry point to the arena allocator. It
 //! provides methods for allocating objects and vectors within the arena.
+//! 
+//! # Unsafe(**Important**)
+//! The contents of `ArenaBox` or `ArenaIter` will live as long as `Arena`.
+//! Be sure that `ArenaBox` and `ArenaIter` drop before `Arena` drop.
 
 use std::{
     alloc::{Layout, alloc}, cell::{Cell, UnsafeCell}, marker::PhantomData, ops::Deref, ptr::NonNull
