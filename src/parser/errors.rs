@@ -1,10 +1,11 @@
-pub struct ParseErr;
+use crate::tokenizer::Token;
 
-impl ParseErr {
-    fn new() -> Self {
-        Self
-    }
+pub enum ParseErr {
+    UnexpectedEndOfFile,
+    UnexpectedToken(Token),
+    ExpectIdentifier,
 }
+
 
 
 impl std::fmt::Display for ParseErr {
