@@ -11,7 +11,7 @@ use core::cmp::{Eq, PartialEq};
 use crate::compiler::source_holder::SourceHolder;
 
 /// Represents a region of source code.
-#[derive(Eq, PartialEq, Debug, Clone, Copy)]
+#[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
 pub struct Span {
     /// The starting byte index of the span.
     begin: usize,

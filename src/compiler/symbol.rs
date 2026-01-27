@@ -24,7 +24,7 @@ const RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH: usize = 120;
 /// A `Symbol` is a lightweight, copyable handle that can be used to refer to a
 /// string that has been interned by a `SymbolFactory`. It can be cheaply
 /// compared for equality.
-#[derive(Eq, PartialEq, Copy, Clone, Debug)]
+#[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]
 pub struct Symbol(u32);
 
 /// A factory for creating and managing symbols.
