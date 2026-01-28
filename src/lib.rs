@@ -5,7 +5,7 @@
 #![warn(clippy::all, rust_2018_idioms)]
 #![warn(clippy::empty_docs)]
 #![warn(clippy::missing_docs_in_private_items)]
-#![deny(missing_docs)]
+#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 
 // Each module is a pass of the compiler
 mod compiler;

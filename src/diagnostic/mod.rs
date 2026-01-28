@@ -1,4 +1,6 @@
-mod diagnotice_patterns;
+pub mod diagnotice_patterns;
+pub mod error_pool;
+
 use crate::compiler::span::Span;
 
 /// Represents a highlighted region in the source code for diagnostic purposes.
@@ -38,7 +40,7 @@ pub enum DiagnosticLevel {
 /// Implementors of this trait provide details about a specific diagnostic
 /// issue, including its error code, severity level, primary message and span,
 /// additional highlights, notes, and suggestions for resolution.
-pub trait CompilerDiagnosticPattern: Send + Sync {
+pub trait CompilerDiagnostic: Send + Sync + 'static {
     /// Returns the unique error code for this diagnostic.
     ///
     /// This code is typically used for referencing documentation or for filtering diagnostics.

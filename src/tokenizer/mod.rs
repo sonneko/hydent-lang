@@ -1,4 +1,4 @@
-use crate::compiler::query_sys::{Query, Database};
+use crate::compiler::{query_sys::{Database, Query}, source_holder::SourceHolder, symbol::SymbolFactory};
 
 mod test;
 mod tokenizer;
