@@ -22,8 +22,13 @@ where
     T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd + ToBits
 {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let float = self.0;
-        float.to_bits().hash(state)
+        if *self == 0.0 {
+            0.0f32.to_bits()
+        } else if self.is_nan() {
+            f32::NAN.to_bits()
+        } else {
+            f32::to_bits(*self)
+        }
     }
 }
 
