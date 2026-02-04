@@ -4,6 +4,8 @@
 
 use std::fmt::Debug;
 
+use crate::diagnostic::CompilerDiagnostic;
+
 /// Represents the different types of errors that can occur during tokenization.
 #[derive(PartialEq)]
 pub enum TokenizeErr {
@@ -44,5 +46,11 @@ impl Debug for TokenizeErr {
                 write!(f, "Invalid char literal at index {}", index)
             }
         }
+    }
+}
+
+impl Into<Box<dyn CompilerDiagnostic>> for TokenizeErr {
+    fn into(self) -> Box<dyn CompilerDiagnostic> {
+        unimplemented!()
     }
 }

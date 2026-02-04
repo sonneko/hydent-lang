@@ -7,6 +7,8 @@
 #![warn(clippy::missing_docs_in_private_items)]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 
+#![allow(unused)]
+
 // Each module is a pass of the compiler
 mod compiler;
 mod utility;

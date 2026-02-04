@@ -5,7 +5,7 @@
 //! of the source code and its line and column information.
 
 /// Holds the source code and provides methods for accessing it.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct SourceHolder<'src> {
     /// A reference to the source code string.
     src: &'src str,

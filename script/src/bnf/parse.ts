@@ -1,145 +1,129 @@
-export class Tokenizer {
-    private static readonly RULES: [TokenType, RegExp][] = [
-        ['KEYWORD_BRANCH', /^branch\b/],
-        ['KEYWORD_PRODUCT', /^product\b/],
-        ['KEYWORD_WITH', /^with\b/],
-        ['LBRACE', /^{/],
-        ['RBRACE', /^}/],
-        ['COLON', /^:/],
-        ['STAR', /^\*/],
-        ['QUESTION', /^\?/],
-        ['IDENTIFIER', /^[a-zA-Z_]\w*/],
-        ['STRING_LITERAL', /^"([^"\\]|\\.)*"/], // シンプルなダブルクォート文字列
-    ];
+// --- Types & Interfaces ---
 
-    tokenize(input: string): Token[] {
-        let str = input.trim();
-        const tokens: Token[] = [];
+type NodeType = 'Program' | 'BranchRule' | 'ProductRule' | 'BranchItem' | 'ProductItem';
 
-        while (str.length > 0) {
-            let matched = false;
-            for (const [type, regex] of Tokenizer.RULES) {
-                const match = str.match(regex);
-                if (match) {
-                    tokens.push({ type, value: match[0] });
-                    str = str.slice(match[0].length).trim();
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched) throw new Error(`Unexpected character at: ${str.slice(0, 10)}...`);
-        }
-        tokens.push({ type: 'EOF', value: '' });
-        return tokens;
-    }
+interface ASTNode {
+  type: string;
+  id?: string;
+  value?: any;
+  label?: string;
+  children?: ASTNode[];
 }
 
+// --- Lexer (字句解析) ---
 
-// --- Parser ---
-export class Parser {
-    private tokens: Token[];
-    private pos = 0;
+class Lexer {
+  private pos = 0;
+  private tokens: string[] = [];
 
-    constructor(tokens: Token[]) {
-        this.tokens = tokens;
+  constructor(input: string) {
+    // 記号、クォート文字列、識別子を抽出する正規表現
+    const regex = /"([^"\\]|\\.)*"|[a-zA-Z_]\w*|[:{}*?]|[\s]+/g;
+    let match;
+    while ((match = regex.exec(input)) !== null) {
+      if (!match[0].trim()) continue; // 空白をスキップ
+      this.tokens.push(match[0]);
+    }
+  }
+
+  peek() { return this.tokens[this.pos]; }
+  next() { return this.tokens[this.pos++]; }
+  consume(expected?: string) {
+    const token = this.next();
+    if (expected && token !== expected) {
+      throw new Error(`Expected "${expected}" but found "${token}" at position ${this.pos}`);
+    }
+    return token;
+  }
+  isEOF() { return this.pos >= this.tokens.length; }
+}
+
+// --- Parser (構文解析) ---
+
+class Parser {
+  private lexer: Lexer;
+
+  constructor(input: string) {
+    this.lexer = new Lexer(input);
+  }
+
+  public parse(): ASTNode {
+    const rules: ASTNode[] = [];
+    while (!this.lexer.isEOF()) {
+      rules.push(this.parseRule());
+    }
+    return { type: 'Program', children: rules };
+  }
+
+  private parseRule(): ASTNode {
+    const token = this.lexer.peek();
+    if (token === 'branch') return this.parseBranchRule();
+    if (token === 'product') return this.parseProductRule();
+    throw new Error(`Unexpected token: ${token}. Expected "branch" or "product".`);
+  }
+
+  private parseBranchRule(): ASTNode {
+    this.lexer.consume('branch');
+    const id = this.lexer.next(); // identifier
+    this.lexer.consume('{');
+    const items: ASTNode[] = [];
+    while (this.lexer.peek() !== '}') {
+      const itemId = this.lexer.next();
+      let label: string | undefined;
+      if (this.lexer.peek() === 'with') {
+        this.lexer.consume('with');
+        label = this.lexer.next().replace(/"/g, ''); // string_literal
+      }
+      items.push({ type: 'BranchItem', id: itemId, label });
+    }
+    this.lexer.consume('}');
+    return { type: 'BranchRule', id, children: items };
+  }
+
+  private parseProductRule(): ASTNode {
+    this.lexer.consume('product');
+    const id = this.lexer.next();
+    this.lexer.consume('{');
+    const items: ASTNode[] = [];
+    while (this.lexer.peek() !== '}') {
+      items.push(this.parseProductItem());
+    }
+    this.lexer.consume('}');
+    return { type: 'ProductRule', id, children: items };
+  }
+
+  private parseProductItem(): ASTNode {
+    let node: ASTNode;
+    const token = this.lexer.peek();
+
+    if (token.startsWith('"')) {
+      // terminal
+      node = { type: 'Terminal', value: this.lexer.next().replace(/"/g, '') };
+    } else {
+      // ( identifier : nonterminal )
+      const id = this.lexer.next();
+      this.lexer.consume(':');
+      const nonTerminal = this.parseNonTerminal();
+      node = { type: 'ProductItem', id, value: nonTerminal };
     }
 
-    private peek() { return this.tokens[this.pos]; }
-
-    private consume(expected?: TokenType): Token {
-        const token = this.peek();
-        if (expected && token.type !== expected) {
-            throw new Error(`Expected ${expected} but found ${token.type} at position ${this.pos}`);
-        }
-        this.pos++;
-        return token;
+    if (this.lexer.peek() === 'with') {
+      this.lexer.consume('with');
+      node.label = this.lexer.next().replace(/"/g, '');
     }
+    return node;
+  }
 
-    // <bnf> ::= { <rule> }
-    parseBNF() {
-        const rules = [];
-        while (this.peek().type !== 'EOF') {
-            rules.push(this.parseRule());
-        }
-        return { type: 'Program', rules };
+  private parseNonTerminal(): any {
+    const token = this.lexer.peek();
+    if (token === '*') {
+      this.lexer.consume('*');
+      return { modifier: 'repeat', id: this.lexer.next() };
+    } else if (token === '?') {
+      this.lexer.consume('?');
+      return { modifier: 'option', id: this.lexer.next() };
+    } else {
+      return { modifier: 'none', id: this.lexer.next() };
     }
-
-    // <rule> ::= <branch_rule> | <product_rule>
-    private parseRule() {
-        const token = this.peek();
-        if (token.type === 'KEYWORD_BRANCH') return this.parseBranchRule();
-        if (token.type === 'KEYWORD_PRODUCT') return this.parseProductRule();
-        throw new Error(`Invalid rule start: ${token.value}`);
-    }
-
-    // <branch_rule> ::= "branch" <identifier> "{" <branch_rule_inner> "}"
-    private parseBranchRule() {
-        this.consume('KEYWORD_BRANCH');
-        const id = this.consume('IDENTIFIER').value;
-        this.consume('LBRACE');
-        const items = [];
-        while (this.peek().type !== 'RBRACE') {
-            items.push(this.parseBranchRuleInner());
-        }
-        this.consume('RBRACE');
-        return { type: 'BranchRule', id, items };
-    }
-
-    private parseBranchRuleInner() {
-        const id = this.consume('IDENTIFIER').value;
-        let metadata = null;
-        if (this.peek().type === 'KEYWORD_WITH') {
-            this.consume('KEYWORD_WITH');
-            metadata = this.consume('STRING_LITERAL').value;
-        }
-        return { id, metadata };
-    }
-
-    // <product_rule> ::= "product" <identifier> "{" <product_inner> "}"
-    private parseProductRule() {
-        this.consume('KEYWORD_PRODUCT');
-        const id = this.consume('IDENTIFIER').value;
-        this.consume('LBRACE');
-        const items = [];
-        while (this.peek().type !== 'RBRACE') {
-            items.push(this.parseProductInner());
-        }
-        this.consume('RBRACE');
-        return { type: 'ProductRule', id, items };
-    }
-
-    private parseProductInner() {
-        const item = this.parseProductItem();
-        let metadata = null;
-        if (this.peek().type === 'KEYWORD_WITH') {
-            this.consume('KEYWORD_WITH');
-            metadata = this.consume('STRING_LITERAL').value;
-        }
-        return { ...item, metadata };
-    }
-
-    private parseProductItem() {
-        const token = this.peek();
-        if (token.type === 'STRING_LITERAL') {
-            return { kind: 'terminal', value: this.consume().value };
-        } else {
-            const id = this.consume('IDENTIFIER').value;
-            this.consume('COLON');
-            const nonTerminal = this.parseNonTerminal();
-            return { kind: 'nonterminal_mapping', id, nonTerminal };
-        }
-    }
-
-    private parseNonTerminal() {
-        const token = this.peek();
-        if (token.type === 'STAR') {
-            this.consume();
-            return { modifier: 'repeat', item: this.consume('IDENTIFIER').value };
-        }
-        if (token.type === 'QUESTION') {
-            this.consume();
-            return { modifier: 'option', item: this.consume('IDENTIFIER').value };
-        }
-        return { modifier: 'none', item: this.consume('IDENTIFIER').value };
-    }
+  }
 }

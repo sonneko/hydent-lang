@@ -15,11 +15,11 @@ pub type Return<T> = Result<T, TokenizeErr>;
 pub struct Tokenizer<'src> {
     current_pos: usize,
     input: &'src [u8],
-    symbol_factory: SymbolFactory<'src>,
+    symbol_factory: &'src mut SymbolFactory<'src>,
 }
 
 impl<'src> Tokenizer<'src> {
-    pub fn new(input: &'src str, symbol_factory: SymbolFactory<'src>) -> Tokenizer<'src> {
+    pub fn new(input: &'src str, symbol_factory: &'src mut SymbolFactory<'src>) -> Tokenizer<'src> {
         Self {
             current_pos: 0,
             input: input.as_bytes(),

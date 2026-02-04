@@ -10,6 +10,7 @@
     pkgs.rustfmt
     pkgs.stdenv.cc
     pkgs.clippy
+    pkgs.nodejs
   ];
   # Sets environment variables in the workspace
   env = {

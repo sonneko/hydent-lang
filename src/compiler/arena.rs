@@ -201,3 +201,17 @@ impl Drop for Arena {
         }
     }
 }
+
+impl<T: Copy + std::hash::Hash> std::hash::Hash for ArenaIter<T> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        for value in *self {
+            value.hash(state);
+        }
+    }
+}
+
+impl<T: Copy + std::hash::Hash> std::hash::Hash for ArenaBox<T> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        (**self).hash(state);
+    }
+}

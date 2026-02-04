@@ -1,10 +1,12 @@
 use std::hash::Hash;
 use std::collections::HashMap;
 
+use crate::diagnostic::CompilerDiagnostic;
+
 pub trait Query {
     type From: Hash + Clone;
     type To: Hash + Clone;
-    fn run(db: &Database, src: Self::From) -> Self::To;
+    fn run(db: &Database, src: Self::From) -> Result<Self::To, Box<dyn CompilerDiagnostic>>;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
