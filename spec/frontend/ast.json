@@ -1,0 +1,341 @@
+[
+  {
+    "kind": "Product",
+    "name": "Module",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "declarations",
+        "type": {
+          "name": "TopLevelDeclaration",
+          "modifier": "List"
+        },
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "TopLevelDeclaration",
+    "variants": [
+      {
+        "name": "Function",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Function",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "fn",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": "(",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "params",
+        "type": {
+          "name": "Parameter",
+          "modifier": "List"
+        },
+        "note": "comma_separated_params"
+      },
+      {
+        "kind": "Terminal",
+        "value": ")",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "return_type",
+        "type": {
+          "name": "TypeLiteral",
+          "modifier": "Option"
+        },
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "body",
+        "type": {
+          "name": "BlockExpression",
+          "modifier": "None"
+        },
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Parameter",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "BlockExpression",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "{",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "statements",
+        "type": {
+          "name": "Statement",
+          "modifier": "List"
+        },
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "final_expr",
+        "type": {
+          "name": "Expression",
+          "modifier": "Option"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": "}",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "Statement",
+    "variants": [
+      {
+        "name": "ExpressionStmt",
+        "note": null
+      },
+      {
+        "name": "Assignment",
+        "note": null
+      },
+      {
+        "name": "Return",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ExpressionStmt",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "expr",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Assignment",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "let",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": "=",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Return",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "return",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "Option"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "Expression",
+    "variants": [
+      {
+        "name": "Literal",
+        "note": null
+      },
+      {
+        "name": "FunctionCall",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Literal",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "StringLiteral",
+          "modifier": "None"
+        },
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "FunctionCall",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": null
+      },
+      {
+        "kind": "Terminal",
+        "value": "(",
+        "note": null
+      },
+      {
+        "kind": "Field",
+        "name": "args",
+        "type": {
+          "name": "Expression",
+          "modifier": "List"
+        },
+        "note": "comma_separated_exprs"
+      },
+      {
+        "kind": "Terminal",
+        "value": ")",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "TypeLiteral",
+    "variants": [
+      {
+        "name": "IntType",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "IntType",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "Int",
+        "note": null
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Identifier",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "Identifier",
+        "note": "identifier"
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "StringLiteral",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "StringLiteral",
+        "note": "string_literal"
+      }
+    ]
+  }
+]

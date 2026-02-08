@@ -1,129 +1,319 @@
-// --- Types & Interfaces ---
+ // ```
+// <bnf> ::= { <rule> }
+// 
+// <rule> ::= <branch_rule> | <product_rule>
+// 
+// <branch_rule> ::= "branch" <identifier> "{" <branch_rule_inner> "}"
+// <branch_rule_inner> ::= { <identifier> [ "with" <string_literal> ] }
+// 
+// <product_rule> ::= "product" <identifier> "{" <product_inner> "}"
+// <product_inner> ::= { <product_item> [ "with" <string_literal> ] }
+// <product_item> ::= ( <identifier> ":" <nonterminal> ) | <terminal>
+// <nonterminal> ::= <repete_item> | <option_item> | <item>
+// <repete_item> ::= "*" <item>
+// <option_item> ::= "?" <item>
+// <item> ::= <identifier>
+// <terminal> ::= <string_literal>
+// ```
 
-type NodeType = 'Program' | 'BranchRule' | 'ProductRule' | 'BranchItem' | 'ProductItem';
+// --- AST Types ---
 
-interface ASTNode {
-  type: string;
-  id?: string;
-  value?: any;
-  label?: string;
-  children?: ASTNode[];
+export type TypeModifier = 'None' | 'List' | 'Option';
+
+export interface TypeReference {
+  name: string;
+  modifier: TypeModifier;
 }
 
-// --- Lexer (字句解析) ---
+export interface BranchVariant {
+  name: string;
+  note: string | null;
+}
 
-class Lexer {
-  private pos = 0;
-  private tokens: string[] = [];
+export type ProductMember =
+  | { kind: 'Field'; name: string; type: TypeReference; note: string | null }
+  | { kind: 'Terminal'; value: string; note: string | null };
+
+export interface BranchRule {
+  kind: 'Branch';
+  name: string;
+  variants: BranchVariant[];
+}
+
+export interface ProductRule {
+  kind: 'Product';
+  name: string;
+  members: ProductMember[];
+}
+
+export type Rule = BranchRule | ProductRule;
+
+export type Grammar = Rule[];
+
+// --- Lexer Types & Implementation ---
+
+export type TokenKind =
+  | 'Branch' | 'Product' | 'With'
+  | 'LBrace' | 'RBrace' | 'Colon' | 'Star' | 'Question'
+  | 'Identifier' | 'StringLiteral' | 'EOF';
+
+export type Token =
+  | { kind: 'Branch' }
+  | { kind: 'Product' }
+  | { kind: 'With' }
+  | { kind: 'LBrace' }
+  | { kind: 'RBrace' }
+  | { kind: 'Colon' }
+  | { kind: 'Star' }
+  | { kind: 'Question' }
+  | { kind: 'Identifier'; value: string }
+  | { kind: 'StringLiteral'; value: string }
+  | { kind: 'EOF' };
+
+const TOKEN_PATTERNS: Array<{ kind: TokenKind; regex: RegExp }> = [
+  { kind: 'Branch', regex: /^branch\b/ },
+  { kind: 'Product', regex: /^product\b/ },
+  { kind: 'With', regex: /^with\b/ },
+  { kind: 'LBrace', regex: /^\{/ },
+  { kind: 'RBrace', regex: /^\}/ },
+  { kind: 'Colon', regex: /^:/ },
+  { kind: 'Star', regex: /^\*/ },
+  { kind: 'Question', regex: /^\?/ },
+  { kind: 'StringLiteral', regex: /^"([^"]*)"/ }, // グループキャプチャあり
+  { kind: 'Identifier', regex: /^[a-zA-Z_][a-zA-Z0-9_]*/ },
+];
+
+export class Lexer {
+  private input: string;
+  private position: number;
 
   constructor(input: string) {
-    // 記号、クォート文字列、識別子を抽出する正規表現
-    const regex = /"([^"\\]|\\.)*"|[a-zA-Z_]\w*|[:{}*?]|[\s]+/g;
-    let match;
-    while ((match = regex.exec(input)) !== null) {
-      if (!match[0].trim()) continue; // 空白をスキップ
-      this.tokens.push(match[0]);
-    }
+    this.input = input;
+    this.position = 0;
   }
 
-  peek() { return this.tokens[this.pos]; }
-  next() { return this.tokens[this.pos++]; }
-  consume(expected?: string) {
-    const token = this.next();
-    if (expected && token !== expected) {
-      throw new Error(`Expected "${expected}" but found "${token}" at position ${this.pos}`);
+  public tokenize(): Token[] {
+    const tokens: Token[] = [];
+
+    while (this.position < this.input.length) {
+      // skip whitespace
+      const whitespace = this.input.slice(this.position).match(/^\s+/);
+      if (whitespace) {
+        this.position += whitespace[0].length;
+        continue;
+      }
+
+      // skip comment
+      const comment = this.input.slice(this.position).match(/^\/\/.*\n/);
+      if (comment) {
+        this.position += comment[0].length;
+        continue;
+      }
+
+      let matched = false;
+      const currentSlice = this.input.slice(this.position);
+
+      for (const { kind, regex } of TOKEN_PATTERNS) {
+        const match = currentSlice.match(regex);
+        if (match) {
+          matched = true;
+          this.position += match[0].length;
+
+          if (kind === 'StringLiteral') {
+            tokens.push({ kind, value: match[1] });
+          } else if (kind === 'Identifier') {
+            tokens.push({ kind, value: match[0] });
+          } else {
+            switch (kind) {
+              case 'Branch': tokens.push({ kind: 'Branch' }); break;
+              case 'Product': tokens.push({ kind: 'Product' }); break;
+              case 'With': tokens.push({ kind: 'With' }); break;
+              case 'LBrace': tokens.push({ kind: 'LBrace' }); break;
+              case 'RBrace': tokens.push({ kind: 'RBrace' }); break;
+              case 'Colon': tokens.push({ kind: 'Colon' }); break;
+              case 'Star': tokens.push({ kind: 'Star' }); break;
+              case 'Question': tokens.push({ kind: 'Question' }); break;
+              default: break;
+            }
+          }
+          break;
+        }
+      }
+
+      if (!matched) {
+        throw new Error(`Unexpected character at position ${this.position}: "${this.input[this.position]}"`);
+      }
     }
+
+    tokens.push({ kind: 'EOF' });
+    return tokens;
+  }
+}
+
+// --- Parser Implementation ---
+
+export class Parser {
+  private tokens: Token[];
+  private position: number;
+
+  constructor(tokens: Token[]) {
+    this.tokens = tokens;
+    this.position = 0;
+  }
+
+  private peek(): Token {
+    return this.tokens[this.position];
+  }
+
+  private advance(): Token {
+    const token = this.tokens[this.position];
+    this.position++;
     return token;
   }
-  isEOF() { return this.pos >= this.tokens.length; }
-}
 
-// --- Parser (構文解析) ---
-
-class Parser {
-  private lexer: Lexer;
-
-  constructor(input: string) {
-    this.lexer = new Lexer(input);
+  private consumeIdentifier(): string {
+      const token = this.peek();
+      if (token.kind === 'Identifier') {
+          this.advance();
+          return token.value;
+      }
+      throw new Error(`Expected Identifier, but got ${token.kind}`);
   }
 
-  public parse(): ASTNode {
-    const rules: ASTNode[] = [];
-    while (!this.lexer.isEOF()) {
+  private consumeStringLiteral(): string {
+      const token = this.peek();
+      if (token.kind === 'StringLiteral') {
+          this.advance();
+          return token.value;
+      }
+      throw new Error(`Expected StringLiteral, but got ${token.kind}`);
+  }
+  
+  private consumeKeyword(kind: 'Branch' | 'Product' | 'LBrace' | 'RBrace' | 'Colon' | 'With' | 'Star' | 'Question'): void {
+      const token = this.peek();
+      if (token.kind === kind) {
+          this.advance();
+          return;
+      }
+      throw new Error(`Expected ${kind}, but got ${token.kind}`);
+  }
+
+  public parse(): Grammar {
+    const rules: Rule[] = [];
+    while (this.peek().kind !== 'EOF') {
       rules.push(this.parseRule());
     }
-    return { type: 'Program', children: rules };
+    return rules;
   }
 
-  private parseRule(): ASTNode {
-    const token = this.lexer.peek();
-    if (token === 'branch') return this.parseBranchRule();
-    if (token === 'product') return this.parseProductRule();
-    throw new Error(`Unexpected token: ${token}. Expected "branch" or "product".`);
+  private parseRule(): Rule {
+    const token = this.peek();
+    if (token.kind === 'Branch') {
+      return this.parseBranchRule();
+    } else if (token.kind === 'Product') {
+      return this.parseProductRule();
+    } else {
+      throw new Error(`Expected 'branch' or 'product', but got ${token.kind}`);
+    }
   }
 
-  private parseBranchRule(): ASTNode {
-    this.lexer.consume('branch');
-    const id = this.lexer.next(); // identifier
-    this.lexer.consume('{');
-    const items: ASTNode[] = [];
-    while (this.lexer.peek() !== '}') {
-      const itemId = this.lexer.next();
-      let label: string | undefined;
-      if (this.lexer.peek() === 'with') {
-        this.lexer.consume('with');
-        label = this.lexer.next().replace(/"/g, ''); // string_literal
+  // <branch_rule> ::= "branch" <identifier> "{" <branch_rule_inner> "}"
+  private parseBranchRule(): BranchRule {
+    this.consumeKeyword('Branch');
+    const name = this.consumeIdentifier();
+    this.consumeKeyword('LBrace');
+
+    const variants: BranchVariant[] = [];
+    // <branch_rule_inner> ::= { <identifier> [ "with" <string_literal> ] }
+    while (this.peek().kind !== 'RBrace' && this.peek().kind !== 'EOF') {
+      const variantName = this.consumeIdentifier();
+      let note: string | null = null;
+      
+      if (this.peek().kind === 'With') {
+        this.consumeKeyword('With');
+        note = this.consumeStringLiteral();
       }
-      items.push({ type: 'BranchItem', id: itemId, label });
+      
+      variants.push({ name: variantName, note });
     }
-    this.lexer.consume('}');
-    return { type: 'BranchRule', id, children: items };
+
+    this.consumeKeyword('RBrace');
+    return { kind: 'Branch', name, variants };
   }
 
-  private parseProductRule(): ASTNode {
-    this.lexer.consume('product');
-    const id = this.lexer.next();
-    this.lexer.consume('{');
-    const items: ASTNode[] = [];
-    while (this.lexer.peek() !== '}') {
-      items.push(this.parseProductItem());
+  // <product_rule> ::= "product" <identifier> "{" <product_inner> "}"
+  private parseProductRule(): ProductRule {
+    this.consumeKeyword('Product');
+    const name = this.consumeIdentifier();
+    this.consumeKeyword('LBrace');
+
+    const members: ProductMember[] = [];
+    
+    // <product_inner> ::= { <product_item> [ "with" <string_literal> ] }
+    while (this.peek().kind !== 'RBrace' && this.peek().kind !== 'EOF') {
+        const member = this.parseProductItem();
+        
+        let note: string | null = null;
+        if (this.peek().kind === 'With') {
+            this.consumeKeyword('With');
+            note = this.consumeStringLiteral();
+        }
+        
+        if (member.kind === 'Field') {
+            members.push({ ...member, note });
+        } else {
+            members.push({ ...member, note });
+        }
     }
-    this.lexer.consume('}');
-    return { type: 'ProductRule', id, children: items };
+
+    this.consumeKeyword('RBrace');
+    return { kind: 'Product', name, members };
   }
 
-  private parseProductItem(): ASTNode {
-    let node: ASTNode;
-    const token = this.lexer.peek();
+  // <product_item> ::= ( <identifier> ":" <nonterminal> ) | <terminal>
+  private parseProductItem(): ProductMember {
+    const token = this.peek();
 
-    if (token.startsWith('"')) {
-      // terminal
-      node = { type: 'Terminal', value: this.lexer.next().replace(/"/g, '') };
+    if (token.kind === 'StringLiteral') {
+        // <terminal>
+        const value = this.consumeStringLiteral();
+        return { kind: 'Terminal', value, note: null };
+    } else if (token.kind === 'Identifier') {
+        // <identifier> ":" <nonterminal>
+        const name = this.consumeIdentifier();
+        this.consumeKeyword('Colon');
+        const typeRef = this.parseNonTerminal();
+        return { kind: 'Field', name, type: typeRef, note: null };
     } else {
-      // ( identifier : nonterminal )
-      const id = this.lexer.next();
-      this.lexer.consume(':');
-      const nonTerminal = this.parseNonTerminal();
-      node = { type: 'ProductItem', id, value: nonTerminal };
+        throw new Error(`Expected Identifier or StringLiteral in product item, got ${token.kind}`);
     }
-
-    if (this.lexer.peek() === 'with') {
-      this.lexer.consume('with');
-      node.label = this.lexer.next().replace(/"/g, '');
-    }
-    return node;
   }
 
-  private parseNonTerminal(): any {
-    const token = this.lexer.peek();
-    if (token === '*') {
-      this.lexer.consume('*');
-      return { modifier: 'repeat', id: this.lexer.next() };
-    } else if (token === '?') {
-      this.lexer.consume('?');
-      return { modifier: 'option', id: this.lexer.next() };
+  // <nonterminal> ::= <repete_item> | <option_item> | <item>
+  private parseNonTerminal(): TypeReference {
+    const token = this.peek();
+    
+    if (token.kind === 'Star') {
+        // <repete_item> ::= "*" <item>
+        this.consumeKeyword('Star');
+        const name = this.consumeIdentifier();
+        return { name, modifier: 'List' };
+    } else if (token.kind === 'Question') {
+        // <option_item> ::= "?" <item>
+        this.consumeKeyword('Question');
+        const name = this.consumeIdentifier();
+        return { name, modifier: 'Option' };
     } else {
-      return { modifier: 'none', id: this.lexer.next() };
+        // <item> ::= <identifier>
+        const name = this.consumeIdentifier();
+        return { name, modifier: 'None' };
     }
   }
+}
+
+export function parse(src: string): Grammar {
+  const lexer = new Lexer(src);
+  const tokens = lexer.tokenize();
+  const parser = new Parser(tokens);
+  return parser.parse()
 }

@@ -1,4 +1,5 @@
 {
+  "include": ["./src/**/*.ts"],
   "compilerOptions": {   
     "rootDir": "./src",
     "outDir": "./dist",
@@ -7,6 +8,5 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true, 
     "strict": true,
-    "incremental": true
   }
 }

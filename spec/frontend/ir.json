@@ -1,0 +1,441 @@
+{
+  "rules": {
+    "Module": {
+      "kind": "Product",
+      "rustName": "Module",
+      "elements": [
+        {
+          "kind": "NonTerminal",
+          "targetRule": "TopLevelDeclaration",
+          "modifier": "List",
+          "hook": null,
+          "rustFieldName": "declarations",
+          "isBoxed": false
+        }
+      ]
+    },
+    "TopLevelDeclaration": {
+      "kind": "Branch",
+      "rustName": "TopLevelDeclaration",
+      "variants": [
+        {
+          "rustVariantName": "Function",
+          "targetRule": "Function"
+        }
+      ]
+    },
+    "Function": {
+      "kind": "Product",
+      "rustName": "Function",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "fn"
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Identifier",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "name",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": "("
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Parameter",
+          "modifier": "List",
+          "hook": "comma_separated_params",
+          "rustFieldName": "params",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": ")"
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "TypeLiteral",
+          "modifier": "Option",
+          "hook": null,
+          "rustFieldName": "return_type",
+          "isBoxed": false
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "BlockExpression",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "body",
+          "isBoxed": false
+        }
+      ]
+    },
+    "Parameter": {
+      "kind": "Product",
+      "rustName": "Parameter",
+      "elements": [
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Identifier",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "name",
+          "isBoxed": false
+        }
+      ]
+    },
+    "BlockExpression": {
+      "kind": "Product",
+      "rustName": "BlockExpression",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "{"
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Statement",
+          "modifier": "List",
+          "hook": null,
+          "rustFieldName": "statements",
+          "isBoxed": false
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Expression",
+          "modifier": "Option",
+          "hook": null,
+          "rustFieldName": "final_expr",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": "}"
+        }
+      ]
+    },
+    "Statement": {
+      "kind": "Branch",
+      "rustName": "Statement",
+      "variants": [
+        {
+          "rustVariantName": "ExpressionStmt",
+          "targetRule": "ExpressionStmt"
+        },
+        {
+          "rustVariantName": "Assignment",
+          "targetRule": "Assignment"
+        },
+        {
+          "rustVariantName": "Return",
+          "targetRule": "Return"
+        }
+      ]
+    },
+    "ExpressionStmt": {
+      "kind": "Product",
+      "rustName": "ExpressionStmt",
+      "elements": [
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Expression",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "expr",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": ";"
+        }
+      ]
+    },
+    "Assignment": {
+      "kind": "Product",
+      "rustName": "Assignment",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "let"
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Identifier",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "name",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": "="
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Expression",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "value",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": ";"
+        }
+      ]
+    },
+    "Return": {
+      "kind": "Product",
+      "rustName": "Return",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "return"
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Expression",
+          "modifier": "Option",
+          "hook": null,
+          "rustFieldName": "value",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": ";"
+        }
+      ]
+    },
+    "Expression": {
+      "kind": "Branch",
+      "rustName": "Expression",
+      "variants": [
+        {
+          "rustVariantName": "Literal",
+          "targetRule": "Literal"
+        },
+        {
+          "rustVariantName": "FunctionCall",
+          "targetRule": "FunctionCall"
+        }
+      ]
+    },
+    "Literal": {
+      "kind": "Product",
+      "rustName": "Literal",
+      "elements": [
+        {
+          "kind": "NonTerminal",
+          "targetRule": "StringLiteral",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "value",
+          "isBoxed": false
+        }
+      ]
+    },
+    "FunctionCall": {
+      "kind": "Product",
+      "rustName": "FunctionCall",
+      "elements": [
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Identifier",
+          "modifier": "None",
+          "hook": null,
+          "rustFieldName": "name",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": "("
+        },
+        {
+          "kind": "NonTerminal",
+          "targetRule": "Expression",
+          "modifier": "List",
+          "hook": "comma_separated_exprs",
+          "rustFieldName": "args",
+          "isBoxed": false
+        },
+        {
+          "kind": "Terminal",
+          "value": ")"
+        }
+      ]
+    },
+    "TypeLiteral": {
+      "kind": "Branch",
+      "rustName": "TypeLiteral",
+      "variants": [
+        {
+          "rustVariantName": "IntType",
+          "targetRule": "IntType"
+        }
+      ]
+    },
+    "IntType": {
+      "kind": "Product",
+      "rustName": "IntType",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "Int"
+        }
+      ]
+    },
+    "Identifier": {
+      "kind": "Product",
+      "rustName": "Identifier",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "Identifier"
+        }
+      ]
+    },
+    "StringLiteral": {
+      "kind": "Product",
+      "rustName": "StringLiteral",
+      "elements": [
+        {
+          "kind": "Terminal",
+          "value": "StringLiteral"
+        }
+      ]
+    }
+  },
+  "hooks": {
+    "comma_separated_params": {
+      "methodName": "comma_separated_params",
+      "returnType": "Vec<Parameter>",
+      "doc": "Hook for field 'params' in rule 'Function'"
+    },
+    "comma_separated_exprs": {
+      "methodName": "comma_separated_exprs",
+      "returnType": "Vec<Expression>",
+      "doc": "Hook for field 'args' in rule 'FunctionCall'"
+    }
+  },
+  "analysis": {
+    "firstSets": {
+      "Module": [
+        "fn"
+      ],
+      "TopLevelDeclaration": [
+        "fn"
+      ],
+      "Function": [
+        "fn"
+      ],
+      "Parameter": [
+        "Identifier"
+      ],
+      "BlockExpression": [
+        "{"
+      ],
+      "Statement": [
+        "let",
+        "return",
+        "StringLiteral",
+        "Identifier"
+      ],
+      "ExpressionStmt": [
+        "StringLiteral",
+        "Identifier"
+      ],
+      "Assignment": [
+        "let"
+      ],
+      "Return": [
+        "return"
+      ],
+      "Expression": [
+        "StringLiteral",
+        "Identifier"
+      ],
+      "Literal": [
+        "StringLiteral"
+      ],
+      "FunctionCall": [
+        "Identifier"
+      ],
+      "TypeLiteral": [
+        "Int"
+      ],
+      "IntType": [
+        "Int"
+      ],
+      "Identifier": [
+        "Identifier"
+      ],
+      "StringLiteral": [
+        "StringLiteral"
+      ]
+    },
+    "followSets": {
+      "Module": [],
+      "TopLevelDeclaration": [],
+      "Function": [],
+      "Parameter": [
+        ")"
+      ],
+      "BlockExpression": [],
+      "Statement": [
+        "}",
+        "StringLiteral",
+        "Identifier"
+      ],
+      "ExpressionStmt": [],
+      "Assignment": [],
+      "Return": [],
+      "Expression": [
+        "}",
+        ";",
+        ")"
+      ],
+      "Literal": [],
+      "FunctionCall": [],
+      "TypeLiteral": [
+        "{"
+      ],
+      "IntType": [],
+      "Identifier": [
+        "(",
+        ")",
+        "="
+      ],
+      "StringLiteral": []
+    },
+    "isNullable": {
+      "Module": true
+    },
+    "recursiveRules": [],
+    "syncPoints": [
+      "}",
+      ";",
+      ")",
+      "Int",
+      "Identifier",
+      "StringLiteral"
+    ]
+  },
+  "terminals": [
+    "fn",
+    "(",
+    ")",
+    "{",
+    "}",
+    ";",
+    "let",
+    "=",
+    "return",
+    "Int",
+    "Identifier",
+    "StringLiteral"
+  ]
+}
