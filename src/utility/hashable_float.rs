@@ -1,4 +1,3 @@
-
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct HashableFloat<T>(T)
 where
@@ -6,12 +5,12 @@ where
 
 impl<T> HashableFloat<T>
 where
-    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd
+    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd,
 {
     pub fn new(value: T) -> Self {
         HashableFloat(value)
     }
-    
+
     pub fn get(&self) -> T {
         self.0
     }
@@ -41,14 +40,11 @@ impl std::hash::Hash for HashableFloat<f64> {
     }
 }
 
-impl<T> Eq for HashableFloat<T>
-where 
-    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd
-{}
+impl<T> Eq for HashableFloat<T> where T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd {}
 
 impl<T> From<T> for HashableFloat<T>
-where 
-    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd
+where
+    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd,
 {
     fn from(value: T) -> Self {
         HashableFloat(value)
@@ -56,8 +52,8 @@ where
 }
 
 impl<T> std::fmt::Display for HashableFloat<T>
-where 
-    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd
+where
+    T: std::fmt::Debug + Clone + Copy + PartialEq + PartialOrd,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "HashableFloat({:?})", self.0)

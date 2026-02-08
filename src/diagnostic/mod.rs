@@ -76,6 +76,9 @@ pub trait CompilerDiagnostic: Send + Sync + 'static {
     ///
     /// The default implementation generates a URL based on the error code.
     fn documentation_url(&self) -> Option<String> {
-        Some(format!("https://doc.****.com/error_codes/E{:04}.html", self.error_code()))
+        Some(format!(
+            "https://doc.****.com/error_codes/E{:04}.html",
+            self.error_code()
+        ))
     }
 }

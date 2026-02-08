@@ -18,7 +18,6 @@ pub enum TokenizeErr {
     BlockCommentNotClosed(usize),
 }
 
-
 /// Implements the `Debug` trait for `TokenizeErr` to provide user-friendly error messages.
 impl Debug for TokenizeErr {
     /// Implements the `Debug` trait for `TokenizeErr` to provide user-friendly error messages.

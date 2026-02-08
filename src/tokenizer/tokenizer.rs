@@ -6,9 +6,9 @@
 //! of the compiler's frontend.
 
 use super::errors::TokenizeErr;
-use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Operator, Token, Literal};
 use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
+use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
 
 pub type Return<T> = Result<T, TokenizeErr>;
 
@@ -115,7 +115,9 @@ impl<'src> Tokenizer<'src> {
     #[inline]
     fn consume_str(&mut self, target: &[u8]) -> bool {
         let len = target.len();
-        if self.current_pos + len <= self.input.len() && &self.input[self.current_pos..self.current_pos + len] == target {
+        if self.current_pos + len <= self.input.len()
+            && &self.input[self.current_pos..self.current_pos + len] == target
+        {
             self.current_pos += len;
             true
         } else {
@@ -135,7 +137,7 @@ impl<'src> Tokenizer<'src> {
             }
         }
         let slice = &self.input[start..self.current_pos];
-        
+
         // キーワード判定 (Matchはコンパイラが自動で高速なジャンプテーブル/分岐に最適化する)
         match slice {
             b"import" => Token::Keyword(Keyword::Import),
@@ -199,11 +201,19 @@ impl<'src> Tokenizer<'src> {
         // 16進数等のプレフィックス対応
         if self.consume_str(b"0x") {
             while let Some(b) = self.peek() {
-                if b.is_ascii_hexdigit() { self.advance(); } else { break; }
+                if b.is_ascii_hexdigit() {
+                    self.advance();
+                } else {
+                    break;
+                }
             }
         } else if self.consume_str(b"0b") {
             while let Some(b) = self.peek() {
-                if b == b'0' || b == b'1' { self.advance(); } else { break; }
+                if b == b'0' || b == b'1' {
+                    self.advance();
+                } else {
+                    break;
+                }
             }
         } else {
             while let Some(b) = self.peek() {
@@ -211,14 +221,18 @@ impl<'src> Tokenizer<'src> {
                     self.advance();
                 } else if b == b'.' {
                     if let Some(next) = self.peek_at(1) {
-                        if next == b'.' { break; } // .. 演算子への配慮
+                        if next == b'.' {
+                            break;
+                        } // .. 演算子への配慮
                     }
                     is_float = true;
                     self.advance();
                 } else if b == b'e' || b == b'E' {
                     is_float = true;
                     self.advance();
-                    if matches!(self.peek(), Some(b'+' | b'-')) { self.advance(); }
+                    if matches!(self.peek(), Some(b'+' | b'-')) {
+                        self.advance();
+                    }
                 } else {
                     break;
                 }
@@ -227,10 +241,14 @@ impl<'src> Tokenizer<'src> {
 
         let slice = unsafe { std::str::from_utf8_unchecked(&self.input[start..self.current_pos]) };
         if is_float {
-            slice.parse::<f32>().map(|v| Token::Literal(Literal::FloatLiteral(v.into())))
+            slice
+                .parse::<f32>()
+                .map(|v| Token::Literal(Literal::FloatLiteral(v.into())))
                 .map_err(|_| TokenizeErr::InvalidFloatLiteral(start))
         } else {
-            slice.parse::<i32>().map(|v| Token::Literal(Literal::IntegerLiteral(v.into())))
+            slice
+                .parse::<i32>()
+                .map(|v| Token::Literal(Literal::IntegerLiteral(v.into())))
                 .map_err(|_| TokenizeErr::InvalidIntegerLiteral(start))
         }
     }
@@ -262,10 +280,17 @@ impl<'src> Tokenizer<'src> {
         let c = match self.peek() {
             Some(b'\\') => {
                 self.advance();
-                let esc = self.peek().ok_or(TokenizeErr::CharLiteralNotClosed(start))?;
+                let esc = self
+                    .peek()
+                    .ok_or(TokenizeErr::CharLiteralNotClosed(start))?;
                 self.advance();
                 match esc {
-                    b'n' => '\n', b'r' => '\r', b't' => '\t', b'\\' => '\\', b'\'' => '\'', _ => return Err(TokenizeErr::InvalidCharLiteral(start)),
+                    b'n' => '\n',
+                    b'r' => '\r',
+                    b't' => '\t',
+                    b'\\' => '\\',
+                    b'\'' => '\'',
+                    _ => return Err(TokenizeErr::InvalidCharLiteral(start)),
                 }
             }
             Some(b) => {
@@ -286,16 +311,23 @@ impl<'src> Tokenizer<'src> {
     fn read_line_comment(&mut self) -> Return<Token> {
         self.advance_n(2); // //
         let is_doc = self.peek() == Some(b'/');
-        if is_doc { self.advance(); }
-        
-        let start = self.current_pos;
-        while let Some(b) = self.peek() {
-            if b == b'\n' { break; }
+        if is_doc {
             self.advance();
         }
-        
+
+        let start = self.current_pos;
+        while let Some(b) = self.peek() {
+            if b == b'\n' {
+                break;
+            }
+            self.advance();
+        }
+
         if is_doc {
-            Ok(Token::Comment(Comment::DocComment(Span::new(start, self.current_pos))))
+            Ok(Token::Comment(Comment::DocComment(Span::new(
+                start,
+                self.current_pos,
+            ))))
         } else {
             Ok(Token::Comment(Comment::LineComment))
         }
@@ -324,23 +356,55 @@ impl<'src> Tokenizer<'src> {
 
     fn read_operator_or_delimiter(&mut self) -> Option<Token> {
         let b = self.peek()?;
-        
-        if self.consume_str(b"=>") { return Some(Token::Operator(Operator::FatArrow)); }
-        if self.consume_str(b"|>") { return Some(Token::Operator(Operator::Pipe)); }
-        if self.consume_str(b"->") { return Some(Token::Operator(Operator::Arrow)); }
-        if self.consume_str(b"::") { return Some(Token::Operator(Operator::NamespaceResolver)); }
-        if self.consume_str(b"||") { return Some(Token::Operator(Operator::LogicalOr)); }
-        if self.consume_str(b"&&") { return Some(Token::Operator(Operator::LogicalAnd)); }
-        if self.consume_str(b"==") { return Some(Token::Operator(Operator::Equality)); }
-        if self.consume_str(b"!=") { return Some(Token::Operator(Operator::Inequality)); }
-        if self.consume_str(b"<=") { return Some(Token::Operator(Operator::LessThanOrEqual)); }
-        if self.consume_str(b">=") { return Some(Token::Operator(Operator::GreaterThanOrEqual)); }
-        if self.consume_str(b"<<") { return Some(Token::Operator(Operator::ShiftLeft)); }
-        if self.consume_str(b">>") { return Some(Token::Operator(Operator::ShiftRight)); }
-        if self.consume_str(b"**") { return Some(Token::Operator(Operator::PowerOf)); }
-        if self.consume_str(b"+=") { return Some(Token::Operator(Operator::AddAssign)); }
-        if self.consume_str(b"-=") { return Some(Token::Operator(Operator::SubtractAssign)); }
-        if self.consume_str(b"*=") { return Some(Token::Operator(Operator::MultiplyAssign)); }
+
+        if self.consume_str(b"=>") {
+            return Some(Token::Operator(Operator::FatArrow));
+        }
+        if self.consume_str(b"|>") {
+            return Some(Token::Operator(Operator::Pipe));
+        }
+        if self.consume_str(b"->") {
+            return Some(Token::Operator(Operator::Arrow));
+        }
+        if self.consume_str(b"::") {
+            return Some(Token::Operator(Operator::NamespaceResolver));
+        }
+        if self.consume_str(b"||") {
+            return Some(Token::Operator(Operator::LogicalOr));
+        }
+        if self.consume_str(b"&&") {
+            return Some(Token::Operator(Operator::LogicalAnd));
+        }
+        if self.consume_str(b"==") {
+            return Some(Token::Operator(Operator::Equality));
+        }
+        if self.consume_str(b"!=") {
+            return Some(Token::Operator(Operator::Inequality));
+        }
+        if self.consume_str(b"<=") {
+            return Some(Token::Operator(Operator::LessThanOrEqual));
+        }
+        if self.consume_str(b">=") {
+            return Some(Token::Operator(Operator::GreaterThanOrEqual));
+        }
+        if self.consume_str(b"<<") {
+            return Some(Token::Operator(Operator::ShiftLeft));
+        }
+        if self.consume_str(b">>") {
+            return Some(Token::Operator(Operator::ShiftRight));
+        }
+        if self.consume_str(b"**") {
+            return Some(Token::Operator(Operator::PowerOf));
+        }
+        if self.consume_str(b"+=") {
+            return Some(Token::Operator(Operator::AddAssign));
+        }
+        if self.consume_str(b"-=") {
+            return Some(Token::Operator(Operator::SubtractAssign));
+        }
+        if self.consume_str(b"*=") {
+            return Some(Token::Operator(Operator::MultiplyAssign));
+        }
 
         self.advance();
         match b {

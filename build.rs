@@ -4,6 +4,4 @@
 /// perform various tasks before the main project is compiled,
 /// such as generating code, compiling C dependencies, or
 /// setting environment variables.
-fn main() {
-    
-}
+fn main() {}

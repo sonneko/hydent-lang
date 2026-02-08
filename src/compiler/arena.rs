@@ -8,13 +8,18 @@
 //!
 //! The `Arena` struct is the main entry point to the arena allocator. It
 //! provides methods for allocating objects and vectors within the arena.
-//! 
+//!
 //! # Unsafe(**Important**)
 //! The contents of `ArenaBox` or `ArenaIter` will live as long as `Arena`.
 //! Be sure that `ArenaBox` and `ArenaIter` drop before `Arena` drop.
 
+use crate::compiler::collections::ASTContainer;
 use std::{
-    alloc::{Layout, alloc}, cell::{Cell, UnsafeCell}, marker::PhantomData, ops::Deref, ptr::NonNull
+    alloc::{alloc, Layout},
+    cell::{Cell, UnsafeCell},
+    marker::PhantomData,
+    ops::Deref,
+    ptr::NonNull,
 };
 
 static ALIGNMENT: usize = 64;
@@ -67,9 +72,10 @@ where
                 self.page += 1;
                 self.index = 0;
             }
-            let ptr = unsafe { (*(*self.pages_list_ptr).get())[self.page].add(self.index) } as *mut T;
+            let ptr =
+                unsafe { (*(*self.pages_list_ptr).get())[self.page].add(self.index) } as *mut T;
             self.index += self.size;
-            Some(unsafe {*ptr })
+            Some(unsafe { *ptr })
         }
     }
 }
@@ -148,14 +154,15 @@ impl Arena {
 
         for value in value {
             if self.index.get() + size < Self::BLOCK_SIZE {
-                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(self.index.get()) } as *mut T;
+                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(self.index.get()) }
+                    as *mut T;
                 self.index.set(self.index.get() + size);
                 unsafe {
                     ptr.write(value);
                 }
             } else {
                 self.grow();
-                let ptr = unsafe{(*self.ptrs.get())[self.page_index.get()]} as *mut T;
+                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()] } as *mut T;
                 self.index.set(size);
                 unsafe { ptr.write(value) }
             }
@@ -185,7 +192,7 @@ impl Arena {
                 ALIGNMENT,
             ))
         };
-        unsafe{(*self.ptrs.get()).push(new_block_ptr)};
+        unsafe { (*self.ptrs.get()).push(new_block_ptr) };
         self.page_index.set(self.page_index.get() + 1);
         self.index.set(0);
     }
@@ -193,7 +200,7 @@ impl Arena {
 
 impl Drop for Arena {
     fn drop(&mut self) {
-        for ptr in unsafe{(*self.ptrs.get()).iter()} {
+        for ptr in unsafe { (*self.ptrs.get()).iter() } {
             unsafe {
                 let layout = Layout::from_size_align_unchecked(Self::BLOCK_SIZE, ALIGNMENT);
                 std::alloc::dealloc(*ptr, layout);

@@ -1,6 +1,5 @@
-
-use crate::compiler::{symbol::Symbol};
 use crate::compiler::arena::{ArenaBox, ArenaIter};
+use crate::compiler::symbol::Symbol;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Ast {

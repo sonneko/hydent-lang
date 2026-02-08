@@ -101,7 +101,7 @@ pub enum Operator {
     AddAssign,          // +=
     SubtractAssign,     // -=
     MultiplyAssign,     // *=
-    DivideAssign,       // /=    
+    DivideAssign,       // /=
     Multiply,           // *
     Assignment,         // =
     Colon,              // :
@@ -138,8 +138,8 @@ pub enum Delimiter {
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
 pub enum Comment {
     DocComment(Span), // `/// ...`
-    LineComment,         // `// ...`
-    BlockComment,        // `/* ... */`
+    LineComment,      // `// ...`
+    BlockComment,     // `/* ... */`
 }
 
 /// Defines attributes for tokens, such as whether they belong to a first or follow set.
@@ -158,10 +158,18 @@ impl TokenAttribute for Token {
     fn is_first_set(&self) -> bool {
         match self {
             Token::Keyword(k) => match k {
-                Keyword::Import | Keyword::Static | Keyword::Class | Keyword::Enum | 
-                Keyword::Struct | Keyword::Extern | Keyword::Protocol | Keyword::Module | 
-                Keyword::Type | Keyword::Pub | Keyword::Async | Keyword::Fn
-                => true,
+                Keyword::Import
+                | Keyword::Static
+                | Keyword::Class
+                | Keyword::Enum
+                | Keyword::Struct
+                | Keyword::Extern
+                | Keyword::Protocol
+                | Keyword::Module
+                | Keyword::Type
+                | Keyword::Pub
+                | Keyword::Async
+                | Keyword::Fn => true,
                 _ => false,
             },
             Token::Operator(Operator::At) => true,
@@ -177,7 +185,7 @@ impl TokenAttribute for Token {
         match self {
             Token::EndOfFile => true,
             Token::Delimiter(Delimiter::RightBrace) => true,
-            
+
             _ => self.is_first_set(),
         }
     }
@@ -279,7 +287,7 @@ impl std::fmt::Display for Literal {
             Self::StringLiteral(_) => write!(f, "string literal"),
             Self::CharLiteral(c) => write!(f, "char literal '{}'", c),
             Self::BoolLiteral(b) => write!(f, "boolean literal {}", b),
-        }   
+        }
     }
 }
 
@@ -305,7 +313,7 @@ impl std::fmt::Display for Operator {
             Self::AddAssign => write!(f, "+="),
             Self::SubtractAssign => write!(f, "-="),
             Self::MultiplyAssign => write!(f, "*="),
-            Self::DivideAssign => write!(f, "/="),    
+            Self::DivideAssign => write!(f, "/="),
             Self::Multiply => write!(f, "*"),
             Self::Assignment => write!(f, "="),
             Self::Colon => write!(f, ":"),
