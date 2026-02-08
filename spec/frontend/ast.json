@@ -322,7 +322,7 @@
     "members": [
       {
         "kind": "Terminal",
-        "value": "Identifier",
+        "value": "#identifier",
         "note": "identifier"
       }
     ]
@@ -333,7 +333,7 @@
     "members": [
       {
         "kind": "Terminal",
-        "value": "StringLiteral",
+        "value": "#string",
         "note": "string_literal"
       }
     ]

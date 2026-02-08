@@ -1,11 +1,15 @@
 import fs from "fs";
+import { spawnSync } from "child_process";
+
 import { parse } from "./bnf/parse";
 import { analyze } from "./bnf/analyzer";
 import { generateParser } from "./bnf/gen";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
 const AST_FILE_PATH = "../spec/frontend/ast.json";
-const IR_FILE_PATH = "../spec/frontend/ir.json"
+const IR_FILE_PATH = "../spec/frontend/ir.json";
+const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
+const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
 
 function main() {
     console.log("🤖 Generating AST...")
@@ -29,8 +33,10 @@ function main() {
 
     console.log("🤖 Generating Parser...");
     const parser = generateParser(analysis);
-    fs.writeFileSync("../src/parser/generated_parser.rs", parser, "utf8");
-    console.log("✅ Parser written to src/parser/generated_parser.rs");
+    fs.writeFileSync(AST_TYPE_FILE_PATH, parser[0], "utf8");
+    fs.writeFileSync(PARSER_FILE_PATH, parser[1], "utf8");
+    spawnSync("cargo", ["fmt", "--", AST_TYPE_FILE_PATH, PARSER_FILE_PATH], { stdio: "inherit" });
+    console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
 
 }
 

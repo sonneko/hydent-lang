@@ -132,7 +132,7 @@ export class GrammarAnalyzer {
                             hookName = this.sanitizeIdentifier(this.toSnakeCase(member.note));
 
                             const returnTypeRaw = this.toPascalCase(targetRuleName);
-                            const returnType = modifier === 'List' ? `Vec<${returnTypeRaw}>`
+                            const returnType = modifier === 'List' ? `ArenaIter<${returnTypeRaw}>`
                                 : modifier === 'Option' ? `Option<${returnTypeRaw}>`
                                     : returnTypeRaw;
 

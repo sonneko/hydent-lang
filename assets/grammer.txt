@@ -78,9 +78,9 @@ product IntType {
 }
 
 product Identifier {
-    "Identifier" with "identifier"
+    "#identifier" with "identifier"
 }
 
 product StringLiteral {
-    "StringLiteral" with "string_literal"
+    "#string" with "string_literal"
 }

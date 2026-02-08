@@ -294,7 +294,7 @@
       "elements": [
         {
           "kind": "Terminal",
-          "value": "Identifier"
+          "value": "#identifier"
         }
       ]
     },
@@ -304,7 +304,7 @@
       "elements": [
         {
           "kind": "Terminal",
-          "value": "StringLiteral"
+          "value": "#string"
         }
       ]
     }
@@ -312,12 +312,12 @@
   "hooks": {
     "comma_separated_params": {
       "methodName": "comma_separated_params",
-      "returnType": "Vec<Parameter>",
+      "returnType": "ArenaIter<Parameter>",
       "doc": "Hook for field 'params' in rule 'Function'"
     },
     "comma_separated_exprs": {
       "methodName": "comma_separated_exprs",
-      "returnType": "Vec<Expression>",
+      "returnType": "ArenaIter<Expression>",
       "doc": "Hook for field 'args' in rule 'FunctionCall'"
     }
   },
@@ -333,7 +333,7 @@
         "fn"
       ],
       "Parameter": [
-        "Identifier"
+        "#identifier"
       ],
       "BlockExpression": [
         "{"
@@ -341,12 +341,12 @@
       "Statement": [
         "let",
         "return",
-        "StringLiteral",
-        "Identifier"
+        "#string",
+        "#identifier"
       ],
       "ExpressionStmt": [
-        "StringLiteral",
-        "Identifier"
+        "#string",
+        "#identifier"
       ],
       "Assignment": [
         "let"
@@ -355,14 +355,14 @@
         "return"
       ],
       "Expression": [
-        "StringLiteral",
-        "Identifier"
+        "#string",
+        "#identifier"
       ],
       "Literal": [
-        "StringLiteral"
+        "#string"
       ],
       "FunctionCall": [
-        "Identifier"
+        "#identifier"
       ],
       "TypeLiteral": [
         "Int"
@@ -371,10 +371,10 @@
         "Int"
       ],
       "Identifier": [
-        "Identifier"
+        "#identifier"
       ],
       "StringLiteral": [
-        "StringLiteral"
+        "#string"
       ]
     },
     "followSets": {
@@ -387,8 +387,8 @@
       "BlockExpression": [],
       "Statement": [
         "}",
-        "StringLiteral",
-        "Identifier"
+        "#string",
+        "#identifier"
       ],
       "ExpressionStmt": [],
       "Assignment": [],
@@ -420,8 +420,8 @@
       ";",
       ")",
       "Int",
-      "Identifier",
-      "StringLiteral"
+      "#identifier",
+      "#string"
     ]
   },
   "terminals": [
@@ -435,7 +435,7 @@
     "=",
     "return",
     "Int",
-    "Identifier",
-    "StringLiteral"
+    "#identifier",
+    "#string"
   ]
 }
