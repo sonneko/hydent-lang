@@ -5,8 +5,8 @@
 //! compiler artifacts with their original location in the source code. This is
 //! useful for error reporting and other source code analysis tools.
 
-use core::hash::Hash;
 use core::cmp::{Eq, PartialEq};
+use core::hash::Hash;
 
 use crate::compiler::source_holder::SourceHolder;
 

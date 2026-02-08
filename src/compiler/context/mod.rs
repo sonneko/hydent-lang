@@ -8,14 +8,14 @@
 //! compiler passes to access the information they need without having to pass
 //! around a large number of individual arguments.
 
+pub mod backend;
 pub mod frontend;
 pub mod middleend;
-pub mod backend;
 
 use crate::compiler::source_holder::SourceHolder;
 
-use super::symbol::SymbolFactory;
 use super::arena::Arena;
+use super::symbol::SymbolFactory;
 
 /// A trait for types that can be merged.
 ///
@@ -74,5 +74,4 @@ pub trait CompilerContext: Sized + Mergeble {
     /// Returns a reference to the source holder, which contains the original source code
     /// and possibly metadata about it.
     fn get_source(&self) -> &SourceHolder<'_>;
-
 }

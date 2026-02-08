@@ -27,9 +27,7 @@ impl<'src> SourceHolder<'src> {
     ///
     /// * `source` - The source code string.
     pub fn new(source: &'src str) -> Self {
-        Self {
-            src: source,
-        }
+        Self { src: source }
     }
 
     /// Returns a reference to the source code string.
@@ -43,10 +41,16 @@ impl<'src> SourceHolder<'src> {
     }
 
     pub fn upgrade(self) -> SourceHolderWithLineInfo<'src> {
-        let lines = self.src.match_indices("\n").map(|(i, _)| i).collect::<Vec<_>>();
-        SourceHolderWithLineInfo { src:  self.src, line_starts: lines }
+        let lines = self
+            .src
+            .match_indices("\n")
+            .map(|(i, _)| i)
+            .collect::<Vec<_>>();
+        SourceHolderWithLineInfo {
+            src: self.src,
+            line_starts: lines,
+        }
     }
-
 }
 
 pub struct SourceHolderWithLineInfo<'src> {
@@ -72,7 +76,13 @@ impl<'src> SourceHolderWithLineInfo<'src> {
     /// # Returns
     ///
     /// A string slice of the specified portion of the source code.
-    pub fn slice_from_line_info(&self, begin_line: usize, begin_column: usize, end_line: usize, end_column: usize) -> &str {
+    pub fn slice_from_line_info(
+        &self,
+        begin_line: usize,
+        begin_column: usize,
+        end_line: usize,
+        end_column: usize,
+    ) -> &str {
         let begin = self.line_starts[begin_line - 1] + begin_column;
         let end = self.line_starts[end_line - 1] + end_column;
         &self.src[begin..end]

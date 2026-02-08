@@ -22,6 +22,6 @@ impl ErrorPool {
         for error in self.errors {
             // TODO
         }
-        Ok(())   
+        Ok(())
     }
 }

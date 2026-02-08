@@ -9,10 +9,10 @@
 //! lightweight numeric IDs. This makes comparisons, hashing, and storage much
 //! more efficient.
 
-use std::collections::HashMap;
 use crate::compiler::source_holder::SourceHolder;
+use std::collections::HashMap;
 
-use super::span::{SpanWithRef, Span};
+use super::span::{Span, SpanWithRef};
 
 /// A rough estimate used to pre-allocate the symbol table's capacity.
 /// This assumes an average symbol length to estimate the number of symbols,
@@ -41,12 +41,11 @@ pub struct SymbolFactory<'src> {
     map: HashMap<SpanWithRef<'src>, Symbol>,
 }
 
-
 /// Implementation block for `SymbolFactory`.
 ///
 /// This block contains methods for `SymbolFactory` such as
 /// constructor, and methods for interning strings into symbols.
-impl <'src>SymbolFactory<'src> {
+impl<'src> SymbolFactory<'src> {
     /// Creates a new `SymbolFactory` for a given source holder.
     ///
     /// The factory is initialized with an empty symbol table. The capacity of the
@@ -57,7 +56,9 @@ impl <'src>SymbolFactory<'src> {
     /// * `src` - A reference to the `SourceHolder` containing the source code.
     pub fn new(src: SourceHolder<'src>) -> Self {
         Self {
-            map: HashMap::with_capacity(src.len() * 2 / RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH + 1),
+            map: HashMap::with_capacity(
+                src.len() * 2 / RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH + 1,
+            ),
             source: src,
             now_symbol_id: 0,
         }

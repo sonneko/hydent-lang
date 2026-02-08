@@ -1,8 +1,8 @@
+use super::middleend::CompilerMiddleendContext;
 use super::Arena;
 use super::SourceHolder;
 use super::SymbolFactory;
 use crate::compiler::context::CompilerContext;
-use super::middleend::CompilerMiddleendContext;
 use crate::compiler::context::Mergeble;
 
 /// Represents the frontend context of the compiler.
@@ -51,7 +51,6 @@ impl CompilerContext for CompilerFrontendContext<'_> {
     fn get_source(&self) -> &SourceHolder<'_> {
         &self.source
     }
-
 }
 
 /// Implementation of `CompilerFrontendContext` for managing frontend-specific operations.
@@ -79,5 +78,4 @@ impl<'ctx> CompilerFrontendContext<'ctx> {
             arena: arena,
         }
     }
-
 }
