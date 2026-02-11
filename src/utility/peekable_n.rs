@@ -21,7 +21,7 @@ where
     }
 
     #[inline(always)]
-    pub fn peek<const M: usize>(&self) -> Option<&T> {
+    pub fn peek_n<const M: usize>(&self) -> Option<&T> {
         const { assert!(M < N, "M must be less than N") };
         let index = self.wrap_index(M);
         unsafe { self.buf.get_unchecked(index) }.as_ref()
