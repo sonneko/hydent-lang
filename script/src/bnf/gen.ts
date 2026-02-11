@@ -86,22 +86,27 @@ ${variants}
 }`);
             } else {
                 // Product
-                const fields = rule.elements
-                    .filter((e): e is Extract<ElementIR, { kind: 'NonTerminal' }> => e.kind === 'NonTerminal')
-                    .map(e => {
-                        let typeStr = this.getRustType(e.targetRule, e.modifier);
-                        if (e.isBoxed) {
-                            typeStr = `ArenaBox<${typeStr}>`;
-                        }
-                        return `    pub ${e.rustFieldName}: ${typeStr},`;
-                    })
-                    .join('\n');
+                if (rule.elements === undefined) {
+                    code.push(`
+use crate::parser::maual_ast::${rule.rustName};`);
+                } else {
+                    const fields = rule.elements
+                        .filter((e): e is Extract<ElementIR, { kind: 'NonTerminal' }> => e.kind === 'NonTerminal')
+                        .map(e => {
+                            let typeStr = this.getRustType(e.targetRule, e.modifier);
+                            if (e.isBoxed) {
+                                typeStr = `ArenaBox<${typeStr}>`;
+                            }
+                            return `    pub ${e.rustFieldName}: ${typeStr},`;
+                        })
+                        .join('\n');
 
-                code.push(`
+                    code.push(`
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct ${rule.rustName} {
 ${fields}
 }`);
+                }
             }
         }
         return code.join('\n');
@@ -160,22 +165,30 @@ ${methods.join('\n\n')}
                     return getFirstTerminalChar(rule);
                 } else {
                     // ir.kind is 'Product'
-                    if (ir.elements.length === 0) {
+                    if (ir.elements === undefined) {
                         exceptionManualRule = ir;
                         return "";
                     }
                     if (ir.elements[0].kind === "Terminal") {
                         return ir.elements[0].value;
                     } else {
-                        return getFirstTerminalChar(this.getRuleFromName(ir.elements[0].targetRule))
+                        const rule = this.getRuleFromName(ir.elements[0].targetRule);
+                        if (rule) {
+                            return getFirstTerminalChar(rule);
+                        }
+                        exceptionManualRule = ir;
+                        return "";
                     }
                 }
             };
-            const firstChar = getFirstTerminalChar(this.getRuleFromName(variant.targetRule));
+            const rule = this.getRuleFromName(variant.targetRule);
             if (exceptionManualRule !== null) {
                 const rule = exceptionManualRule as ProductRuleIR;
                 return `_ if self.parse_${rule.rustName}().is_ok()`;
+            } else if (rule === undefined) {
+                return "";
             }
+            const firstChar = getFirstTerminalChar(rule);
             return firstChar;
         });
 
@@ -208,6 +221,10 @@ ${branches.join("\n")}
 
     private generateProductMethod(rule: ProductRuleIR): string {
         const functionCalls: string[] = [];
+        if (rule.elements === undefined) {
+            return `\
+    fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error>;`
+        }
         for (const [_, element] of rule.elements.entries()) {
             switch (element.kind) {
                 case "NonTerminal":
@@ -279,11 +296,8 @@ ${rule.elements
         return `${name}_${this.unique_id}`;
     }
 
-    private getRuleFromName(name: string): RuleIR {
+    private getRuleFromName(name: string): RuleIR | undefined {
         const ret = this.ir.rules.get(name);
-        if (ret === undefined) {
-            throw new Error(`Unknown rule: ${name}`);
-        }
         return ret;
     }
 }

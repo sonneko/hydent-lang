@@ -318,37 +318,10 @@
   },
   {
     "kind": "Product",
-    "name": "Identifier",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "_a1",
-        "type": {
-          "name": "_a1",
-          "modifier": "None"
-        },
-        "note": "identifier"
-      }
-    ]
+    "name": "Identifier"
   },
   {
     "kind": "Product",
-    "name": "StringLiteral",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "_a1",
-        "type": {
-          "name": "_a1",
-          "modifier": "None"
-        },
-        "note": "string_literal"
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "_a1",
-    "members": []
+    "name": "StringLiteral"
   }
 ]

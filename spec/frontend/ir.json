@@ -290,36 +290,7 @@
     },
     "Identifier": {
       "kind": "Product",
-      "rustName": "Identifier",
-      "elements": [
-        {
-          "kind": "NonTerminal",
-          "targetRule": "_a1",
-          "modifier": "None",
-          "hook": "identifier",
-          "rustFieldName": "a1",
-          "isBoxed": false
-        }
-      ]
-    },
-    "StringLiteral": {
-      "kind": "Product",
-      "rustName": "StringLiteral",
-      "elements": [
-        {
-          "kind": "NonTerminal",
-          "targetRule": "_a1",
-          "modifier": "None",
-          "hook": "string_literal",
-          "rustFieldName": "a1",
-          "isBoxed": false
-        }
-      ]
-    },
-    "_a1": {
-      "kind": "Product",
-      "rustName": "A1",
-      "elements": []
+      "rustName": "Identifier"
     }
   },
   "hooks": {
@@ -332,16 +303,6 @@
       "methodName": "comma_separated_exprs",
       "returnType": "ArenaIter<Expression>",
       "doc": "Hook for field 'args' in rule 'FunctionCall'"
-    },
-    "identifier": {
-      "methodName": "identifier",
-      "returnType": "A1",
-      "doc": "Hook for field '_a1' in rule 'Identifier'"
-    },
-    "string_literal": {
-      "methodName": "string_literal",
-      "returnType": "A1",
-      "doc": "Hook for field '_a1' in rule 'StringLiteral'"
     }
   },
   "analysis": {
@@ -360,37 +321,26 @@
         "{"
       ],
       "Statement": [
-        ";",
         "let",
-        "return",
-        "("
+        "return"
       ],
-      "ExpressionStmt": [
-        ";",
-        "("
-      ],
+      "ExpressionStmt": [],
       "Assignment": [
         "let"
       ],
       "Return": [
         "return"
       ],
-      "Expression": [
-        "("
-      ],
+      "Expression": [],
       "LiteralAST": [],
-      "FunctionCall": [
-        "("
-      ],
+      "FunctionCall": [],
       "TypeLiteral": [
         "Int"
       ],
       "IntType": [
         "Int"
       ],
-      "Identifier": [],
-      "StringLiteral": [],
-      "_a1": []
+      "Identifier": []
     },
     "followSets": {
       "Module": [],
@@ -401,16 +351,14 @@
       ],
       "BlockExpression": [],
       "Statement": [
-        "}",
-        "("
+        "}"
       ],
       "ExpressionStmt": [],
       "Assignment": [],
       "Return": [],
       "Expression": [
         "}",
-        ";",
-        ")"
+        ";"
       ],
       "LiteralAST": [],
       "FunctionCall": [],
@@ -422,29 +370,15 @@
         "(",
         ")",
         "="
-      ],
-      "StringLiteral": [],
-      "_a1": [
-        "(",
-        ")",
-        "="
       ]
     },
     "isNullable": {
-      "Module": true,
-      "_a1": true,
-      "Identifier": true,
-      "StringLiteral": true,
-      "Parameter": true,
-      "LiteralAST": true,
-      "Expression": true
+      "Module": true
     },
     "recursiveRules": [],
     "syncPoints": [
       "}",
-      ";",
-      ")",
-      "Int"
+      ";"
     ]
   },
   "terminals": [

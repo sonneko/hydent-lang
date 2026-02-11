@@ -67,12 +67,6 @@ product IntType {
     "Int"
 }
 
-product Identifier {
-    _a1: _a1 with "identifier"
-}
+product Identifier
 
-product StringLiteral {
-    _a1: _a1 with "string_literal"
-}
-
-product _a1 {}
+product StringLiteral

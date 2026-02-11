@@ -35,7 +35,7 @@ export interface BranchRuleIR {
 export interface ProductRuleIR {
     kind: 'Product';
     rustName: string; // PascalCase
-    elements: ElementIR[];
+    elements: ElementIR[] | undefined;
 }
 
 export type ElementIR =
@@ -116,6 +116,15 @@ export class GrammarAnalyzer {
                 // Product
                 const elements: ElementIR[] = [];
 
+                if (rule.members === undefined) {
+                    this.ir.rules.set(rule.name, {
+                        kind: 'Product',
+                        rustName,
+                        elements: undefined,
+                    });
+                    return;
+                }
+
                 for (const member of rule.members) {
                     if (member.kind === 'Terminal') {
                         this.ir.terminals.add(member.value);
@@ -176,11 +185,15 @@ export class GrammarAnalyzer {
                 if (rule.kind === 'Branch') {
                     newNullable = rule.variants.some(v => this.ir.analysis.isNullable.get(v.targetRule));
                 } else {
-                    newNullable = rule.elements.every(elem => {
-                        if (elem.kind === 'Terminal') return false;
-                        if (elem.modifier === 'Option' || elem.modifier === 'List') return true;
-                        return this.ir.analysis.isNullable.get(elem.targetRule) || false;
-                    });
+                    if (rule.elements === undefined) {
+                        newNullable = false;
+                    } else {
+                        newNullable = rule.elements.every(elem => {
+                            if (elem.kind === 'Terminal') return false;
+                            if (elem.modifier === 'Option' || elem.modifier === 'List') return true;
+                            return this.ir.analysis.isNullable.get(elem.targetRule) || false;
+                        });
+                    }
                 }
 
                 if (newNullable !== currentNullable) {
@@ -215,26 +228,30 @@ export class GrammarAnalyzer {
                     }
                 } else {
                     let allNullableSoFar = true;
-                    for (const elem of rule.elements) {
-                        if (!allNullableSoFar) break;
+                    if (rule.elements === undefined) {
+                        allNullableSoFar = false;
+                    } else {
+                        for (const elem of rule.elements) {
+                            if (!allNullableSoFar) break;
 
-                        if (elem.kind === 'Terminal') {
-                            firstSet.add(elem.value);
-                            allNullableSoFar = false;
-                        } else {
-                            // NonTerminal
-                            const targetFirst = this.ir.analysis.firstSets.get(elem.targetRule);
-                            if (targetFirst) {
-                                targetFirst.forEach(t => firstSet.add(t));
-                            }
-
-                            const isElemNullable =
-                                elem.modifier === 'Option' ||
-                                elem.modifier === 'List' ||
-                                this.ir.analysis.isNullable.get(elem.targetRule);
-
-                            if (!isElemNullable) {
+                            if (elem.kind === 'Terminal') {
+                                firstSet.add(elem.value);
                                 allNullableSoFar = false;
+                            } else {
+                                // NonTerminal
+                                const targetFirst = this.ir.analysis.firstSets.get(elem.targetRule);
+                                if (targetFirst) {
+                                    targetFirst.forEach(t => firstSet.add(t));
+                                }
+
+                                const isElemNullable =
+                                    elem.modifier === 'Option' ||
+                                    elem.modifier === 'List' ||
+                                    this.ir.analysis.isNullable.get(elem.targetRule);
+
+                                if (!isElemNullable) {
+                                    allNullableSoFar = false;
+                                }
                             }
                         }
                     }
@@ -271,13 +288,17 @@ export class GrammarAnalyzer {
 
                 let trailer = new Set(parentFollow);
 
+                if (rule.elements === undefined) {
+                    return;
+                }
+
                 for (let i = rule.elements.length - 1; i >= 0; i--) {
                     const elem = rule.elements[i];
 
                     if (elem.kind === 'NonTerminal') {
                         const targetFollow = this.ir.analysis.followSets.get(elem.targetRule);
                         if (targetFollow === undefined) {
-                            throw new Error(`Follow set for ${elem.targetRule} not found`);
+                            return;
                         }
 
                         const originalSize = targetFollow.size;
@@ -318,6 +339,7 @@ export class GrammarAnalyzer {
     private detectRecursionAndBox(): void {
         for (const [ruleName, rule] of this.ir.rules) {
             if (rule.kind !== 'Product') continue;
+            if (rule.elements === undefined) continue;
 
             for (const elem of rule.elements) {
                 if (elem.kind === 'Terminal') continue;
@@ -343,6 +365,7 @@ export class GrammarAnalyzer {
             return rule.variants.some(v => this.checkReaches(v.targetRule, target, visited));
         } else {
             // Product
+            if (rule.elements === undefined) return false;
             return rule.elements.some(elem => {
                 if (elem.kind === 'Terminal') return false;
                 if (elem.modifier === 'List') return false;
