@@ -237,7 +237,7 @@
     "name": "Expression",
     "variants": [
       {
-        "name": "Literal",
+        "name": "LiteralAST",
         "note": null
       },
       {
@@ -248,7 +248,7 @@
   },
   {
     "kind": "Product",
-    "name": "Literal",
+    "name": "LiteralAST",
     "members": [
       {
         "kind": "Field",
@@ -321,8 +321,12 @@
     "name": "Identifier",
     "members": [
       {
-        "kind": "Terminal",
-        "value": "#identifier",
+        "kind": "Field",
+        "name": "_a1",
+        "type": {
+          "name": "_a1",
+          "modifier": "None"
+        },
         "note": "identifier"
       }
     ]
@@ -332,10 +336,19 @@
     "name": "StringLiteral",
     "members": [
       {
-        "kind": "Terminal",
-        "value": "#string",
+        "kind": "Field",
+        "name": "_a1",
+        "type": {
+          "name": "_a1",
+          "modifier": "None"
+        },
         "note": "string_literal"
       }
     ]
+  },
+  {
+    "kind": "Product",
+    "name": "_a1",
+    "members": []
   }
 ]

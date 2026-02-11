@@ -215,8 +215,8 @@
       "rustName": "Expression",
       "variants": [
         {
-          "rustVariantName": "Literal",
-          "targetRule": "Literal"
+          "rustVariantName": "LiteralAST",
+          "targetRule": "LiteralAST"
         },
         {
           "rustVariantName": "FunctionCall",
@@ -224,9 +224,9 @@
         }
       ]
     },
-    "Literal": {
+    "LiteralAST": {
       "kind": "Product",
-      "rustName": "Literal",
+      "rustName": "LiteralAST",
       "elements": [
         {
           "kind": "NonTerminal",
@@ -293,8 +293,12 @@
       "rustName": "Identifier",
       "elements": [
         {
-          "kind": "Terminal",
-          "value": "#identifier"
+          "kind": "NonTerminal",
+          "targetRule": "_a1",
+          "modifier": "None",
+          "hook": "identifier",
+          "rustFieldName": "a1",
+          "isBoxed": false
         }
       ]
     },
@@ -303,10 +307,19 @@
       "rustName": "StringLiteral",
       "elements": [
         {
-          "kind": "Terminal",
-          "value": "#string"
+          "kind": "NonTerminal",
+          "targetRule": "_a1",
+          "modifier": "None",
+          "hook": "string_literal",
+          "rustFieldName": "a1",
+          "isBoxed": false
         }
       ]
+    },
+    "_a1": {
+      "kind": "Product",
+      "rustName": "A1",
+      "elements": []
     }
   },
   "hooks": {
@@ -319,6 +332,16 @@
       "methodName": "comma_separated_exprs",
       "returnType": "ArenaIter<Expression>",
       "doc": "Hook for field 'args' in rule 'FunctionCall'"
+    },
+    "identifier": {
+      "methodName": "identifier",
+      "returnType": "A1",
+      "doc": "Hook for field '_a1' in rule 'Identifier'"
+    },
+    "string_literal": {
+      "methodName": "string_literal",
+      "returnType": "A1",
+      "doc": "Hook for field '_a1' in rule 'StringLiteral'"
     }
   },
   "analysis": {
@@ -332,21 +355,19 @@
       "Function": [
         "fn"
       ],
-      "Parameter": [
-        "#identifier"
-      ],
+      "Parameter": [],
       "BlockExpression": [
         "{"
       ],
       "Statement": [
+        ";",
         "let",
         "return",
-        "#string",
-        "#identifier"
+        "("
       ],
       "ExpressionStmt": [
-        "#string",
-        "#identifier"
+        ";",
+        "("
       ],
       "Assignment": [
         "let"
@@ -355,14 +376,11 @@
         "return"
       ],
       "Expression": [
-        "#string",
-        "#identifier"
+        "("
       ],
-      "Literal": [
-        "#string"
-      ],
+      "LiteralAST": [],
       "FunctionCall": [
-        "#identifier"
+        "("
       ],
       "TypeLiteral": [
         "Int"
@@ -370,12 +388,9 @@
       "IntType": [
         "Int"
       ],
-      "Identifier": [
-        "#identifier"
-      ],
-      "StringLiteral": [
-        "#string"
-      ]
+      "Identifier": [],
+      "StringLiteral": [],
+      "_a1": []
     },
     "followSets": {
       "Module": [],
@@ -387,8 +402,7 @@
       "BlockExpression": [],
       "Statement": [
         "}",
-        "#string",
-        "#identifier"
+        "("
       ],
       "ExpressionStmt": [],
       "Assignment": [],
@@ -398,7 +412,7 @@
         ";",
         ")"
       ],
-      "Literal": [],
+      "LiteralAST": [],
       "FunctionCall": [],
       "TypeLiteral": [
         "{"
@@ -409,19 +423,28 @@
         ")",
         "="
       ],
-      "StringLiteral": []
+      "StringLiteral": [],
+      "_a1": [
+        "(",
+        ")",
+        "="
+      ]
     },
     "isNullable": {
-      "Module": true
+      "Module": true,
+      "_a1": true,
+      "Identifier": true,
+      "StringLiteral": true,
+      "Parameter": true,
+      "LiteralAST": true,
+      "Expression": true
     },
     "recursiveRules": [],
     "syncPoints": [
       "}",
       ";",
       ")",
-      "Int",
-      "#identifier",
-      "#string"
+      "Int"
     ]
   },
   "terminals": [
@@ -434,8 +457,6 @@
     "let",
     "=",
     "return",
-    "Int",
-    "#identifier",
-    "#string"
+    "Int"
   ]
 }
