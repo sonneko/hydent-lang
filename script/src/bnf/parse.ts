@@ -177,7 +177,7 @@ export class Parser {
           this.advance();
           return token.value;
       }
-      throw new Error(`Expected Identifier, but got ${token.kind}`);
+      throw new Error(`Expected Identifier, but got ${token.kind} at position ${this.position}`);
   }
 
   private consumeStringLiteral(): string {
@@ -186,7 +186,7 @@ export class Parser {
           this.advance();
           return token.value;
       }
-      throw new Error(`Expected StringLiteral, but got ${token.kind}`);
+      throw new Error(`Expected StringLiteral, but got ${token.kind} at position ${this.position}`);
   }
   
   private consumeKeyword(kind: 'Branch' | 'Product' | 'LBrace' | 'RBrace' | 'Colon' | 'With' | 'Star' | 'Question'): void {
@@ -195,7 +195,10 @@ export class Parser {
           this.advance();
           return;
       }
-      throw new Error(`Expected ${kind}, but got ${token.kind}`);
+      if (kind === "Colon") {
+        console.log(this.tokens[this.position], this.tokens[this.position - 1]);
+      }
+      throw new Error(`Expected ${kind}, but got ${token.kind} at position ${this.position}`);
   }
 
   public parse(): Grammar {
@@ -213,7 +216,7 @@ export class Parser {
     } else if (token.kind === 'Product') {
       return this.parseProductRule();
     } else {
-      throw new Error(`Expected 'branch' or 'product', but got ${token.kind}`);
+      throw new Error(`Expected 'branch' or 'product', but got ${token.kind} at position ${this.position}`);
     }
   }
 
@@ -285,7 +288,7 @@ export class Parser {
         const typeRef = this.parseNonTerminal();
         return { kind: 'Field', name, type: typeRef, note: null };
     } else {
-        throw new Error(`Expected Identifier or StringLiteral in product item, got ${token.kind}`);
+        throw new Error(`Expected Identifier or StringLiteral in product item, got ${token.kind} at position ${this.position}`);
     }
   }
 
