@@ -3,7 +3,7 @@ import {
     GrammarIR, RuleIR, ElementIR,
     ProductRuleIR, BranchRuleIR,
     HookIR
-} from './analyzer';
+} from './analyze';
 
 
 const TYPE_DEFINITION_PREFIX = `\
@@ -28,9 +28,11 @@ use crate::compiler::arena::{ArenaBox, ArenaIter, Arena};
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::compiler::symbol::Symbol;
 use crate::parser::errors::ParseErr;
-use crate::parser::generated_ast::*;
 use crate::parser::parser::BaseParser;
 use crate::tokenizer::tokens::{Token, Literal, Keyword, Operator, Delimiter};
+
+#[allow(clippy::wildcard_imports)] // because of no knowledge of all ast types
+use crate::parser::generated_ast::*;
 
 `;
 
@@ -49,9 +51,11 @@ const TOKENS_MAP = ((): Map<string, string> => {
 
 export class RustParserGenerator {
     private ir: GrammarIR;
+    private unique_id: number;
 
     constructor(ir: GrammarIR) {
         this.ir = ir;
+        this.unique_id = 0;
     }
 
     public generate(): [string, string] {
@@ -114,10 +118,10 @@ ${fields}
         for (const [_, rule] of this.ir.rules) {
             switch (rule.kind) {
                 case "Branch":
-                    methods.push(this.generateBranchMethod(rule));
+                    methods.push(`#[inline]\n${this.generateBranchMethod(rule)}`);
                     break;
                 case "Product":
-                    methods.push(this.generateProductMethod(rule));
+                    methods.push(`#[inline]\n${this.generateProductMethod(rule)}`);
                     break;
             }
         }
@@ -128,8 +132,9 @@ ${fields}
         }
 
         return `\
+#[allow(non_snake_case)]
 pub trait GeneratedParser: BaseParser + Sized {
-${methods.join('\n')}
+${methods.join('\n\n')}
 }
 
 `;
@@ -141,17 +146,69 @@ ${methods.join('\n')}
 
     private generateBranchMethod(rule: BranchRuleIR): string {
         // TODO: implement this
-        
-        // A. Try parsing one peek (L1 grammar)
 
-        // B. Only if A failed, start LL(k) grammar analysis
-        
+        // A. Try parsing one peek (L1 grammar)
+        const firstChars = rule.variants.map(variant => {
+            let exceptionManualRule: ProductRuleIR | null = null;
+
+            const getFirstTerminalChar = (ir: RuleIR): string => {
+                if (ir.kind === 'Branch') {
+                    const rule = this.ir.rules.get(ir.variants[0].targetRule);
+                    if (rule === undefined) {
+                        throw new Error(`Unknown rule: ${rule}`);
+                    }
+                    return getFirstTerminalChar(rule);
+                } else {
+                    // ir.kind is 'Product'
+                    if (ir.elements.length === 0) {
+                        exceptionManualRule = ir;
+                        return "";
+                    }
+                    if (ir.elements[0].kind === "Terminal") {
+                        return ir.elements[0].value;
+                    } else {
+                        return getFirstTerminalChar(this.getRuleFromName(ir.elements[0].targetRule))
+                    }
+                }
+            };
+            const firstChar = getFirstTerminalChar(this.getRuleFromName(variant.targetRule));
+            if (exceptionManualRule !== null) {
+                const rule = exceptionManualRule as ProductRuleIR;
+                return `_ if self.parse_${rule.rustName}().is_ok()`;
+            }
+            return firstChar;
+        });
+
+        if (Array.from(new Set(firstChars)).length === firstChars.length) {
+            // there is no same first character, so succeed to LL(1) parsing.
+            const branches = firstChars.map((firstChar, i) => {
+                const targetRuleRustName = this.getRuleFromName(rule.variants[i].targetRule).rustName;
+                const rustVariantName = rule.variants[i].rustVariantName;
+                return `\
+            Some(${TOKENS_MAP.get(firstChar)!}) => Ok(${rule.rustName}::${rustVariantName}(self.parse_${targetRuleRustName}()?)),`;
+            })
+            return `\
+        fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
+            match self.peek_n::<1>() {
+${branches.join("\n")}
+                _ => Self::Error,
+            }
+        }`
+        }
+
+        // B. Only if A failed, start LL(2) grammar analysis
+
+        // C. Only if A and B failed, start LL(k) grammar analysis
+
+        return `\
+    fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
+        todo!()
+    }`
     }
 
     private generateProductMethod(rule: ProductRuleIR): string {
         const functionCalls: string[] = [];
         for (const [_, element] of rule.elements.entries()) {
-            // TODO: implement hook calling logic
             switch (element.kind) {
                 case "NonTerminal":
                     const ruleName = element.targetRule;
@@ -159,27 +216,50 @@ ${methods.join('\n')}
                     if (element.isBoxed) {
                         typeStr = `ArenaBox<${typeStr}>`;
                     }
-                    functionCalls.push(`\
+                    switch (element.modifier) {
+                        case "List":
+                            functionCalls.push(`\
+        let ${element.rustFieldName} = self.alloc_iter(move || Self::parse_${ruleName}(&mut self));`);
+                            break;
+                        case "Option":
+                            functionCalls.push(`\
+        let ${element.rustFieldName} = self.parse_${ruleName}().ok();`);
+                            break;
+                        case "None":
+                            functionCalls.push(`\
         let ${element.rustFieldName} = self.parse_${ruleName}()?;`);
+                            break;
+                    }
+
                     break;
                 case "Terminal":
                     const tokenType = TOKENS_MAP.get(element.value);
                     if (tokenType === undefined) {
                         throw new Error(`Unknown token type: ${element.value}`);
                     }
+                    if (tokenType.includes("$")) {
+                        throw new Error(`Token type with $..$ must parse manually. \nCreate new altanative for wrapping and implement by yourself.`)
+                    }
                     functionCalls.push(`\
-        self.expect_token("${tokenType}")?;`);
+        self.expect_token(${tokenType})?;`);
                     break;
             }
         }
         return `\
     fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
 ${functionCalls.join('\n')}
+        Ok(${rule.rustName} {
+${rule.elements
+                .filter((e): e is Extract<ElementIR, { kind: 'NonTerminal' }> => e.kind === 'NonTerminal')
+                .map(v => (`    ${v.rustFieldName}`))}
+        })
     }`;
     }
 
     private generateHookMethod(rule: HookIR): string {
         // TODO: implement hook definition
+        return `\
+    fn ${rule.methodName}(&mut self) -> Result<${rule.returnType}, Self::Error>;`
     }
 
     // -------------------------------------------------------------------------
@@ -192,6 +272,19 @@ ${functionCalls.join('\n')}
             case 'Option': return `Option<${ruleName}>`;
             case 'None': return ruleName;
         }
+    }
+
+    private makeUniqueName(name: string): string {
+        this.unique_id += 1;
+        return `${name}_${this.unique_id}`;
+    }
+
+    private getRuleFromName(name: string): RuleIR {
+        const ret = this.ir.rules.get(name);
+        if (ret === undefined) {
+            throw new Error(`Unknown rule: ${name}`);
+        }
+        return ret;
     }
 }
 
