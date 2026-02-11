@@ -275,7 +275,11 @@ export class GrammarAnalyzer {
                     const elem = rule.elements[i];
 
                     if (elem.kind === 'NonTerminal') {
-                        const targetFollow = this.ir.analysis.followSets.get(elem.targetRule)!;
+                        const targetFollow = this.ir.analysis.followSets.get(elem.targetRule);
+                        if (targetFollow === undefined) {
+                            throw new Error(`Follow set for ${elem.targetRule} not found`);
+                        }
+
                         const originalSize = targetFollow.size;
 
                         trailer.forEach(t => targetFollow.add(t));
