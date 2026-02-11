@@ -16,6 +16,8 @@
 use crate::compiler::collections::ASTContainer;
 use std::{
     alloc::{alloc, Layout},
+};
+use core::{
     cell::{Cell, UnsafeCell},
     marker::PhantomData,
     ops::Deref,
