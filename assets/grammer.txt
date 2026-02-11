@@ -8,13 +8,10 @@ branch TopLevelDeclaration {
 
 // 関数定義
 product Function {
-    "fn"
-    name: Identifier
-    "("
-    params: *Parameter with "comma_separated_params"
-    ")"
-    return_type: ?TypeLiteral
-    body: BlockExpression
+    "fn" name: Identifier "(" 
+        params: *Parameter with "comma_separated_params"
+    ")" return_type: ?TypeLiteral
+        body: BlockExpression
 }
 
 product Parameter {
@@ -23,8 +20,8 @@ product Parameter {
 
 product BlockExpression {
     "{"
-    statements: *Statement
-    final_expr: ?Expression
+        statements: *Statement
+        final_expr: ?Expression
     "}"
 }
 
@@ -40,32 +37,25 @@ product ExpressionStmt {
 }
 
 product Assignment {
-    "let" // assignment_keywordを具体化
-    name: Identifier
-    "="
-    value: Expression
-    ";"
+    "let" name: Identifier "=" value: Expression ";"
 }
 
 product Return {
-    "return"
-    value: ?Expression
-    ";"
+    "return" value: ?Expression ";"
 }
 
 branch Expression {
-    Literal
+    LiteralAST
     FunctionCall
 }
 
-product Literal {
-    value: StringLiteral // または IntLiteral
+product LiteralAST {
+    value: StringLiteral
 }
 
 product FunctionCall {
-    name: Identifier
-    "("
-    args: *Expression with "comma_separated_exprs"
+    name: Identifier "("
+        args: *Expression with "comma_separated_exprs"
     ")"
 }
 
@@ -78,9 +68,11 @@ product IntType {
 }
 
 product Identifier {
-    "#identifier" with "identifier"
+    _a1: _a1 with "identifier"
 }
 
 product StringLiteral {
-    "#string" with "string_literal"
+    _a1: _a1 with "string_literal"
 }
+
+product _a1 {}
