@@ -2,7 +2,7 @@ import fs from "fs";
 import { spawnSync } from "child_process";
 
 import { parse } from "./bnf/parse";
-import { analyze } from "./bnf/analyzer";
+import { analyze } from "./bnf/analyze";
 import { generateParser } from "./bnf/gen";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
