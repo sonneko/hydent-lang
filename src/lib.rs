@@ -2,10 +2,10 @@
 //! This crate contains the core components of the compiler,
 //! including the tokenizer, parser, and various compiler passes.
 
-#![warn(clippy::all, rust_2018_idioms)]
-#![warn(clippy::empty_docs)]
-#![warn(clippy::missing_docs_in_private_items)]
-#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
+#![deny(clippy::all, rust_2018_idioms)]
+#![deny(clippy::empty_docs)]
+#![deny(clippy::missing_docs_in_private_items)]
+#![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![allow(unused)]
 
 // Each module is a pass of the compiler
