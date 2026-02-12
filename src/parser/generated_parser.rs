@@ -7,7 +7,7 @@
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::compiler::symbol::Symbol;
-use crate::parser::errors::ParseErr;
+use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parser::BaseParser;
 use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Token};
 
@@ -18,7 +18,7 @@ use crate::parser::generated_ast::*;
 pub trait GeneratedParser: BaseParser + Sized {
     #[inline]
     fn parse_Module(&mut self) -> Result<Module, Self::Error> {
-        let declarations = self.alloc_iter(move || Self::parse_TopLevelDeclaration(&mut self));
+        let declarations = self.repeat(|this: &mut Self| this.parse_TopLevelDeclaration());
         Ok(Module { declarations })
     }
 
@@ -28,7 +28,11 @@ pub trait GeneratedParser: BaseParser + Sized {
             Some(Token::Keyword(Keyword::Fn)) => {
                 Ok(TopLevelDeclaration::Function(self.parse_Function()?))
             }
-            _ => Self::Error,
+            _ => Err(Self::Error::create(
+                self.get_errors_arena(),
+                [Token::Keyword(Keyword::Fn)],
+                self.peek_n::<1>(),
+            )),
         }
     }
 
@@ -37,7 +41,7 @@ pub trait GeneratedParser: BaseParser + Sized {
         self.expect_token(Token::Keyword(Keyword::Fn))?;
         let name = self.parse_Identifier()?;
         self.expect_token(Token::Delimiter(Delimiter::LeftParen))?;
-        let params = self.alloc_iter(move || Self::parse_Parameter(&mut self));
+        let params = self.repeat(|this: &mut Self| this.parse_Parameter());
         self.expect_token(Token::Delimiter(Delimiter::RightParen))?;
         let return_type = self.parse_TypeLiteral().ok();
         let body = self.parse_BlockExpression()?;
@@ -58,7 +62,7 @@ pub trait GeneratedParser: BaseParser + Sized {
     #[inline]
     fn parse_BlockExpression(&mut self) -> Result<BlockExpression, Self::Error> {
         self.expect_token(Token::Delimiter(Delimiter::LeftBrace))?;
-        let statements = self.alloc_iter(move || Self::parse_Statement(&mut self));
+        let statements = self.repeat(|this: &mut Self| this.parse_Statement());
         let final_expr = self.parse_Expression().ok();
         self.expect_token(Token::Delimiter(Delimiter::RightBrace))?;
         Ok(BlockExpression {
@@ -75,7 +79,14 @@ pub trait GeneratedParser: BaseParser + Sized {
                 Ok(Statement::Assignment(self.parse_Assignment()?))
             }
             Some(Token::Keyword(Keyword::Return)) => Ok(Statement::Return(self.parse_Return()?)),
-            _ => Self::Error,
+            _ => Err(Self::Error::create(
+                self.get_errors_arena(),
+                [
+                    Token::Keyword(Keyword::Let),
+                    Token::Keyword(Keyword::Return),
+                ],
+                self.peek_n::<1>(),
+            )),
         }
     }
 
@@ -119,7 +130,7 @@ pub trait GeneratedParser: BaseParser + Sized {
     fn parse_FunctionCall(&mut self) -> Result<FunctionCall, Self::Error> {
         let name = self.parse_Identifier()?;
         self.expect_token(Token::Delimiter(Delimiter::LeftParen))?;
-        let args = self.alloc_iter(move || Self::parse_Expression(&mut self));
+        let args = self.repeat(|this: &mut Self| this.parse_Expression());
         self.expect_token(Token::Delimiter(Delimiter::RightParen))?;
         Ok(FunctionCall { name, args })
     }
@@ -128,7 +139,11 @@ pub trait GeneratedParser: BaseParser + Sized {
     fn parse_TypeLiteral(&mut self) -> Result<TypeLiteral, Self::Error> {
         match self.peek_n::<1>() {
             Some(Token::Keyword(Keyword::Int)) => Ok(TypeLiteral::IntType(self.parse_IntType()?)),
-            _ => Self::Error,
+            _ => Err(Self::Error::create(
+                self.get_errors_arena(),
+                [Token::Keyword(Keyword::Int)],
+                self.peek_n::<1>(),
+            )),
         }
     }
 
@@ -139,27 +154,12 @@ pub trait GeneratedParser: BaseParser + Sized {
     }
 
     #[inline]
-    fn parse_Identifier(&mut self) -> Result<Identifier, Self::Error> {
-        let a1 = self.parse__a1()?;
-        Ok(Identifier { a1 })
-    }
+    fn parse_Identifier(&mut self) -> Result<Identifier, Self::Error>;
 
     #[inline]
-    fn parse_StringLiteral(&mut self) -> Result<StringLiteral, Self::Error> {
-        let a1 = self.parse__a1()?;
-        Ok(StringLiteral { a1 })
-    }
-
-    #[inline]
-    fn parse_A1(&mut self) -> Result<A1, Self::Error> {
-        Ok(A1 {})
-    }
+    fn parse_StringLiteral(&mut self) -> Result<StringLiteral, Self::Error>;
 
     fn comma_separated_params(&mut self) -> Result<ArenaIter<Parameter>, Self::Error>;
 
     fn comma_separated_exprs(&mut self) -> Result<ArenaIter<Expression>, Self::Error>;
-
-    fn identifier(&mut self) -> Result<A1, Self::Error>;
-
-    fn string_literal(&mut self) -> Result<A1, Self::Error>;
 }

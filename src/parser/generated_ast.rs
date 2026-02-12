@@ -83,15 +83,6 @@ pub enum TypeLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct IntType {}
 
-#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct Identifier {
-    pub a1: _a1,
-}
+pub use crate::parser::manual_ast::Identifier;
 
-#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct StringLiteral {
-    pub a1: _a1,
-}
-
-#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct A1 {}
+pub use crate::parser::manual_ast::StringLiteral;

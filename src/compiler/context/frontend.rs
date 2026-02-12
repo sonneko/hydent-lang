@@ -13,7 +13,8 @@ use crate::compiler::context::Mergeble;
 pub struct CompilerFrontendContext<'ctx> {
     pub source: SourceHolder<'ctx>,
     pub symbol_factory: SymbolFactory<'ctx>,
-    pub arena: &'ctx Arena,
+    pub ast_arena: &'ctx Arena,
+    pub errors_arena: &'ctx Arena,
 }
 
 /// Implements the `Mergeble` trait for `CompilerFrontendContext`.
@@ -70,12 +71,17 @@ impl<'ctx> CompilerFrontendContext<'ctx> {
     /// # Returns
     ///
     /// A new `CompilerFrontendContext` instance.
-    pub fn new(source: &'ctx str, arena: &'ctx Arena) -> CompilerFrontendContext<'ctx> {
+    pub fn new(
+        source: &'ctx str,
+        ast_arena: &'ctx Arena,
+        errors_arena: &'ctx Arena,
+    ) -> CompilerFrontendContext<'ctx> {
         let source_holder = SourceHolder::new(source);
         Self {
             source: source_holder.clone(),
             symbol_factory: SymbolFactory::new(source_holder),
-            arena: arena,
+            ast_arena,
+            errors_arena,
         }
     }
 }

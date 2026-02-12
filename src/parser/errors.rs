@@ -1,9 +1,22 @@
+use crate::compiler::arena::{Arena, ArenaIter};
 use crate::{diagnostic::CompilerDiagnostic, tokenizer::tokens::Token};
 
-pub enum ParseErr {
-    UnexpectedEndOfFile,
-    UnexpectedToken(Token),
-    ExpectIdentifier,
+pub struct ParseErr {
+    expected: ArenaIter<Token>,
+    found: Option<Token>,
+}
+
+pub trait IParseErr {
+    fn create<const N: usize>(arena: &Arena, expected: [Token; N], found: Option<&Token>) -> Self;
+}
+
+impl IParseErr for ParseErr {
+    fn create<const N: usize>(arena: &Arena, expected: [Token; N], found: Option<&Token>) -> Self {
+        Self {
+            expected: arena.alloc_slice(expected),
+            found: found.copied(),
+        }
+    }
 }
 
 impl std::fmt::Display for ParseErr {
