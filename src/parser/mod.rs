@@ -4,7 +4,7 @@ use crate::compiler::{
 };
 use crate::diagnostic::CompilerDiagnostic;
 use crate::parser::{errors::ParseErr, parser::Parser};
-use crate::tokenizer::{tokenizer::Tokenizer, tokens::Token};
+use crate::tokenizer::tokenizer::Tokenizer;
 
 pub mod ast;
 pub mod base_parser;

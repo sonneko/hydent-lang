@@ -19,7 +19,10 @@ pub struct Tokenizer<'src, 'ctx> {
 }
 
 impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
-    pub fn new(input: &'src str, symbol_factory: &'ctx mut SymbolFactory<'src>) -> Tokenizer<'src, 'ctx> {
+    pub fn new(
+        input: &'src str,
+        symbol_factory: &'ctx mut SymbolFactory<'src>,
+    ) -> Tokenizer<'src, 'ctx> {
         Self {
             current_pos: 0,
             input: input.as_bytes(),

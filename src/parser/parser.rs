@@ -1,12 +1,9 @@
-use std::iter::Peekable;
-
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
 use crate::compiler::context::frontend::CompilerFrontendContext;
-use crate::compiler::symbol::Symbol;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::generated_ast::Module;
 use crate::parser::generated_parser::GeneratedParser;
-use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Token};
+use crate::tokenizer::tokens::Token;
 use crate::utility::peekable_n::PeekableN;
 
 pub trait BaseParser {
@@ -47,9 +44,7 @@ where
         &mut self,
         mut hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T> {
-        self.ctx.ast_arena.alloc_with(|| {
-            hook(self).ok()
-        })
+        self.ctx.ast_arena.alloc_with(|| hook(self).ok())
     }
 
     fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error> {

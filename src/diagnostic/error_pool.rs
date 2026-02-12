@@ -1,5 +1,3 @@
-use std::{fmt::Write, path::Display};
-
 use crate::diagnostic::CompilerDiagnostic;
 
 pub struct ErrorPool {
