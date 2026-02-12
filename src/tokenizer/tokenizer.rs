@@ -12,14 +12,14 @@ use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, T
 
 pub type Return<T> = Result<T, TokenizeErr>;
 
-pub struct Tokenizer<'src> {
+pub struct Tokenizer<'src, 'ctx> {
     current_pos: usize,
     input: &'src [u8],
-    symbol_factory: &'src mut SymbolFactory<'src>,
+    symbol_factory: &'ctx mut SymbolFactory<'src>,
 }
 
-impl<'src> Tokenizer<'src> {
-    pub fn new(input: &'src str, symbol_factory: &'src mut SymbolFactory<'src>) -> Tokenizer<'src> {
+impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
+    pub fn new(input: &'src str, symbol_factory: &'ctx mut SymbolFactory<'src>) -> Tokenizer<'src, 'ctx> {
         Self {
             current_pos: 0,
             input: input.as_bytes(),
@@ -27,7 +27,7 @@ impl<'src> Tokenizer<'src> {
         }
     }
 
-    pub fn tokenize(mut self: Tokenizer<'src>) -> Return<Vec<Token>> {
+    pub fn tokenize(mut self) -> Return<Vec<Token>> {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // 投機的なアロケーション
 
         while let Some(b) = self.peek() {
