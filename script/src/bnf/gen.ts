@@ -27,7 +27,7 @@ const PARSER_PREFIX = `\
 use crate::compiler::arena::{ArenaBox, ArenaIter, Arena};
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::compiler::symbol::Symbol;
-use crate::parser::errors::ParseErr;
+use crate::parser::errors::{ParseErr, IParseErr};
 use crate::parser::parser::BaseParser;
 use crate::tokenizer::tokens::{Token, Literal, Keyword, Operator, Delimiter};
 
@@ -88,7 +88,7 @@ ${variants}
                 // Product
                 if (rule.elements === undefined) {
                     code.push(`
-use crate::parser::maual_ast::${rule.rustName};`);
+pub use crate::parser::manual_ast::${rule.rustName};`);
                 } else {
                     const fields = rule.elements
                         .filter((e): e is Extract<ElementIR, { kind: 'NonTerminal' }> => e.kind === 'NonTerminal')
@@ -195,16 +195,17 @@ ${methods.join('\n\n')}
         if (Array.from(new Set(firstChars)).length === firstChars.length) {
             // there is no same first character, so succeed to LL(1) parsing.
             const branches = firstChars.map((firstChar, i) => {
-                const targetRuleRustName = this.getRuleFromName(rule.variants[i].targetRule).rustName;
+                const targetRuleRustName = this.getRuleFromName(rule.variants[i].targetRule)!.rustName;
                 const rustVariantName = rule.variants[i].rustVariantName;
                 return `\
             Some(${TOKENS_MAP.get(firstChar)!}) => Ok(${rule.rustName}::${rustVariantName}(self.parse_${targetRuleRustName}()?)),`;
-            })
+            });
+            const expected = firstChars.map(char => TOKENS_MAP.get(char)!).filter(v => v !== undefined).filter(v => v.trim() !== "");
             return `\
         fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
             match self.peek_n::<1>() {
 ${branches.join("\n")}
-                _ => Self::Error,
+                _ => Err(Self::Error::create(self.get_errors_arena(), [${expected.join(", ")}], self.peek_n::<1>())),
             }
         }`
         }
@@ -236,7 +237,7 @@ ${branches.join("\n")}
                     switch (element.modifier) {
                         case "List":
                             functionCalls.push(`\
-        let ${element.rustFieldName} = self.alloc_iter(move || Self::parse_${ruleName}(&mut self));`);
+        let ${element.rustFieldName} = self.repeat(|this: &mut Self| this.parse_${ruleName}());`);
                             break;
                         case "Option":
                             functionCalls.push(`\
