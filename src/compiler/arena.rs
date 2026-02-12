@@ -14,15 +14,13 @@
 //! Be sure that `ArenaBox` and `ArenaIter` drop before `Arena` drop.
 
 use crate::compiler::collections::ASTContainer;
-use std::{
-    alloc::{alloc, Layout},
-};
 use core::{
     cell::{Cell, UnsafeCell},
     marker::PhantomData,
     ops::Deref,
     ptr::NonNull,
 };
+use std::alloc::{alloc, Layout};
 
 static ALIGNMENT: usize = 64;
 
@@ -75,7 +73,7 @@ where
                 self.index = 0;
             }
             let ptr =
-                unsafe { (*(*self.pages_list_ptr).get())[self.page].add(self.index) } as *mut T;
+                unsafe { (*(*self.pages_list_ptr).get()).as_ptr().add(self.page).add(self.index) } as *mut T;
             self.index += self.size;
             Some(unsafe { *ptr })
         }
@@ -122,7 +120,7 @@ impl Arena {
             self.grow();
             start = 0;
         }
-        let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(start) } as *mut T;
+        let ptr = unsafe { (*self.ptrs.get()).as_ptr().add(self.page_index.get()).add(start) } as *mut T;
         self.index.set(start + size);
         unsafe {
             ptr.write(value);
@@ -156,7 +154,7 @@ impl Arena {
 
         for value in value {
             if self.index.get() + size < Self::BLOCK_SIZE {
-                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()].add(self.index.get()) }
+                let ptr = unsafe { (*self.ptrs.get()).as_ptr().add(self.page_index.get()).add(self.index.get()) }
                     as *mut T;
                 self.index.set(self.index.get() + size);
                 unsafe {
@@ -164,7 +162,7 @@ impl Arena {
                 }
             } else {
                 self.grow();
-                let ptr = unsafe { (*self.ptrs.get())[self.page_index.get()] } as *mut T;
+                let ptr = unsafe { (*self.ptrs.get()).as_ptr().add(self.page_index.get()) } as *mut T;
                 self.index.set(size);
                 unsafe { ptr.write(value) }
             }
@@ -184,6 +182,10 @@ impl Arena {
     pub fn alloc_with<T: Copy>(&self, f: impl FnMut() -> Option<T>) -> ArenaIter<T> {
         let iter = std::iter::from_fn(f);
         self.alloc_iter(iter)
+    }
+
+    pub fn alloc_slice<T: Copy, const N: usize>(&self, slice: [T; N]) -> ArenaIter<T> {
+        self.alloc_iter(slice.into_iter())
     }
 
     fn grow(&self) {
