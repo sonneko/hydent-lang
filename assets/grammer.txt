@@ -6,7 +6,6 @@ branch TopLevelDeclaration {
     Function
 }
 
-// 関数定義
 product Function {
     "fn" name: Identifier "(" 
         params: *Parameter with "comma_separated_params"
