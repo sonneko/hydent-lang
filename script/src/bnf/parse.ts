@@ -103,10 +103,17 @@ export class Lexer {
         continue;
       }
 
-      // skip comment
-      const comment = this.input.slice(this.position).match(/^\/\/.*\n/);
-      if (comment) {
-        this.position += comment[0].length;
+      // skip line comment
+      const lineComment = this.input.slice(this.position).match(/^\/\/.*\n/);
+      if (lineComment) {
+        this.position += lineComment[0].length;
+        continue;
+      }
+
+      // skip block comment
+      const blockComment = this.input.slice(this.position).match(/^\/\*.*\*\//);
+      if (blockComment) {
+        this.position += blockComment[0].length;
         continue;
       }
 
