@@ -4,10 +4,12 @@
 //  In "/src/parser/generated_parser.rs"
 // ==========================================
 
-use crate::compiler::arena::ArenaIter;
-use crate::parser::errors::IParseErr;
+use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
+use crate::compiler::context::frontend::CompilerFrontendContext;
+use crate::compiler::symbol::Symbol;
+use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parser::BaseParser;
-use crate::tokenizer::tokens::{Delimiter, Keyword, Operator, Token};
+use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Token};
 
 #[allow(clippy::wildcard_imports)] // because of no knowledge of all ast types
 use crate::parser::generated_ast::*;
@@ -151,8 +153,10 @@ pub trait GeneratedParser: BaseParser + Sized {
         Ok(IntType {})
     }
 
+    #[inline]
     fn parse_Identifier(&mut self) -> Result<Identifier, Self::Error>;
 
+    #[inline]
     fn parse_StringLiteral(&mut self) -> Result<StringLiteral, Self::Error>;
 
     fn comma_separated_params(&mut self) -> Result<ArenaIter<Parameter>, Self::Error>;

@@ -4,7 +4,7 @@
 //  In "/src/parser/generated_ast.rs"
 // ==========================================
 
-use crate::compiler::arena::ArenaIter;
+use crate::compiler::arena::{ArenaBox, ArenaIter};
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct Module {
