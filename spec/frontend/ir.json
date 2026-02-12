@@ -291,6 +291,10 @@
     "Identifier": {
       "kind": "Product",
       "rustName": "Identifier"
+    },
+    "StringLiteral": {
+      "kind": "Product",
+      "rustName": "StringLiteral"
     }
   },
   "hooks": {
@@ -304,82 +308,6 @@
       "returnType": "ArenaIter<Expression>",
       "doc": "Hook for field 'args' in rule 'FunctionCall'"
     }
-  },
-  "analysis": {
-    "firstSets": {
-      "Module": [
-        "fn"
-      ],
-      "TopLevelDeclaration": [
-        "fn"
-      ],
-      "Function": [
-        "fn"
-      ],
-      "Parameter": [],
-      "BlockExpression": [
-        "{"
-      ],
-      "Statement": [
-        "let",
-        "return"
-      ],
-      "ExpressionStmt": [],
-      "Assignment": [
-        "let"
-      ],
-      "Return": [
-        "return"
-      ],
-      "Expression": [],
-      "LiteralAST": [],
-      "FunctionCall": [],
-      "TypeLiteral": [
-        "Int"
-      ],
-      "IntType": [
-        "Int"
-      ],
-      "Identifier": []
-    },
-    "followSets": {
-      "Module": [],
-      "TopLevelDeclaration": [],
-      "Function": [],
-      "Parameter": [
-        ")"
-      ],
-      "BlockExpression": [],
-      "Statement": [
-        "}"
-      ],
-      "ExpressionStmt": [],
-      "Assignment": [],
-      "Return": [],
-      "Expression": [
-        "}",
-        ";"
-      ],
-      "LiteralAST": [],
-      "FunctionCall": [],
-      "TypeLiteral": [
-        "{"
-      ],
-      "IntType": [],
-      "Identifier": [
-        "(",
-        ")",
-        "="
-      ]
-    },
-    "isNullable": {
-      "Module": true
-    },
-    "recursiveRules": [],
-    "syncPoints": [
-      "}",
-      ";"
-    ]
   },
   "terminals": [
     "fn",
