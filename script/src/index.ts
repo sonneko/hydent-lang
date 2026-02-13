@@ -1,5 +1,4 @@
 import fs from "fs";
-import { spawnSync } from "child_process";
 
 import { parse } from "./bnf/parse";
 import { analyze } from "./bnf/analyze";
@@ -22,10 +21,10 @@ function main() {
     const analysis = analyze(ast);
     fs.writeFileSync(IR_FILE_PATH, JSON.stringify(analysis, (_, value) => {
         if (value instanceof Map) {
-            return Object.fromEntries(value); // または Array.from(value.entries())
+            return Object.fromEntries(value);
         }
         if (value instanceof Set) {
-            return Array.from(value); // または [...value]
+            return Array.from(value);
         }
         return value;
     }, 2), "utf8");
@@ -35,7 +34,6 @@ function main() {
     const parser = generateParser(analysis);
     fs.writeFileSync(AST_TYPE_FILE_PATH, parser[0], "utf8");
     fs.writeFileSync(PARSER_FILE_PATH, parser[1], "utf8");
-    spawnSync("cargo", ["fmt", "--", AST_TYPE_FILE_PATH, PARSER_FILE_PATH], { stdio: "inherit" });
     console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
 
 }
