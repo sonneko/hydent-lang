@@ -21,5 +21,6 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 21
+          sudo apt-get install -y libpolly-21-dev
     - name: Build
       run: cargo build --verbose
