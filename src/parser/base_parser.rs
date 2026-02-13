@@ -1,1 +1,78 @@
+use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
+use crate::parser::ast::ASTNode;
+use crate::parser::errors::{IParseErr, ParseErr};
+use crate::parser::parser::Parser;
+use crate::tokenizer::tokens::Token;
 
+pub trait BaseParser {
+    type Error: IParseErr;
+    fn peek_n<const N: usize>(&self) -> Option<&Token>;
+    fn consume_token(&mut self) -> Option<Token>;
+    fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error>;
+    fn repeat<T: Copy + ASTNode>(
+        &mut self,
+        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> ArenaIter<T>;
+    fn alloc_box<T: Copy>(&mut self, item: T) -> ArenaBox<T>;
+    fn get_errors_arena(&self) -> &Arena;
+    fn report_error(&self, error: Self::Error);
+}
+
+impl<I> BaseParser for Parser<'_, I>
+where
+    I: Iterator<Item = Token>,
+{
+    type Error = ParseErr;
+    fn alloc_box<T: Copy>(&mut self, value: T) -> ArenaBox<T> {
+        self.ctx.ast_arena.alloc(value)
+    }
+
+    fn peek_n<const N: usize>(&self) -> Option<&Token> {
+        self.tokens.peek_n::<N>()
+    }
+
+    fn consume_token(&mut self) -> Option<Token> {
+        self.tokens.next()
+    }
+
+    fn get_errors_arena(&self) -> &Arena {
+        self.ctx.errors_arena
+    }
+
+    fn repeat<T: Copy + ASTNode>(
+        &mut self,
+        mut hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> ArenaIter<T> {
+        self.ctx.ast_arena.alloc_with(|| match hook(self) {
+            Ok(value) => Some(value),
+            Err(err) => {
+                self.report_error(err);
+                let ret = Some(T::get_error_situation(err)?);
+                while !T::is_sync_point(self.peek_n::<1>()) {
+                    self.consume_token();
+                }
+                self.consume_token();
+                ret
+            }
+        })
+    }
+
+    fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error> {
+        let found = self.consume_token();
+        if let Some(found) = found {
+            if found == expected {
+                Ok(())
+            } else {
+                Err(ParseErr::create(
+                    self.get_errors_arena(),
+                    [expected],
+                    Some(&found),
+                ))
+            }
+        } else {
+            Err(ParseErr::create(self.get_errors_arena(), [expected], None))
+        }
+    }
+
+    fn report_error(&self, err: Self::Error) {}
+}

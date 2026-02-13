@@ -7,6 +7,7 @@ use crate::utility::hashable_float::HashableFloat;
 
 /// Represents the different types of tokens that can be produced by the tokenizer.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Token {
     Keyword(Keyword),
     Identifier(Symbol),
@@ -19,6 +20,7 @@ pub enum Token {
 
 /// Represents the keywords in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Keyword {
     DoubleFloat,
     DoubleInt,
@@ -70,6 +72,7 @@ pub enum Keyword {
 
 /// Represents various literal values in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Literal {
     IntegerLiteral(i32),
     FloatLiteral(HashableFloat<f32>),
@@ -82,6 +85,7 @@ pub enum Literal {
 
 /// Represents the operators in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Operator {
     RangeInclusive,     // ..=
     FatArrow,           // =>
@@ -123,6 +127,7 @@ pub enum Operator {
 
 /// Represents the delimiters in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Delimiter {
     Semicolon,    // ;
     LeftBrace,    // {
@@ -136,6 +141,7 @@ pub enum Delimiter {
 
 /// Represents the different types of comments in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
+#[repr(u8)]
 pub enum Comment {
     DocComment(Span), // `/// ...`
     LineComment,      // `// ...`
