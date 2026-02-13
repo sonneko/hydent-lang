@@ -14,6 +14,7 @@ const TYPE_DEFINITION_PREFIX = `\
 // ==========================================
 
 use crate::compiler::arena::{ArenaIter, ArenaBox};
+use crate::parser::ast::ASTNode;
 
 `;
 
@@ -28,7 +29,7 @@ use crate::compiler::arena::{ArenaBox, ArenaIter, Arena};
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::compiler::symbol::Symbol;
 use crate::parser::errors::{ParseErr, IParseErr};
-use crate::parser::parser::BaseParser;
+use crate::parser::base_parser::BaseParser;
 use crate::tokenizer::tokens::{Token, Literal, Keyword, Operator, Delimiter};
 
 #[allow(clippy::wildcard_imports)] // because of no knowledge of all ast types
@@ -80,6 +81,11 @@ export class RustParserGenerator {
                     .join('\n');
 
                 code.push(`
+impl ASTNode for ${rule.rustName} {
+    fn follow_sets(&self) -> &[Self] {
+        
+    }
+}
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub enum ${rule.rustName} {
 ${variants}
@@ -102,6 +108,11 @@ pub use crate::parser::manual_ast::${rule.rustName};`);
                         .join('\n');
 
                     code.push(`
+impl ASTNode for ${rule.rustName} {
+    fn follow_sets(&self) -> &[Self] {
+        
+    }
+}
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct ${rule.rustName} {
 ${fields}
@@ -211,6 +222,7 @@ ${branches.join("\n")}
         }
 
         // B. Only if A failed, start LL(2) grammar analysis
+
 
         // C. Only if A and B failed, start LL(k) grammar analysis
 

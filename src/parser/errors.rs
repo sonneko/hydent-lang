@@ -1,6 +1,7 @@
 use crate::compiler::arena::{Arena, ArenaIter};
 use crate::{diagnostic::CompilerDiagnostic, tokenizer::tokens::Token};
 
+#[derive(Clone, Copy)]
 pub struct ParseErr {
     expected: ArenaIter<Token>,
     found: Option<Token>,
