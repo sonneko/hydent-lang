@@ -26,6 +26,7 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 21
           sudo apt-get install -y libpolly-21-dev
+          rm ./llvm.sh
 
     - name: setup git
       run: |
@@ -39,7 +40,7 @@ jobs:
       run: |
           mkdir -p ~/bench-final/data
           cp -r ./target/criterion/report/* ~/bench-final/ 2>/dev/null || true
-          cp -r ./target/criterion/data/* ~/bench-final/data/ 2>/dev/null || true
+          cp -r ./.git ~/bench-final/ 2>/dev/null || true
 
           git fetch origin
           if git checkout bench-results; then
