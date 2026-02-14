@@ -11,6 +11,8 @@ const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
 const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
 
 function main() {
+    fs.mkdirSync("../spec/frontend", { recursive: true });
+
     console.log("🤖 Generating AST...")
     const source = fs.readFileSync(BNF_FILE_PATH, "utf8");
     const ast = parse(source);
