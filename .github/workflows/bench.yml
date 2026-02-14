@@ -48,7 +48,7 @@ jobs:
             git checkout --orphan bench-results
           fi
 
-          git rm -rf . --ignore-unmatch
+          rm -rf ./* ./.*
           rm target -rf
 
           cp -r ~/bench-final/* .
