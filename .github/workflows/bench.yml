@@ -41,11 +41,11 @@ jobs:
           cp -r ./target/criterion/report/* ~/bench-output-temp/
 
           git fetch origin
-          git checkout gh-pages || git checkout --orphan gh-pages
+          git checkout bench-results || git checkout --orphan bench-results
 
           git rm -rf .
           cp -r ~/bench-output-temp/* .
 
           git add .
           git commit -m "[bot] update bench results" || echo "No changes to commit"
-          git push origin gh-pages
+          git push origin bench-results
