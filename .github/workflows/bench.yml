@@ -1,0 +1,51 @@
+name: Run Benchmarks and save
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: install llvm
+      run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 21
+          sudo apt-get install -y libpolly-21-dev
+
+    - name: setup git
+      run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    
+    - name: run benchmark
+      run: cargo bench
+
+    - name: save output
+      run: |
+          mkdir ~/bench-output-temp
+          cp -r ./target/criterion/report/* ~/bench-output-temp/
+
+          git fetch origin
+          git checkout gh-pages || git checkout --orphan gh-pages
+
+          git rm -rf .
+          cp -r ~/bench-output-temp/* .
+
+          git add .
+          git commit -m "[bot] update bench results" || echo "No changes to commit"
+          git push origin gh-pages

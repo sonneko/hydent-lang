@@ -4,8 +4,6 @@ version = "0.1.0"
 edition = "2021"
 description = "Compiler for hydent-lang"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 pest = "2.8.5"
 pest_derive = "2.8.5"
@@ -14,3 +12,10 @@ inkwell = { version = "0.8.0", features = ["llvm21-1"] }
 clap = { version = "4.5.57", features = ["derive"] }
 console = "0.16.2"
 indicatif = "0.18.3"
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name = "compiler"
+harness = false

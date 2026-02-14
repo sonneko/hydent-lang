@@ -6,7 +6,6 @@
 //! to process and transform the source code.
 
 pub mod arena;
-pub mod collections;
 pub mod context;
 pub mod query_sys;
 pub mod source_holder;

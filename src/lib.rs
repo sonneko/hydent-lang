@@ -9,21 +9,21 @@
 #![allow(unused)]
 
 // Each module is a pass of the compiler
-mod compiler;
-mod utility;
+pub mod compiler;
+pub mod utility;
 
-mod cli;
-mod dependency_resolution;
-mod diagnostic;
-mod doc_gen;
-mod hir_gen;
-mod hir_transform;
-mod linker;
-mod linter;
-mod llvmir_gen;
-mod mir_gen;
-mod mir_transform;
-mod name_resolution;
-mod parser;
-mod tokenizer;
-mod type_checker;
+pub mod cli;
+pub mod dependency_resolution;
+pub mod diagnostic;
+pub mod doc_gen;
+pub mod hir_gen;
+pub mod hir_transform;
+pub mod linker;
+pub mod linter;
+pub mod llvmir_gen;
+pub mod mir_gen;
+pub mod mir_transform;
+pub mod name_resolution;
+pub mod parser;
+pub mod tokenizer;
+pub mod type_checker;
