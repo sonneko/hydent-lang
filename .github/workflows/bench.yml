@@ -39,14 +39,20 @@ jobs:
     - name: save output
       run: |
           mkdir ~/bench-output-temp
-          cp -r ./target/criterion/report/* ~/bench-output-temp/
+          if [ -d "./target/criterion/report" ]; then
+            cp -r ./target/criterion/report/* ~/bench-output-temp/
+          else
+            echo "Benchmark report not found!"
+            exit 1
+          fi
 
           git fetch origin
           git checkout bench-results || git checkout --orphan bench-results
 
           git rm -rf .
+
           cp -r ~/bench-output-temp/* .
 
           git add .
-          git commit -m "[bot] update bench results" || echo "No changes to commit"
+          git commit -m "[bot] update bench results: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push origin bench-results
