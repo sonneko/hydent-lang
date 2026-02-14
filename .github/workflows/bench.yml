@@ -31,28 +31,29 @@ jobs:
       run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global http.postBuffer 524288000
     
     - name: run benchmark
       run: cargo bench
 
     - name: save output
       run: |
-          mkdir ~/bench-output-temp
-          if [ -d "./target/criterion/report" ]; then
-            cp -r ./target/criterion/report/* ~/bench-output-temp/
-          else
-            echo "Benchmark report not found!"
-            exit 1
-          fi
+          mkdir -p ~/bench-final/data
+          cp -r ./target/criterion/report/* ~/bench-final/ 2>/dev/null || true
+          cp -r ./target/criterion/data/* ~/bench-final/data/ 2>/dev/null || true
 
           git fetch origin
-          git checkout bench-results || git checkout --orphan bench-results
+          if git checkout bench-results; then
+            git pull origin bench-results
+          else
+            git checkout --orphan bench-results
+          fi
 
-          git rm -rf .
+          git rm -rf . --ignore-unmatch
 
-          cp -r ~/bench-output-temp/* .
+          cp -r ~/bench-final/* .
 
           git add .
+          
           git commit -m "[bot] update bench results: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+
           git push origin bench-results
