@@ -14,7 +14,10 @@ const TYPE_DEFINITION_PREFIX = `\
 // ==========================================
 
 use crate::compiler::arena::{ArenaIter, ArenaBox};
+use crate::tokenizer::tokens::Token;
 use crate::parser::ast::ASTNode;
+use crate::parser::ast::SyncPointBitMap;
+use crate::parser::errors::ParseErr;
 
 `;
 
@@ -82,13 +85,17 @@ export class RustParserGenerator {
 
                 code.push(`
 impl ASTNode for ${rule.rustName} {
-    fn follow_sets(&self) -> &[Self] {
-        
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(&[], false, false, false);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
+        Some(Self::Invalid)
     }
+
+    fn is_sync_point(token: Option<&Token>) -> bool { false }
 }
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub enum ${rule.rustName} {
 ${variants}
+    Invalid,
 }`);
             } else {
                 // Product
@@ -109,9 +116,11 @@ pub use crate::parser::manual_ast::${rule.rustName};`);
 
                     code.push(`
 impl ASTNode for ${rule.rustName} {
-    fn follow_sets(&self) -> &[Self] {
-        
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(&[], false, false, false);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
+        None
     }
+    fn is_sync_point(token: Option<&Token>) -> bool { false }
 }
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct ${rule.rustName} {
@@ -164,44 +173,7 @@ ${methods.join('\n\n')}
         // TODO: implement this
 
         // A. Try parsing one peek (L1 grammar)
-        const firstChars = rule.variants.map(variant => {
-            let exceptionManualRule: ProductRuleIR | null = null;
-
-            const getFirstTerminalChar = (ir: RuleIR): string => {
-                if (ir.kind === 'Branch') {
-                    const rule = this.ir.rules.get(ir.variants[0].targetRule);
-                    if (rule === undefined) {
-                        throw new Error(`Unknown rule: ${rule}`);
-                    }
-                    return getFirstTerminalChar(rule);
-                } else {
-                    // ir.kind is 'Product'
-                    if (ir.elements === undefined) {
-                        exceptionManualRule = ir;
-                        return "";
-                    }
-                    if (ir.elements[0].kind === "Terminal") {
-                        return ir.elements[0].value;
-                    } else {
-                        const rule = this.getRuleFromName(ir.elements[0].targetRule);
-                        if (rule) {
-                            return getFirstTerminalChar(rule);
-                        }
-                        exceptionManualRule = ir;
-                        return "";
-                    }
-                }
-            };
-            const rule = this.getRuleFromName(variant.targetRule);
-            if (exceptionManualRule !== null) {
-                const rule = exceptionManualRule as ProductRuleIR;
-                return `_ if self.parse_${rule.rustName}().is_ok()`;
-            } else if (rule === undefined) {
-                return "";
-            }
-            const firstChar = getFirstTerminalChar(rule);
-            return firstChar;
-        });
+        const firstChars: string[] = []; // TODO: calculate firstChars in analyze.ts
 
         if (Array.from(new Set(firstChars)).length === firstChars.length) {
             // there is no same first character, so succeed to LL(1) parsing.

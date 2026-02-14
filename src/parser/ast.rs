@@ -11,6 +11,36 @@ pub struct SyncPointBitMap {
     eof: bool,
 }
 
+impl SyncPointBitMap {
+    pub const fn build_map(tokens: &[Token], comment: bool, identifier: bool, eof: bool) -> Self {
+        let mut keywords_bits = 0u64;
+        let mut operators_bits = 0u64;
+        let mut delimiters_bits = 0u64;
+
+        let i = 0usize;
+
+        while i < tokens.len() {
+            // can't use "for in loop" and iterator pattern in const function
+            match tokens[i] {
+                Token::Keyword(keyword) => keywords_bits |= 1 << (keyword as u8),
+                Token::Operator(operator) => operators_bits |= 1 << (operator as u8),
+                Token::Delimiter(delimiter) => delimiters_bits |= 1 << (delimiter as u8),
+                _ => panic!("Invalid token in SyncPointBitMap"),
+            }
+        }
+
+        Self {
+            keywords: keywords_bits,
+            operators: operators_bits,
+            delimiter: delimiters_bits,
+            literals: true,
+            comments: comment,
+            identifier: identifier,
+            eof: eof,
+        }
+    }
+}
+
 pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
