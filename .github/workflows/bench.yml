@@ -36,8 +36,8 @@ jobs:
       - name: Prepare Benchmark Reports
         run: |
           mkdir -p ./out-bench
-          if [ -d "./target/criterion/report" ]; then
-            cp -r ./target/criterion/report/* ./out-bench/
+          if [ -d "./target/criterion" ]; then
+            cp -r ./target/criterion/* ./out-bench/
           fi
 
       - name: Deploy to bench-results branch
