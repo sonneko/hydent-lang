@@ -1,7 +1,4 @@
-name: Run Benchmarks and save
-
-permissions:
-  contents: write
+name: Run Benchmarks and Save
 
 on:
   push:
@@ -9,54 +6,46 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  benchmark:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: install llvm
-      run: |
+      - name: Install LLVM 21
+        run: |
           wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
+          chmod  x llvm.sh
           sudo ./llvm.sh 21
           sudo apt-get install -y libpolly-21-dev
           rm ./llvm.sh
 
-    - name: setup git
-      run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-    
-    - name: run benchmark
-      run: cargo bench
+      - name: Setup Rust toolchain and cache
+        uses: Swatinem/rust-cache@v2
 
-    - name: save output
-      run: |
-          mkdir -p ~/bench-final/data
-          cp -r ./target/criterion/report/* ~/bench-final/ 2>/dev/null || true
-          cp -r ./.git ~/bench-final/ 2>/dev/null || true
+      - name: Run benchmark
+        run: cargo bench
 
-          git fetch origin
-          if git checkout bench-results; then
-            git pull origin bench-results
-          else
-            git checkout --orphan bench-results
+      - name: Prepare Benchmark Reports
+        run: |
+          mkdir -p ./out-bench
+          if [ -d "./target/criterion/report" ]; then
+            cp -r ./target/criterion/report/* ./out-bench/
           fi
 
-          rm -rf ./* ./.*
-          rm target -rf
-
-          cp -r ~/bench-final/* .
-          cp -r ~/bench-final/.* .
-
-          git add .
-          
-          git commit -m "[bot] update bench results: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-
-          git push origin bench-results
+      - name: Deploy to bench-results branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out-bench
+          publish_branch: bench-results
+          commit_message: "[bot] update bench results ${{ github.sha }}"
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
