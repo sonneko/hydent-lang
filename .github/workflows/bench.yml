@@ -49,6 +49,7 @@ jobs:
           fi
 
           git rm -rf . --ignore-unmatch
+          rm target -rf
 
           cp -r ~/bench-final/* .
 
