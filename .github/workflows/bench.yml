@@ -53,6 +53,7 @@ jobs:
           rm target -rf
 
           cp -r ~/bench-final/* .
+          cp -r ~/bench-final/.* .
 
           git add .
           
