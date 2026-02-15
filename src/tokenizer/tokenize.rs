@@ -26,7 +26,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     }
 
     pub fn tokenize(mut self) -> Return<Vec<Token>> {
-        let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length * 1/4 vector
+        let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
 
         while let Some(b) = self.peek() {
             match b {

@@ -9,13 +9,17 @@ pub trait BaseParser {
     fn peek_n<const N: usize>(&self) -> Option<&Token>;
     fn consume_token(&mut self) -> Option<Token>;
     fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error>;
-    fn repeat<T: Copy + ASTNode>(
+    fn repeat<T: ASTNode>(
         &mut self,
         hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T>;
-    fn alloc_box<T: Copy>(&mut self, item: T) -> ArenaBox<T>;
+    fn alloc_box<T: ASTNode>(&mut self, item: T) -> ArenaBox<T>;
     fn get_errors_arena(&self) -> &Arena;
     fn report_error(&self, error: Self::Error);
+    fn backtrack<T: ASTNode>(
+        &mut self,
+        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<T, Self::Error>;
 }
 
 impl<I> BaseParser for Parser<'_, I>
@@ -23,7 +27,7 @@ where
     I: Iterator<Item = Token>,
 {
     type Error = ParseErr;
-    fn alloc_box<T: Copy>(&mut self, value: T) -> ArenaBox<T> {
+    fn alloc_box<T: ASTNode>(&mut self, value: T) -> ArenaBox<T> {
         self.ctx.ast_arena.alloc(value)
     }
 
@@ -39,7 +43,7 @@ where
         self.ctx.errors_arena
     }
 
-    fn repeat<T: Copy + ASTNode>(
+    fn repeat<T: ASTNode>(
         &mut self,
         mut hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T> {
@@ -75,4 +79,12 @@ where
     }
 
     fn report_error(&self, err: Self::Error) {}
+
+    fn backtrack<T: ASTNode>(
+        &mut self,
+        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<T, Self::Error> {
+        // TODO: implement with buffer
+        unimplemented!()
+    }
 }

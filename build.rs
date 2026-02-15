@@ -5,7 +5,7 @@ fn main() {
 
     let status = Command::new("npm")
         .args(["install"])
-        .current_dir(script_dir) // ここで 'cd script' 相当の処理
+        .current_dir(script_dir)
         .status()
         .expect("Failed to execute npm install");
 

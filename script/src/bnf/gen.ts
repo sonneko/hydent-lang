@@ -3,7 +3,9 @@ import {
     GrammarIR, RuleIR, ElementIR,
     ProductRuleIR, BranchRuleIR,
     HookIR,
-    RuleName
+    RuleName,
+    ParserAction,
+    DecisionNode,
 } from './analyze';
 
 const TYPE_DEFINITION_PREFIX = `\
@@ -82,7 +84,6 @@ export class RustParserGenerator {
 
         for (const [_, rule] of this.ir.rules) {
             if (rule.kind === 'Branch') {
-                // Branch
                 const variants = rule.variants
                     .map(v => `    ${v.rustVariantName}(${v.targetRule}),`)
                     .join('\n');
@@ -171,31 +172,37 @@ ${methods.join('\n\n')}
     // -------------------------------------------------------------------------
 
     private generateBranchMethod(rule: BranchRuleIR): string {
-        // TODO: implement this
+        const { rustName, decisionTree } = rule;
 
-    
+        // decide decision tree strategy
+        const isLL2 = this.containsLL2(decisionTree);
 
-        // A. Try parsing one peek (L1 grammar)
+        let matchBody = "";
+        if (isLL2) {
+            // match (self.peek_n::<0>(), self.peek_n::<1>()) {}
+            const arms = this.collectLL2Arms(decisionTree, rustName);
+            const defaultAction = this.renderAction(decisionTree.default, rustName);
+            matchBody = `
+        match (self.peek_n::<0>(), self.peek_n::<1>()) {
+            ${arms.join('\n            ')}
+            _ => ${defaultAction},
+        }`;
+        } else {
+            // match self.peek_n::<0>() {}
+            const arms = this.collectLL1Arms(decisionTree, rustName);
+            const defaultAction = this.renderAction(decisionTree.default, rustName);
+            matchBody = `
+        match self.peek_n::<0>() {
+            ${arms.join('\n            ')}
+            _ => ${defaultAction},
+        }`;
+        }
 
-        // image: 
-        `\
-        fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
-            match self.peek_n::<1>() {
-$\{branches.join("\n")}
-                _ => Err(Self::Error::create(self.get_errors_arena(), [$\{expected.join(", ")}], self.peek_n::<1>())),
-            }
-        }`
-
-        // B. Only if A failed, start LL(2) grammar analysis
-
-
-        // C. Only if A and B failed, start LL(k) grammar analysis
-
-        return `\
+        return `
     #[inline]
-    fn parse_${rule.rustName}(&mut self) -> Result<${rule.rustName}, Self::Error> {
-        todo!()
-    }`
+    fn parse_${rustName}(&mut self) -> Result<${rustName}, Self::Error> {
+        ${matchBody}
+    }`;
     }
 
     private generateProductMethod(rule: ProductRuleIR): string {
@@ -254,9 +261,64 @@ ${rule.elements
     }
 
     private generateHookMethod(rule: HookIR): string {
-        // TODO: implement hook definition
         return `\
     fn ${rule.methodName}(&mut self) -> Result<${rule.returnType}, Self::Error>;`
+    }
+
+    private renderAction(action: ParserAction, enumName: string): string {
+        switch (action.kind) {
+            case 'Call':
+                return `Ok(${enumName}::${action.variantName}(self.parse_${action.target}()?))`;
+            case 'Backtrack':
+                const trials = action.candidates.map(c =>
+                    `if let Ok(val) = this.parse_${c.target}() { return Ok(${enumName}::${c.variantName}(val)); }`
+                ).join('\n                ');
+
+                return `self.backtrack(|this| {
+                ${trials}
+                Err(Self::Error::create(this.get_errors_arena(), [], this.peek_n::<0>()))
+            })`;
+
+            case 'Error':
+                return `Err(Self::Error::create(self.get_errors_arena(), [], self.peek_n::<0>()))`;
+        }
+    }
+
+    private collectLL1Arms(node: DecisionNode, enumName: string): string[] {
+        const arms: string[] = [];
+        for (const [pattern, next] of node.cases) {
+            if ('kind' in next) {
+                arms.push(`${pattern} => ${this.renderAction(next, enumName)},`);
+            } else {
+                // 万が一 LL(1) 指定なのにネストしていた場合のフォールバック（理論上到達しない）
+                arms.push(`${pattern} => { /* LL2 conflict in LL1 strategy */ ${this.renderAction(next.default, enumName)} },`);
+            }
+        }
+        return arms;
+    }
+
+    private collectLL2Arms(node: DecisionNode, enumName: string): string[] {
+        const arms: string[] = [];
+        for (const [p0, next0] of node.cases) {
+            if ('kind' in next0) {
+                arms.push(`(${p0}, _) => ${this.renderAction(next0, enumName)},`);
+            } else {
+                for (const [p1, next1] of next0.cases) {
+                    const action = 'kind' in next1 ? next1 : next1.default;
+                    arms.push(`(${p0}, ${p1}) => ${this.renderAction(action, enumName)},`);
+                }
+                arms.push(`(${p0}, _) => ${this.renderAction(next0.default, enumName)},`);
+            }
+        }
+        return arms;
+    }
+
+    private containsLL2(node: DecisionNode): boolean {
+        if (node.peekIndex === 1) return true;
+        for (const value of node.cases.values()) {
+            if (!('kind' in value) && this.containsLL2(value)) return true;
+        }
+        return false;
     }
 
     // -------------------------------------------------------------------------

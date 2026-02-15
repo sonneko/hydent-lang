@@ -14,15 +14,18 @@ where
     pub tokens: PeekableN<I, Token, 2>,
 }
 
-impl<I> Parser<'_, I>
+impl<'ctx, I> Parser<'ctx, I>
 where
     I: Iterator<Item = Token>,
 {
-    pub fn new(tokens: I, ctx: CompilerFrontendContext<'_>) -> Self {
-        unimplemented!()
+    pub fn new(tokens: I, ctx: CompilerFrontendContext<'ctx>) -> Parser<'ctx, I> {
+        Self {
+            ctx,
+            tokens: PeekableN::new(tokens),
+        }
     }
 
-    pub fn parse(self) -> Result<Module, ParseErr> {
-        unimplemented!()
+    pub fn parse(mut self) -> Result<Module, ParseErr> {
+        self.parse_Module()
     }
 }
