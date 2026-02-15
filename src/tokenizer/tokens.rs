@@ -1,13 +1,10 @@
-//! This module defines the token types and related structures for the Hydent tokenizer.
-//! It includes enums for `Token`, `Keyword`, `Literal`, `Operator`, `Delimiter`, and `Comment`,
-//! along with implementations for `TokenAttribute` and `Display` traits.
+//! token types
+
 use crate::compiler::span::Span;
 use crate::compiler::symbol::Symbol;
 use crate::utility::hashable_float::HashableFloat;
 
-/// Represents the different types of tokens that can be produced by the tokenizer.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
-#[repr(u8)]
 pub enum Token {
     Keyword(Keyword),
     Identifier(Symbol),
@@ -70,20 +67,18 @@ pub enum Keyword {
     In,
 }
 
-/// Represents various literal values in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
 #[repr(u8)]
 pub enum Literal {
     IntegerLiteral(i32),
     FloatLiteral(HashableFloat<f32>),
-    DoubleIntegerLiteral(i64), // TODO: implement parsing DoubleInt and DoubleFloat literal logic in tokenizer.rs
+    DoubleIntegerLiteral(i64),
     DoubleFloatLiteral(HashableFloat<f64>),
     StringLiteral(Span),
     CharLiteral(char),
     BoolLiteral(bool),
 }
 
-/// Represents the operators in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
 #[repr(u8)]
 pub enum Operator {
@@ -148,57 +143,7 @@ pub enum Comment {
     BlockComment,     // `/* ... */`
 }
 
-/// Defines attributes for tokens, such as whether they belong to a first or follow set.
-pub trait TokenAttribute {
-    /// Checks if the token is part of the first set for a grammar rule.
-    fn is_first_set(&self) -> bool;
-    /// Checks if the token is part of the follow set for a grammar rule.
-    fn is_follow_set(&self) -> bool;
-}
-
-/// Implements the `TokenAttribute` trait for the `Token` enum, providing methods
-/// to check if a token belongs to the first or follow set of a grammar rule.
-impl TokenAttribute for Token {
-    /// Checks if the token is part of the first set for a grammar rule.
-    /// This is typically used in parsing to determine which production rule to take.
-    fn is_first_set(&self) -> bool {
-        match self {
-            Token::Keyword(k) => match k {
-                Keyword::Import
-                | Keyword::Static
-                | Keyword::Class
-                | Keyword::Enum
-                | Keyword::Struct
-                | Keyword::Extern
-                | Keyword::Protocol
-                | Keyword::Module
-                | Keyword::Type
-                | Keyword::Pub
-                | Keyword::Async
-                | Keyword::Fn => true,
-                _ => false,
-            },
-            Token::Operator(Operator::At) => true,
-            Token::Comment(Comment::DocComment(_)) => true,
-
-            _ => false,
-        }
-    }
-
-    /// Checks if the token is part of the follow set for a grammar rule.
-    /// This is used in error recovery and to determine when a grammar rule has ended.
-    fn is_follow_set(&self) -> bool {
-        match self {
-            Token::EndOfFile => true,
-            Token::Delimiter(Delimiter::RightBrace) => true,
-
-            _ => self.is_first_set(),
-        }
-    }
-}
-
 impl std::fmt::Display for Token {
-    /// Implements `Display` for `Token` to provide a human-readable string representation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Comment(_) => write!(f, "comment"),
@@ -213,7 +158,6 @@ impl std::fmt::Display for Token {
 }
 
 impl std::fmt::Display for Delimiter {
-    /// Implements `Display` for `Delimiter` to provide a human-readable string representation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Semicolon => write!(f, ";"),
@@ -229,7 +173,6 @@ impl std::fmt::Display for Delimiter {
 }
 
 impl std::fmt::Display for Keyword {
-    /// Implements `Display` for `Keyword` to provide a human-readable string representation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::DoubleFloat => write!(f, "DoubleFloat"),
@@ -283,7 +226,6 @@ impl std::fmt::Display for Keyword {
 }
 
 impl std::fmt::Display for Literal {
-    /// Implements `Display` for `Literal` to provide a human-readable string representation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::IntegerLiteral(i) => write!(f, "integer literal {}", i),
@@ -298,7 +240,6 @@ impl std::fmt::Display for Literal {
 }
 
 impl std::fmt::Display for Operator {
-    /// Implements `Display` for `Operator` to provide a human-readable string representation.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::RangeInclusive => write!(f, "..="),

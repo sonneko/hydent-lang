@@ -1,4 +1,3 @@
-mod errors;
-mod test;
+pub mod errors;
 pub mod tokenizer;
 pub mod tokens;

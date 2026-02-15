@@ -1,9 +1,4 @@
-//! This module implements the tokenizer for the Hydent programming language.
-//!
-//! The `Tokenizer` is responsible for taking a raw source code string and
-//! breaking it down into a stream of meaningful tokens, such as keywords,
-//! identifiers, literals, operators, and delimiters. This is the first phase
-//! of the compiler's frontend.
+//! Tokenizer with a function to intern strings
 
 use super::errors::TokenizeErr;
 use crate::compiler::span::Span;
@@ -31,7 +26,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     }
 
     pub fn tokenize(mut self) -> Return<Vec<Token>> {
-        let mut tokens = Vec::with_capacity(self.input.len() / 4); // 投機的なアロケーション
+        let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length * 1/4 vector
 
         while let Some(b) = self.peek() {
             match b {
@@ -93,7 +88,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         Ok(tokens)
     }
 
-    // --- 低レベルヘルパー ---
+    // --- low level helpers ---
 
     #[inline(always)]
     fn peek(&self) -> Option<u8> {
@@ -128,7 +123,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    // --- トークン読み取りロジック ---
+    // --- logic to read each tokens ---
 
     fn read_identifier_or_keyword(&mut self) -> Token {
         let start = self.current_pos;
@@ -141,7 +136,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
         let slice = &self.input[start..self.current_pos];
 
-        // キーワード判定 (Matchはコンパイラが自動で高速なジャンプテーブル/分岐に最適化する)
+        // expect rustc to replace this with much faster logic such as phf
         match slice {
             b"import" => Token::Keyword(Keyword::Import),
             b"from" => Token::Keyword(Keyword::From),
@@ -190,7 +185,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             b"Never" => Token::Keyword(Keyword::Never),
             b"Void" => Token::Keyword(Keyword::Void),
             _ => {
-                // キーワードでなければSymbolInterning
+                // not keywords
                 let symbol = self.symbol_factory.from_range(start, self.current_pos);
                 Token::Identifier(symbol)
             }
@@ -201,8 +196,8 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         let start = self.current_pos;
         let mut is_float = false;
 
-        // 16進数等のプレフィックス対応
         if self.consume_str(b"0x") {
+            // prefix for Hexadecimal
             while let Some(b) = self.peek() {
                 if b.is_ascii_hexdigit() {
                     self.advance();
@@ -211,6 +206,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 }
             }
         } else if self.consume_str(b"0b") {
+            // prefix for binary notation
             while let Some(b) = self.peek() {
                 if b == b'0' || b == b'1' {
                     self.advance();
@@ -226,7 +222,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                     if let Some(next) = self.peek_at(1) {
                         if next == b'.' {
                             break;
-                        } // .. 演算子への配慮
+                        } // for ".." operator
                     }
                     is_float = true;
                     self.advance();
@@ -242,7 +238,14 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             }
         }
 
+        // SAFETY: `self.input` is a `&[u8]`, and `start` and `self.current_pos` are valid
+        // indices within `self.input` that have been advanced based on valid UTF-8
+        // characters or ASCII digits/hex digits/binary digits,
+        // or other ASCII characters.
+        // All these are valid UTF-8, so `from_utf8_unchecked` is safe.
         let slice = unsafe { std::str::from_utf8_unchecked(&self.input[start..self.current_pos]) };
+
+        // TODO: add logic to parse f64 and i64
         if is_float {
             slice
                 .parse::<f32>()
@@ -338,7 +341,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     fn read_block_comment(&mut self) -> Return<Token> {
         let start_err = self.current_pos;
-        self.advance_n(2); // /*
+        self.advance_n(2); // skip /*
         let mut depth = 1;
         while let Some(b) = self.peek() {
             if b == b'/' && self.peek_at(1) == Some(b'*') {
@@ -360,6 +363,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     fn read_operator_or_delimiter(&mut self) -> Option<Token> {
         let b = self.peek()?;
 
+        // TODO: make this logic faster
         if self.consume_str(b"=>") {
             return Some(Token::Operator(Operator::FatArrow));
         }

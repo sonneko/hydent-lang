@@ -1,3 +1,5 @@
+//! Float type that can be hashed.
+
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct HashableFloat<T>(T)
 where

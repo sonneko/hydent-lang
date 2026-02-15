@@ -1,3 +1,5 @@
+//! ! An iterator adapter that allows peeking `N` elements ahead by ring buffer.
+
 pub struct PeekableN<I, T, const N: usize>
 where
     I: Iterator<Item = T>,
@@ -24,7 +26,7 @@ where
     pub fn peek_n<const M: usize>(&self) -> Option<&T> {
         const { assert!(M < N, "M must be less than N") };
         let index = self.wrap_index(M);
-        unsafe { self.buf.get_unchecked(index) }.as_ref()
+        unsafe { self.buf.get_unchecked(index) }.as_ref() // checking is in compile fase
     }
 
     #[inline(always)]
@@ -47,6 +49,7 @@ where
 
     #[inline(always)]
     fn wrap_index(&self, m: usize) -> usize {
+        // expect rustc optimizer to delete this branch
         if N.is_power_of_two() {
             (self.head + m) & (N - 1)
         } else {
