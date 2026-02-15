@@ -1,2 +1,2 @@
-mod core;
+pub mod core;
 mod front;

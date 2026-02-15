@@ -1,4 +1,4 @@
 mod arena;
-mod peekable_n;
+pub mod peekable_n;
 mod query_sys;
 mod symbol;
