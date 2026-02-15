@@ -17,5 +17,5 @@ indicatif = "0.18.3"
 criterion = "0.8.2"
 
 [[bench]]
-name = "compiler"
+name = "benches"
 harness = false
