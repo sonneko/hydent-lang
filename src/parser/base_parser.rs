@@ -1,7 +1,7 @@
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
 use crate::parser::ast::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
-use crate::parser::parser::Parser;
+use crate::parser::parse::Parser;
 use crate::tokenizer::tokens::Token;
 
 pub trait BaseParser {

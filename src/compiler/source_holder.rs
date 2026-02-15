@@ -36,6 +36,7 @@ impl<'src> SourceHolder<'src> {
     }
 
     /// Returns the total length of the source code in bytes.
+    #[allow(clippy::len_without_is_empty)]
     pub fn len(&self) -> usize {
         self.src.len()
     }

@@ -80,14 +80,14 @@ impl<'src> SymbolFactory<'src> {
     #[inline]
     pub fn from_span(&mut self, span: Span) -> Symbol {
         // Create a temporary `SpanWithRef` to perform the lookup.
-        let span_with_ref = span.with_ref(self.source.clone());
+        let span_with_ref = span.with_ref(self.source);
         if let Some(&symbol) = self.map.get(&span_with_ref) {
             symbol
         } else {
             // If the symbol is not found, create a new one.
             let symbol_id = self.now_symbol_id;
             let symbol = Symbol(symbol_id);
-            self.map.insert(span.with_ref(self.source.clone()), symbol);
+            self.map.insert(span.with_ref(self.source), symbol);
             self.now_symbol_id += 1;
             symbol
         }

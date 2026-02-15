@@ -43,8 +43,8 @@ impl Debug for TokenizeErr {
     }
 }
 
-impl Into<Box<dyn CompilerDiagnostic>> for TokenizeErr {
-    fn into(self) -> Box<dyn CompilerDiagnostic> {
+impl From<TokenizeErr> for Box<dyn CompilerDiagnostic> {
+    fn from(value: TokenizeErr) -> Self {
         unimplemented!()
     }
 }

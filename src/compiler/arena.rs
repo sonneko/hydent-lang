@@ -133,7 +133,7 @@ impl Arena {
         unsafe {
             ptr.write(value);
         }
-        ArenaBox { ptr: ptr as *mut T }
+        ArenaBox { ptr }
     }
 
     pub fn alloc_iter<T, I>(&self, value: I) -> ArenaIter<T>
@@ -223,6 +223,12 @@ impl Drop for Arena {
                 std::alloc::dealloc(*ptr, layout);
             }
         }
+    }
+}
+
+impl Default for Arena {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

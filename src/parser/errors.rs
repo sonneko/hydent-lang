@@ -26,8 +26,8 @@ impl std::fmt::Display for ParseErr {
     }
 }
 
-impl Into<Box<dyn CompilerDiagnostic>> for ParseErr {
-    fn into(self) -> Box<dyn CompilerDiagnostic> {
+impl From<ParseErr> for Box<dyn CompilerDiagnostic> {
+    fn from(value: ParseErr) -> Self {
         unimplemented!()
     }
 }

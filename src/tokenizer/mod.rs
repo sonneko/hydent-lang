@@ -1,3 +1,3 @@
 pub mod errors;
-pub mod tokenizer;
+pub mod tokenize;
 pub mod tokens;

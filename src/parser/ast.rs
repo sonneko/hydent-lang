@@ -12,7 +12,7 @@ pub struct SyncPointBitMap {
 }
 
 impl SyncPointBitMap {
-    pub const fn build_map(tokens: &[Token], comment: bool, identifier: bool, eof: bool) -> Self {
+    pub const fn build_map(tokens: &[Token], comments: bool, identifier: bool, eof: bool) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
         let mut delimiters_bits = 0u64;
@@ -34,9 +34,9 @@ impl SyncPointBitMap {
             operators: operators_bits,
             delimiter: delimiters_bits,
             literals: true,
-            comments: comment,
-            identifier: identifier,
-            eof: eof,
+            comments,
+            identifier,
+            eof,
         }
     }
 }

@@ -254,7 +254,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         } else {
             slice
                 .parse::<i32>()
-                .map(|v| Token::Literal(Literal::IntegerLiteral(v.into())))
+                .map(|v| Token::Literal(Literal::IntegerLiteral(v)))
                 .map_err(|_| TokenizeErr::InvalidIntegerLiteral(start))
         }
     }

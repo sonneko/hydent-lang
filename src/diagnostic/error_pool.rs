@@ -23,3 +23,9 @@ impl ErrorPool {
         Ok(())
     }
 }
+
+impl Default for ErrorPool {
+    fn default() -> Self {
+        Self::new()
+    }
+}

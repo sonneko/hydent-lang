@@ -78,7 +78,7 @@ impl<'ctx> CompilerFrontendContext<'ctx> {
     ) -> CompilerFrontendContext<'ctx> {
         let source_holder = SourceHolder::new(source);
         Self {
-            source: source_holder.clone(),
+            source: source_holder,
             symbol_factory: SymbolFactory::new(source_holder),
             ast_arena,
             errors_arena,

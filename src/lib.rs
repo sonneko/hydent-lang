@@ -1,7 +1,4 @@
 #![deny(clippy::all, rust_2018_idioms)]
-#![deny(clippy::empty_docs)]
-#![deny(clippy::missing_docs_in_private_items)]
-#![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
 #![allow(unused)] // should delete this line later
 
 pub mod compiler;

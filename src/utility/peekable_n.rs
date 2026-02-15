@@ -36,12 +36,6 @@ where
     }
 
     #[inline(always)]
-    pub unsafe fn peek_dyn_unchecked(&self, m: usize) -> Option<&T> {
-        let index = self.wrap_index(m);
-        self.buf.get_unchecked(index).as_ref()
-    }
-
-    #[inline(always)]
     pub fn peek_safe(&self, m: usize) -> Option<Option<&T>> {
         let index = self.wrap_index(m);
         self.buf.get(index).map(Option::as_ref)
