@@ -49,7 +49,7 @@ fn test_circular_wrap() {
     assert_eq!(iter.next(), Some(1));
     assert_eq!(iter.next(), Some(2));
     assert_eq!(iter.next(), Some(3));
-    
+
     // buffer content shifted.
     assert_eq!(iter.peek_n::<0>(), Some(&4));
     assert_eq!(iter.peek_n::<3>(), None);

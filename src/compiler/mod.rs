@@ -6,3 +6,6 @@ pub mod query_sys;
 pub mod source_holder;
 pub mod span;
 pub mod symbol;
+
+#[cfg(test)]
+mod tests;
