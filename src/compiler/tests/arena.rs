@@ -40,7 +40,7 @@ fn test_arena_large_allocation() {
     let arena = Arena::new();
     let count = 1000_000; // Should be enough to trigger multiple blocks
     let mut iter = arena.alloc_iter(0..count);
-    panic!("{}", Arena::BLOCK_SIZE);
+
     for i in 0..count {
         assert_eq!(iter.next(), Some(i));
     }

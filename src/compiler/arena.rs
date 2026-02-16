@@ -88,7 +88,7 @@ where
 impl Arena {
     #[cfg(not(miri))]
     pub const BLOCK_SIZE: usize = 32 * 1024; // 32KB
-    
+
     #[cfg(miri)]
     pub const BLOCK_SIZE: usize = 128; // 128 byte in test
 
