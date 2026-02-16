@@ -1,4 +1,4 @@
-name: Run Benchmarks and Save
+name: CI
 
 on:
   push:
@@ -27,11 +27,35 @@ jobs:
           sudo apt-get install -y libpolly-21-dev
           rm ./llvm.sh
 
-      - name: Setup Rust toolchain and cache
+      - name: Setup Rust default toolchain and cache
         uses: Swatinem/rust-cache@v2
 
+      - name: Install nightly toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: miri
+
+      - name: Build
+        run: cargo +stable build --verbose
+
+      - name: Check formatting
+        run: cargo +stable fmt --all -- --check
+
+      - name: Clippy
+        run: cargo +stable clippy -- -D warnings
+
+      - name: Test
+        run: cargo +stable test --verbose
+
+      - name: Run Miri
+        run: |
+          cargo +nightly miri setup
+          cargo +nightly miri test --lib
+        env:
+          MIRIFLAGS: "-Zmiri-ignore-leaks" 
+
       - name: Run benchmark
-        run: cargo bench
+        run: cargo +stable bench
 
       - name: Prepare Benchmark Reports
         run: |
