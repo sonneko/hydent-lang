@@ -44,15 +44,15 @@ jobs:
       - name: Clippy
         run: cargo +stable clippy -- -D warnings
 
-      - name: Test
-        run: cargo +stable test --verbose
-
       - name: Run Miri
         run: |
           cargo +nightly miri setup
           cargo +nightly miri test --lib
         env:
           MIRIFLAGS: "-Zmiri-ignore-leaks" 
+
+      - name: Test
+        run: cargo +stable test --verbose
 
       - name: Run benchmark
         run: cargo +stable bench
