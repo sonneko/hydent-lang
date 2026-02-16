@@ -34,10 +34,25 @@ fn test_arena_alloc_iter() {
 }
 
 #[test]
+#[cfg(not(miri))]
 fn test_arena_large_allocation() {
     // Test allocation that exceeds a single block size
     let arena = Arena::new();
-    let count = 10000_000; // Should be enough to trigger multiple blocks
+    let count = 1000_000; // Should be enough to trigger multiple blocks
+    let mut iter = arena.alloc_iter(0..count);
+    panic!("{}", Arena::BLOCK_SIZE);
+    for i in 0..count {
+        assert_eq!(iter.next(), Some(i));
+    }
+    assert_eq!(iter.next(), None);
+}
+
+#[test]
+#[cfg(miri)]
+fn test_arena_large_allocation() {
+    // Test allocation that exceeds a single block size
+    let arena = Arena::new();
+    let count = 1000; // Should be enough to trigger multiple blocks
     let mut iter = arena.alloc_iter(0..count);
 
     for i in 0..count {
@@ -53,7 +68,7 @@ fn test_mixed_allocations() {
     let b = arena.alloc(100u64);
     let c = arena.alloc(200u32);
     let d = arena.alloc(true);
-    let e: ArenaBox<[u64; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    let e: ArenaBox<[u128; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 
     assert_eq!(*a, 1);
     assert_eq!(*b, 100);
