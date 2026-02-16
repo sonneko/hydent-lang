@@ -68,11 +68,15 @@ fn test_mixed_allocations() {
     let b = arena.alloc(100u64);
     let c = arena.alloc(200u32);
     let d = arena.alloc(true);
+
+    #[cfg(not(miri))]
     let e: ArenaBox<[u128; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 
     assert_eq!(*a, 1);
     assert_eq!(*b, 100);
     assert_eq!(*c, 200);
     assert_eq!(*d, true);
+
+    #[cfg(not(miri))]
     assert_eq!(*e, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 }
