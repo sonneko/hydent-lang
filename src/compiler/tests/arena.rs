@@ -1,4 +1,4 @@
-use crate::compiler::arena::Arena;
+use crate::compiler::arena::{Arena, ArenaBox};
 
 #[test]
 fn test_arena_basic_alloc() {
@@ -37,7 +37,7 @@ fn test_arena_alloc_iter() {
 fn test_arena_large_allocation() {
     // Test allocation that exceeds a single block size
     let arena = Arena::new();
-    let count = 10_000; // Should be enough to trigger multiple blocks
+    let count = 10000_000; // Should be enough to trigger multiple blocks
     let mut iter = arena.alloc_iter(0..count);
 
     for i in 0..count {
@@ -52,8 +52,12 @@ fn test_mixed_allocations() {
     let a = arena.alloc(1u8);
     let b = arena.alloc(100u64);
     let c = arena.alloc(200u32);
+    let d = arena.alloc(true);
+    let e: ArenaBox<[u64; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]);
 
     assert_eq!(*a, 1);
     assert_eq!(*b, 100);
     assert_eq!(*c, 200);
+    assert_eq!(*d, true);
+    assert_eq!(*e, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 }

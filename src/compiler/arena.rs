@@ -70,7 +70,7 @@ where
             if self.size == 0 {
                 return Some(unsafe { *NonNull::<T>::dangling().as_ptr() });
             }
-            if self.index + self.size >= Arena::BLOCK_SIZE {
+            if self.index + self.size > Arena::BLOCK_SIZE {
                 self.page += 1;
                 self.index = 0;
             }
@@ -107,16 +107,18 @@ impl Arena {
     {
         let layout = Layout::new::<T>();
 
-        assert!(
-            std::mem::size_of::<T>() <= Self::BLOCK_SIZE,
-            "Type T is too large for this arena"
-        );
+        const {
+            assert!(
+                std::mem::size_of::<T>() <= Self::BLOCK_SIZE,
+                "Type T is too large for this arena"
+            );
+            assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
+        }
         if std::mem::size_of::<T>() == 0 {
             return ArenaBox {
                 ptr: NonNull::dangling().as_ptr(),
             };
         }
-        assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
         let size = layout.size();
         let align = layout.align();
         // indexをalignの倍数まで引き上げ
@@ -125,8 +127,8 @@ impl Arena {
             self.grow();
             start = 0;
         }
+        let ptr = unsafe { self.get_page_base_ptr().add(start) as *mut T };
         self.index.set(start + size);
-        let ptr: *mut T = unsafe { self.get_tip_ptr() };
         unsafe {
             ptr.write(value);
         }
@@ -147,7 +149,7 @@ impl Arena {
         };
         let each_size = std::mem::size_of::<T>();
         if each_size == 0 {
-            let counter = value.count(); 
+            let counter = value.count();
             return ArenaIter {
                 index: 0,
                 page: 0,
@@ -219,6 +221,12 @@ impl Arena {
         let vec_ptr = (*self.ptrs).get();
         let page_ptr = *((*vec_ptr).as_ptr().add(self.page_index.get()));
         page_ptr.add(self.index.get()) as *mut T
+    }
+
+    unsafe fn get_page_base_ptr(&self) -> *mut u8 {
+        let vec_ptr = (*self.ptrs).get();
+        // page_index が指すページのポインタを直接取得
+        *((*vec_ptr).as_ptr().add(self.page_index.get()))
     }
 }
 
