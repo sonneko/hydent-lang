@@ -37,7 +37,11 @@ function main() {
     const parser = generateParser(analysis);
     fs.writeFileSync(AST_TYPE_FILE_PATH, parser[0], "utf8");
     fs.writeFileSync(PARSER_FILE_PATH, parser[1], "utf8");
-    execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH}`);
+    try {
+        execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH}`);
+    } catch (e) {
+        console.warn(`⚠️rustfmt not found!`)
+    }
     console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
 
 }
