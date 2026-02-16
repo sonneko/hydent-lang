@@ -67,16 +67,15 @@ where
             None
         } else {
             self.len -= 1;
-            if self.index + self.size > Arena::BLOCK_SIZE {
+            if self.index + self.size >= Arena::BLOCK_SIZE {
                 self.page += 1;
                 self.index = 0;
             }
             let ptr = unsafe {
-                (*(*self.pages_list_ptr).get())
-                    .as_ptr()
-                    .add(self.page)
-                    .add(self.index)
-            } as *mut T;
+                let vec_ptr = (*self.pages_list_ptr).get();
+                let page_ptr = *((*vec_ptr).as_ptr().add(self.page));
+                page_ptr.add(self.index) as *mut T
+            };
             self.index += self.size;
             Some(unsafe { *ptr })
         }
@@ -119,17 +118,12 @@ impl Arena {
         let align = layout.align();
         // indexをalignの倍数まで引き上げ
         let mut start = (self.index.get() + align - 1) & !(align - 1);
-        if size + start > Self::BLOCK_SIZE {
+        if size + start >= Self::BLOCK_SIZE {
             self.grow();
             start = 0;
         }
-        let ptr = unsafe {
-            (*self.ptrs.get())
-                .as_ptr()
-                .add(self.page_index.get())
-                .add(start)
-        } as *mut T;
         self.index.set(start + size);
+        let ptr: *mut T = unsafe { self.get_tip_ptr() };
         unsafe {
             ptr.write(value);
         }
@@ -141,15 +135,16 @@ impl Arena {
         T: Copy,
         I: Iterator<Item = T>,
     {
+        const {
+            assert!(
+                std::mem::size_of::<T>() <= Self::BLOCK_SIZE,
+                "Type T is too large for this arena"
+            );
+            assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
+
+            assert!(std::mem::size_of::<T>() != 0);
+        }
         let each_size = std::mem::size_of::<T>();
-        assert!(
-            each_size <= Self::BLOCK_SIZE,
-            "Type T is too large for this arena"
-        );
-        assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
-
-        assert!(std::mem::size_of::<T>() != 0);
-
         let each_layout = Layout::new::<T>();
         let align = each_layout.align();
         let size = each_layout.size();
@@ -162,20 +157,14 @@ impl Arena {
 
         for value in value {
             if self.index.get() + size < Self::BLOCK_SIZE {
-                let ptr = unsafe {
-                    (*self.ptrs.get())
-                        .as_ptr()
-                        .add(self.page_index.get())
-                        .add(self.index.get())
-                } as *mut T;
+                let ptr = unsafe { self.get_tip_ptr() } as *mut T;
                 self.index.set(self.index.get() + size);
                 unsafe {
                     ptr.write(value);
                 }
             } else {
                 self.grow();
-                let ptr =
-                    unsafe { (*self.ptrs.get()).as_ptr().add(self.page_index.get()) } as *mut T;
+                let ptr: *mut T = unsafe { self.get_tip_ptr() };
                 self.index.set(size);
                 unsafe { ptr.write(value) }
             }
@@ -212,6 +201,12 @@ impl Arena {
         unsafe { (*self.ptrs.get()).push(new_block_ptr) };
         self.page_index.set(self.page_index.get() + 1);
         self.index.set(0);
+    }
+
+    unsafe fn get_tip_ptr<T>(&self) -> *mut T {
+        let vec_ptr = (*self.ptrs).get();
+        let page_ptr = *((*vec_ptr).as_ptr().add(self.page_index.get()));
+        page_ptr.add(self.index.get()) as *mut T
     }
 }
 
