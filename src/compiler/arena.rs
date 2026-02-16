@@ -67,6 +67,9 @@ where
             None
         } else {
             self.len -= 1;
+            if self.size == 0 {
+                return Some(unsafe { *NonNull::<T>::dangling().as_ptr() });
+            }
             if self.index + self.size >= Arena::BLOCK_SIZE {
                 self.page += 1;
                 self.index = 0;
@@ -118,7 +121,7 @@ impl Arena {
         let align = layout.align();
         // indexをalignの倍数まで引き上げ
         let mut start = (self.index.get() + align - 1) & !(align - 1);
-        if size + start >= Self::BLOCK_SIZE {
+        if size + start > Self::BLOCK_SIZE {
             self.grow();
             start = 0;
         }
@@ -141,10 +144,19 @@ impl Arena {
                 "Type T is too large for this arena"
             );
             assert!(std::mem::align_of::<T>() <= 64, "Type T is not aligned");
-
-            assert!(std::mem::size_of::<T>() != 0);
-        }
+        };
         let each_size = std::mem::size_of::<T>();
+        if each_size == 0 {
+            let counter = value.count(); 
+            return ArenaIter {
+                index: 0,
+                page: 0,
+                len: counter,
+                pages_list_ptr: &*self.ptrs,
+                size: 0,
+                _marker: PhantomData,
+            };
+        }
         let each_layout = Layout::new::<T>();
         let align = each_layout.align();
         let size = each_layout.size();
@@ -156,8 +168,8 @@ impl Arena {
         let mut counter = 0;
 
         for value in value {
-            if self.index.get() + size < Self::BLOCK_SIZE {
-                let ptr = unsafe { self.get_tip_ptr() } as *mut T;
+            if self.index.get() + size <= Self::BLOCK_SIZE {
+                let ptr: *mut T = unsafe { self.get_tip_ptr() };
                 self.index.set(self.index.get() + size);
                 unsafe {
                     ptr.write(value);
