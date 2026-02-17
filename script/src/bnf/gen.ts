@@ -54,8 +54,7 @@ class Generator {
             ret += `Some(${branch.firstTerminal}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),`;
         }
         if (func.branchesJudgebleInPeek1.length === 0 && func.branchesNeedBacktrack.length === 0) {
-            // TODO: add infomation for error messaging as params of Error::build static method
-            ret += `_ => Self::Error::build(self.get_errors_arena(), &[], self.peek::<0>()),`;
+            ret += `_ => Self::Error::build(self.get_errors_arena(), &[${func.expectedTerminals.join(",")}], self.peek::<0>()),`;
         }
         if (func.branchesJudgebleInPeek1.length !== 0 && func.branchesNeedBacktrack.length === 0) {
             ret += `_ => match (self.peek::<0>(), self.peek::<1>()) {`;
@@ -169,19 +168,25 @@ class Generator {
 
     private generateBranchASTType(func: BranchParserFunction): string {
         let ret = "";
+        ret += `impl ASTNode for ${func.astTypeName} {`
+        ret += `const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(&[${func.syncPointsTerminals.join(",")}]);`;
+        ret += `fn get_error_situation(err: ParseErr) -> Option<Self> {`;
+        ret += `Some(Self::Invalid)`;
+        ret += `}`;
+        ret += `}`;
         ret += `pub enum ${func.astTypeName} {`;
         for (const branch of [...func.branchesJudgebleInPeek0, ...func.branchesJudgebleInPeek1, ...func.branchesNeedBacktrack]) {
             ret += `${branch.astTypeName}(${branch.astTypeName}),`;
         }
+        ret += `Invalid,`
         ret += `}`;
         return ret;
     }
 
     private generateProductASTType(func: ProductParserFunction): string {
         let ret = "";
-        // TODO: add sync points information for parse recocery
         ret += `impl ASTNode for ${func.astTypeName} {`
-        ret += `const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(&[], false, false, false);`;
+        ret += `const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(&[${func.syncPointsTerminals.join(",")}]);`;
         ret += `fn get_error_situation(err: ParseErr) -> Option<Self> {`;
         ret += `None`;
         ret += `}`;

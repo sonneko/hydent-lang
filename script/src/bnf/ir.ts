@@ -22,6 +22,8 @@ export type BranchParserFunction = {
     kind: "branch",
     functionName: RustFunctionName,
     astTypeName: RustASTTypeName,
+    expectedTerminals: RustTokenTypeName[],
+    syncPointsTerminals: RustTokenTypeName[],
     branchesJudgebleInPeek0: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
@@ -42,6 +44,7 @@ export type ProductParserFunction = {
     kind: "product",
     functionName: RustFunctionName,
     astTypeName: RustASTTypeName,
+    syncPointsTerminals: RustTokenTypeName[],
     elements: ({
         kind: "normal",
         astTypeName: RustASTTypeName,
