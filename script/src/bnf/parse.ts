@@ -195,7 +195,7 @@ class Parser {
             this.consumeKeyword('RBrace');
             return { kind: 'Product', name, members };
         } else {
-            return { kind: 'Product', name, members: undefined };
+            throw new Error("Expected '{' in product rule")
         }
 
     }

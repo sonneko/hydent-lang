@@ -116,10 +116,16 @@ class Generator {
                 case "repeat":
                     ret += `let ${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName});`;
                     break;
+                case "terminal":
+                    ret += `self.expect({element.tokenTypeName})?;`;
+                    break;
             }
         }
         ret += `Ok(${func.astTypeName} {`;
         for (const element of func.elements) {
+            if (element.kind === "terminal") {
+                continue;
+            }
             ret += `${element.astTypeName},`;
         }
         ret += `})`;

@@ -41,7 +41,7 @@ export interface BranchRule {
 export interface ProductRule {
     kind: 'Product';
     name: string;
-    members: ProductMember[] | undefined;
+    members: ProductMember[];
 }
 
 export type Rule = BranchRule | ProductRule;

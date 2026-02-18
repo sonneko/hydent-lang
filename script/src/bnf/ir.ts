@@ -57,5 +57,8 @@ export type ProductParserFunction = {
     } | {
         kind: "option",
         astTypeName: RustASTTypeName,
+    } | {
+        kind: "terminal",
+        tokenTypeName: RustTokenTypeName,
     })[],
 };
