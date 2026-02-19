@@ -1,0 +1,1 @@
+import "./bnf/tests";

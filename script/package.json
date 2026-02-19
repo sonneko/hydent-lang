@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "run": "tsx ./src/index.ts"
+    "run": "tsx ./src/index.ts",
+    "test": "tsx ./src/test.ts"
   },
   "dependencies": {
     "@types/node": "^25.2.0",

@@ -42,7 +42,11 @@ function concatSeq(a: TokenSeq, b: TokenSeq): TokenSeq {
 class TokenMap {
     private map: Record<string, string>;
 
-    public constructor() {
+    public constructor(record?: Record<string, string>) {
+        if (record !== undefined) {
+            this.map = record;
+            return;
+        }
         const map = new Map<string, string>();
         try {
             const csv = readFileSync('../assets/token_map.csv', 'utf8');
@@ -82,9 +86,9 @@ class Analyzer {
     private firstSets: Map<string, Set<string>> = new Map(); // Key: ASTName, Value: Set<SeqString>
     private followSets: Map<string, Set<string>> = new Map(); // Key: ASTName, Value: Set<TokenString>
 
-    public constructor(grammar: Grammar) {
+    public constructor(grammar: Grammar, tokenMap?: Record<string, string>) {
         this.grammar = grammar;
-        this.tokenMap = new TokenMap();
+        this.tokenMap = new TokenMap(tokenMap);
         this.ruleMap = new Map();
 
         for (const rule of grammar) {
@@ -513,7 +517,7 @@ class Analyzer {
     }
 }
 
-export function analyze(grammar: Grammar): IR {
-    const analyzer = new Analyzer(grammar);
+export function analyze(grammar: Grammar, tokenMap?: Record<string, string>): IR {
+    const analyzer = new Analyzer(grammar, tokenMap);
     return analyzer.analyze();
 }
