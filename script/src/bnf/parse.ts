@@ -159,7 +159,7 @@ class Parser {
                 note = this.consumeStringLiteral();
             }
 
-            variants.push({ name: variantName, note });
+            variants.push({ name: variantName, note: note || "" });
         }
 
         this.consumeKeyword('RBrace');
@@ -186,16 +186,22 @@ class Parser {
                 }
 
                 if (member.kind === 'Field') {
-                    members.push({ ...member, note });
+                    members.push({ ...member, note: note || "" });
                 } else {
-                    members.push({ ...member, note });
+                    members.push({ ...member, note: note || "" });
                 }
             }
 
             this.consumeKeyword('RBrace');
             return { kind: 'Product', name, members };
         } else {
-            throw new Error("Expected '{' in product rule")
+            this.consumeKeyword("With");
+            const terminal = this.consumeStringLiteral();
+            return { kind: 'Product', name, members: [{
+                "kind": "Terminal",
+                "value": terminal,
+                "note": "",
+            }] }
         }
 
     }
@@ -207,13 +213,13 @@ class Parser {
         if (token.kind === 'StringLiteral') {
             // <terminal>
             const value = this.consumeStringLiteral();
-            return { kind: 'Terminal', value, note: null };
+            return { kind: 'Terminal', value, note: "" };
         } else if (token.kind === 'Identifier') {
             // <identifier> ":" <nonterminal>
             const name = this.consumeIdentifier();
             this.consumeKeyword('Colon');
             const typeRef = this.parseNonTerminal();
-            return { kind: 'Field', name, type: typeRef, note: null };
+            return { kind: 'Field', name, type: typeRef, note: "" };
         } else {
             throw new Error(`Expected Identifier or StringLiteral in product item, got ${token.kind} at position ${this.position}`);
         }

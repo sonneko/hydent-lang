@@ -1,21 +1,32 @@
 use crate::compiler::arena::{Arena, ArenaIter};
+use crate::parser::base_parser::Enviroment;
 use crate::{diagnostic::CompilerDiagnostic, tokenizer::tokens::Token};
 
 #[derive(Clone, Copy)]
 pub struct ParseErr {
     expected: ArenaIter<Token>,
-    found: Option<Token>,
+    found: Enviroment,
 }
 
 pub trait IParseErr {
-    fn create<const N: usize>(arena: &Arena, expected: [Token; N], found: Option<&Token>) -> Self;
+    fn build<const N: usize>(
+        arena: &Arena,
+        identifier: bool,
+        expected: [Token; N],
+        found: Enviroment,
+    ) -> Self;
 }
 
 impl IParseErr for ParseErr {
-    fn create<const N: usize>(arena: &Arena, expected: [Token; N], found: Option<&Token>) -> Self {
+    fn build<const N: usize>(
+        arena: &Arena,
+        identifier: bool,
+        expected: [Token; N],
+        found: Enviroment,
+    ) -> Self {
         Self {
             expected: arena.alloc_slice(expected),
-            found: found.copied(),
+            found,
         }
     }
 }

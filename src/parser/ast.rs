@@ -36,12 +36,12 @@ pub struct SyncPointBitMap {
 }
 
 impl SyncPointBitMap {
-    pub const fn build_map(tokens: &[Token]) -> Self {
+    pub const fn build_map(identifier: bool, tokens: &[Token]) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
         let mut delimiters_bits = 0u64;
 
-        let i = 0usize;
+        let mut i = 0usize;
 
         while i < tokens.len() {
             // can't use "for in loop" and iterator pattern in const function
@@ -51,6 +51,7 @@ impl SyncPointBitMap {
                 Token::Delimiter(delimiter) => delimiters_bits |= 1 << (delimiter as u8),
                 _ => panic!("Invalid token in SyncPointBitMap"),
             }
+            i += 1;
         }
 
         Self {
@@ -59,7 +60,7 @@ impl SyncPointBitMap {
             delimiter: delimiters_bits,
             literals: false,
             comments: false,
-            identifier: false,
+            identifier,
             eof: false,
         }
     }

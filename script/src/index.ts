@@ -40,7 +40,7 @@ function main() {
     try {
         execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH}`);
     } catch (e) {
-        console.warn(`⚠️ rustfmt not found!`)
+        console.warn(`⚠️ rustfmt not found or failed because of syntax error`)
     }
     console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
 

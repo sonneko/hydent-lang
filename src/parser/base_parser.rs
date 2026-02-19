@@ -6,9 +6,9 @@ use crate::tokenizer::tokens::Token;
 
 pub trait BaseParser {
     type Error: IParseErr;
-    fn peek_n<const N: usize>(&self) -> Option<&Token>;
+    fn peek<const N: usize>(&self) -> Option<&Token>;
     fn consume_token(&mut self) -> Option<Token>;
-    fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error>;
+    fn expect(&mut self, expected: Token) -> Result<(), Self::Error>;
     fn repeat<T: ASTNode>(
         &mut self,
         hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
@@ -20,7 +20,11 @@ pub trait BaseParser {
         &mut self,
         hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error>;
+    fn enviroment(&self) -> Enviroment;
 }
+
+#[derive(Clone, Copy)]
+pub struct Enviroment {}
 
 impl<I> BaseParser for Parser<'_, I>
 where
@@ -31,7 +35,7 @@ where
         self.ctx.ast_arena.alloc(value)
     }
 
-    fn peek_n<const N: usize>(&self) -> Option<&Token> {
+    fn peek<const N: usize>(&self) -> Option<&Token> {
         self.tokens.peek_n::<N>()
     }
 
@@ -52,7 +56,7 @@ where
             Err(err) => {
                 self.report_error(err);
                 let ret = Some(T::get_error_situation(err)?);
-                while !T::is_sync_point(self.peek_n::<1>()) {
+                while !T::is_sync_point(self.peek::<1>()) {
                     self.consume_token();
                 }
                 self.consume_token();
@@ -61,30 +65,43 @@ where
         })
     }
 
-    fn expect_token(&mut self, expected: Token) -> Result<(), Self::Error> {
+    fn expect(&mut self, expected: Token) -> Result<(), Self::Error> {
         let found = self.consume_token();
         if let Some(found) = found {
             if found == expected {
                 Ok(())
             } else {
-                Err(ParseErr::create(
+                Err(ParseErr::build(
                     self.get_errors_arena(),
+                    matches!(expected, Token::Identifier(_)),
                     [expected],
-                    Some(&found),
+                    self.enviroment(),
                 ))
             }
         } else {
-            Err(ParseErr::create(self.get_errors_arena(), [expected], None))
+            Err(ParseErr::build(
+                self.get_errors_arena(),
+                matches!(expected, Token::Identifier(_)),
+                [expected],
+                self.enviroment(),
+            ))
         }
     }
 
-    fn report_error(&self, err: Self::Error) {}
+    fn report_error(&self, err: Self::Error) {
+        // TODO: implement
+        unimplemented!()
+    }
 
     fn backtrack<T: ASTNode>(
         &mut self,
         hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error> {
         // TODO: implement with buffer
+        unimplemented!()
+    }
+
+    fn enviroment(&self) -> Enviroment {
         unimplemented!()
     }
 }

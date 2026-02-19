@@ -6,7 +6,7 @@
 // <branch_rule> ::= "branch" <identifier> "{" <branch_rule_inner> "}"
 // <branch_rule_inner> ::= { <identifier> [ "with" <string_literal> ] }
 // 
-// <product_rule> ::= "product" <identifier> ( "{" <product_inner> "}" )?
+// <product_rule> ::= "product" <identifier> ( "{" <product_inner> "}" ) | ( "with" <string_literal> )
 // <product_inner> ::= { <product_item> [ "with" <string_literal> ] }
 // <product_item> ::= ( <identifier> ":" <nonterminal> ) | <terminal>
 // <nonterminal> ::= <repete_item> | <option_item> | <item>
@@ -25,12 +25,12 @@ export interface TypeReference {
 
 export interface BranchVariant {
     name: string;
-    note: string | null;
+    note: string;
 }
 
 export type ProductMember =
-    | { kind: 'Field'; name: string; type: TypeReference; note: string | null }
-    | { kind: 'Terminal'; value: string; note: string | null };
+    | { kind: 'Field'; name: string; type: TypeReference; note: string }
+    | { kind: 'Terminal'; value: string; note: string };
 
 export interface BranchRule {
     kind: 'Branch';
