@@ -66,6 +66,6 @@ product IntType {
     "Int"
 }
 
-product Identifier
+product Identifier with "#identifier"
 
-product StringLiteral
+product StringLiteral with "#string"
