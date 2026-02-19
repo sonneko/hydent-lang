@@ -89,7 +89,7 @@ where
     }
 
     fn report_error(&self, err: Self::Error) {
-        // TODO: implement
+        // TODO: add error to error_pool
         unimplemented!()
     }
 
@@ -102,6 +102,7 @@ where
     }
 
     fn enviroment(&self) -> Enviroment {
+        // TODO: consider Environment structure
         unimplemented!()
     }
 }

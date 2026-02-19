@@ -31,14 +31,9 @@ impl IParseErr for ParseErr {
     }
 }
 
-impl std::fmt::Display for ParseErr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        unimplemented!()
-    }
-}
-
 impl From<ParseErr> for Box<dyn CompilerDiagnostic> {
     fn from(value: ParseErr) -> Self {
+        // TODO: convert ParseErr into CompilerDiagnostic
         unimplemented!()
     }
 }

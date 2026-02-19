@@ -7,6 +7,9 @@ use crate::parser::{errors::ParseErr, parse::Parser};
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::tokenize::Tokenizer;
 
+#[cfg(test)]
+mod tests;
+
 pub mod ast;
 pub mod base_parser;
 pub mod errors;

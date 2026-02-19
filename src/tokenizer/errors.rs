@@ -45,6 +45,7 @@ impl Debug for TokenizeErr {
 
 impl From<TokenizeErr> for Box<dyn CompilerDiagnostic> {
     fn from(value: TokenizeErr) -> Self {
+        // TODO: convert TokenizeErr into CompilerDiagnostic
         unimplemented!()
     }
 }

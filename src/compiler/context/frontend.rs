@@ -27,6 +27,7 @@ impl Mergeble for CompilerFrontendContext<'_> {
     ///
     /// The specific merging logic is currently unimplemented.
     fn merge(self, _other: Self) -> Self {
+        // TODO: merge ctx
         unimplemented!()
     }
 }
@@ -43,6 +44,7 @@ impl CompilerContext for CompilerFrontendContext<'_> {
     ///
     /// The specific transition logic is currently unimplemented.
     fn next_fase(self) -> Self::NextFase {
+        // TODO
         unimplemented!()
     }
 
