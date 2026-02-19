@@ -68,7 +68,6 @@ pub enum Keyword {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
-#[repr(u8)]
 pub enum Literal {
     IntegerLiteral(i32),
     FloatLiteral(HashableFloat<f32>),
@@ -136,11 +135,16 @@ pub enum Delimiter {
 
 /// Represents the different types of comments in the Hydent programming language.
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
-#[repr(u8)]
 pub enum Comment {
     DocComment(Span), // `/// ...`
     LineComment,      // `// ...`
     BlockComment,     // `/* ... */`
+}
+
+impl Token {
+    pub const fn is_identifier(&self) -> bool {
+        matches!(self, Self::Identifier(_))
+    }
 }
 
 impl std::fmt::Display for Token {
