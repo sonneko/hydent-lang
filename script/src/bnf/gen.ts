@@ -104,6 +104,11 @@ class Generator {
 
     private generateProductParserFunction(func: ProductParserFunction): string {
         let ret = "";
+        let isManual = func.elements.filter(element => element.kind === "terminal").some(element => element.tokenTypeName.includes("$"));
+        if (isManual) {
+            ret += `fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error>;`
+            return ret;
+        }
         ret += `fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {`;
         for (const element of func.elements) {
             switch (element.kind) {
@@ -200,6 +205,11 @@ class Generator {
 
     private generateProductASTType(func: ProductParserFunction): string {
         let ret = "";
+        let isManual = func.elements.filter(element => element.kind === "terminal").some(element => element.tokenTypeName.includes("$"));
+        if (isManual) {
+            ret += `pub use crate::parser::manual_ast::${func.astTypeName};`
+            return ret;
+        }
         ret += `impl ASTNode for ${func.astTypeName} {`
         ret += `const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${func.syncPointsTerminals.some(t => t.includes("Identifier")) ? "true" : "false"}, &[${func.syncPointsTerminals.filter(t => !t.includes("$")).join(",")}]);`;
         ret += `fn get_error_situation(err: ParseErr) -> Option<Self> {`;
