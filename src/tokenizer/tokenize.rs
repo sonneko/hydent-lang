@@ -1,11 +1,9 @@
 //! Tokenizer with a function to intern strings
 
-use super::errors::TokenizeErr;
 use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
+use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
-
-pub type Return<T> = Result<T, TokenizeErr>;
 
 pub struct Tokenizer<'src, 'ctx> {
     current_pos: usize,
@@ -25,7 +23,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    pub fn tokenize(mut self) -> Return<Vec<(Token, Span)>> {
+    pub fn tokenize(mut self) -> Result<Vec<(Token, Span)>, TokenizeErr> {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
 
         while let Some(b) = self.peek() {
@@ -193,7 +191,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_number_literal(&mut self) -> Return<Token> {
+    fn read_number_literal(&mut self) -> Result<Token, TokenizeErr> {
         let start = self.current_pos;
         let mut is_float = false;
 
@@ -260,7 +258,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_string_literal(&mut self) -> Return<Token> {
+    fn read_string_literal(&mut self) -> Result<Token, TokenizeErr> {
         self.advance(); // skip opening "
         let start = self.current_pos;
         while let Some(b) = self.peek() {
@@ -281,7 +279,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         Err(TokenizeErr::StringLiteralNotClosed(start))
     }
 
-    fn read_char_literal(&mut self) -> Return<Token> {
+    fn read_char_literal(&mut self) -> Result<Token, TokenizeErr> {
         self.advance(); // '
         let start = self.current_pos;
         let c = match self.peek() {
@@ -315,7 +313,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_line_comment(&mut self) -> Return<Token> {
+    fn read_line_comment(&mut self) -> Result<Token, TokenizeErr> {
         self.advance_n(2); // //
         let is_doc = self.peek() == Some(b'/');
         if is_doc {
@@ -340,7 +338,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_block_comment(&mut self) -> Return<Token> {
+    fn read_block_comment(&mut self) -> Result<Token, TokenizeErr> {
         let start_err = self.current_pos;
         self.advance_n(2); // skip /*
         let mut depth = 1;

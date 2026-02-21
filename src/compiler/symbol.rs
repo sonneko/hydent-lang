@@ -12,7 +12,7 @@
 use crate::compiler::source_holder::SourceHolder;
 use std::collections::HashMap;
 
-use super::span::{Span, SpanWithRef};
+use crate::compiler::span::{Span, SpanWithRef};
 
 /// A rough estimate used to pre-allocate the symbol table's capacity.
 /// This assumes an average symbol length to estimate the number of symbols,

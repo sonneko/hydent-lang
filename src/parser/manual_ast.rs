@@ -1,6 +1,7 @@
 use crate::{
     compiler::{span::Span, symbol::Symbol},
-    parser::ast::ASTNode,
+    parser::ast::{ASTNode, SyncPointBitMap},
+    parser::errors::ParseErr,
 };
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -8,9 +9,8 @@ pub struct Identifier {
     pub symbol: Symbol,
 }
 impl ASTNode for Identifier {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -20,9 +20,8 @@ pub struct StringLiteral {
     pub span: Span,
 }
 impl ASTNode for StringLiteral {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -30,9 +29,8 @@ impl ASTNode for StringLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct CharLiteral {}
 impl ASTNode for CharLiteral {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -40,9 +38,8 @@ impl ASTNode for CharLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct IntLiteral {}
 impl ASTNode for IntLiteral {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -50,9 +47,8 @@ impl ASTNode for IntLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct FloatLiteral {}
 impl ASTNode for FloatLiteral {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -60,9 +56,8 @@ impl ASTNode for FloatLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct BoolLiteral {}
 impl ASTNode for BoolLiteral {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -70,9 +65,8 @@ impl ASTNode for BoolLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct DocComment {}
 impl ASTNode for DocComment {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -80,9 +74,8 @@ impl ASTNode for DocComment {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct LineComment {}
 impl ASTNode for LineComment {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }
@@ -90,9 +83,8 @@ impl ASTNode for LineComment {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct BlockComment {}
 impl ASTNode for BlockComment {
-    const SYNC_POINT_SETS: super::ast::SyncPointBitMap =
-        super::ast::SyncPointBitMap::build_map(false, &[]);
-    fn get_error_situation(err: super::errors::ParseErr) -> Option<Self> {
+    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
 }

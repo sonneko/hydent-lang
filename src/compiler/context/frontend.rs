@@ -1,9 +1,9 @@
-use super::middleend::CompilerMiddleendContext;
-use super::Arena;
-use super::SourceHolder;
-use super::SymbolFactory;
+use crate::compiler::context::middleend::CompilerMiddleendContext;
+use crate::compiler::context::Arena;
 use crate::compiler::context::CompilerContext;
 use crate::compiler::context::Mergeble;
+use crate::compiler::source_holder::SourceHolder;
+use crate::compiler::symbol::SymbolFactory;
 
 /// Represents the frontend context of the compiler.
 ///
