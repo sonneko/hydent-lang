@@ -1,6 +1,8 @@
 use std::process::Command;
 
 fn main() {
+    println!("cargo:rerun-if-changed=script/");
+
     let script_dir = "./script";
 
     let status = Command::new("npm")
