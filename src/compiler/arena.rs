@@ -118,7 +118,9 @@ impl Arena {
             self.grow();
             start = 0;
         }
-        let ptr = unsafe { *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())).add(start) as *mut T };
+        let ptr = unsafe {
+            *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())).add(start) as *mut T
+        };
         self.index.set(start + size);
         unsafe {
             ptr.write(value);
@@ -158,7 +160,7 @@ impl Arena {
         let start_page = self.page_index.get();
 
         let mut counter = 0;
-        let mut page_ptr = unsafe {*((*(*self.ptrs).get()).as_ptr().add(self.page_index.get()))};
+        let mut page_ptr = unsafe { *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())) };
 
         for value in value {
             if self.index.get() + size <= Self::BLOCK_SIZE {
@@ -169,7 +171,7 @@ impl Arena {
                 }
             } else {
                 self.grow();
-                page_ptr = unsafe {*((*(*self.ptrs).get()).as_ptr().add(self.page_index.get()))};
+                page_ptr = unsafe { *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())) };
                 let ptr: *mut T = unsafe { page_ptr.add(self.index.get()) as *mut T };
                 self.index.set(size);
                 unsafe { ptr.write(value) }
@@ -208,7 +210,6 @@ impl Arena {
         self.page_index.set(self.page_index.get() + 1);
         self.index.set(0);
     }
-
 }
 
 impl Drop for Arena {
