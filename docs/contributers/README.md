@@ -1,20 +1,22 @@
+## 
+
 ## compiler fases
 
 * SURFACE
     - `cli`: receive user's input and send that into `compiler` and return the results
     - `compiler`: manage all compile process and resource with scheduling
-* FRONTEND(`CompilerFrontendContext`)
+* FRONTEND(using `CompilerFrontendContext`)
     - `tokenizer`: tokenize input and generate `Vec<Token>`
     - `parser`: parse `Vec<Token>` and generate `AST`
     - `dependency_resolution`: resolve file and package level devendency
     - `name_resolution`: resolve name and type
     - `type_checker`: check if type is correct
-* MIDDLEEND(`CompilerMiddleendContext`)
+* MIDDLEEND(using `CompilerMiddleendContext`)
     - `hir_gen`: generate hir that is more low-level and brief lang from `AST`
     - `hir_transform`: optimize or transform hir
     - `mir_gen`: generate mir from hir
     - `mir_transform`: optimize or transform mir
-* BACKEND(`CompilerBackendContext`)
+* BACKEND(using `CompilerBackendContext`)
     - `llvmir_gen`: generate llvm-ir
     - `linker`: link the output binary to binaries from other programming language and export one binary
 * OTHER
@@ -23,24 +25,25 @@
     - `doc_gen`: generate documents from source code
     - `common`: utility for all fases
 
+## How to build Compiler
 
+### dependencies
 
-## build step
+* Rust stable toolchains (cargo, rustfmt, rustc, clippy)
+* Rust nightly toolchains (miri)
+* Node.js
+* (in the future) LLVM_21 with libpolly-21-dev
 
-#### 整合性check@`tokenizer`,`parser`のチェック
-- `/assets/grammer.bnf`の全非終端文字の定義の存在を確認する。
-- `/assets/grammer.bnf`から再帰降下パーサの関数のシグネチャを生成し、`/spec/parser-functions.rs.txt'に保存する。
-- 全関数が、`src/parser/parser.rs`に実装されていることを確認する。
-- 非終端文字の一覧を、`/spec/non-terminal-characters.txt`に保存する。
-- ASTの型定義にそれらが含まれていることを確認する。**<- TODO**
-- 終端文字の一覧を、`/spec/terminal-characters.txt`に保存する。
-- Tokenの型定義にそれらが含まれていることを確認する。**<- TODO**
-- テストの実行 **<-TODO**
-- 他のcheck **<-TODO**
+### Build
 
-#### 整合性check@
-- 他のcheck **<-TODO**
+1. Install script dependencies bia npm
 
-#### エラーメッセージのビルド
-- `cargo build`を実行する。
-- 
+```bash
+cd script && npm install
+```
+
+2. Build compiler bia cargo
+
+```bash
+cargo build --release
+```
