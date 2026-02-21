@@ -185,6 +185,7 @@ class Generator {
         ret += `//  In "/src/parser/generated_ast.rs"\n`;
         ret += `// ==========================================\n\n`;
         ret += `#![allow(non_snake_case)]\n`;
+        ret += `#![allow(clippy::large_enum_variant)]   // TODO: delete this line`;
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
         ret += `use crate::parser::ast::ASTNode;\n`;

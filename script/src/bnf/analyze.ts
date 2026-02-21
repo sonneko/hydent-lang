@@ -13,10 +13,6 @@ import {
     tokenName
 } from "./ir";
 
-// ----------------------------------------------------------------------------
-// Utility Types & Helpers
-// ----------------------------------------------------------------------------
-
 type TokenSeq = RustTokenTypeName[];
 
 function seqKey(seq: TokenSeq): string {
@@ -32,10 +28,6 @@ function concatSeq(a: TokenSeq, b: TokenSeq): TokenSeq {
     const combined = [...a, ...b];
     return combined.slice(0, 2);
 }
-
-// ----------------------------------------------------------------------------
-// TokenMap
-// ----------------------------------------------------------------------------
 
 class TokenMap {
     private map: Record<string, string>;
@@ -69,10 +61,6 @@ class TokenMap {
         return tokenName(val);
     }
 }
-
-// ----------------------------------------------------------------------------
-// Analyzer
-// ----------------------------------------------------------------------------
 
 export class Analyzer {
     private grammar: Grammar;
@@ -198,7 +186,6 @@ export class Analyzer {
                                 subFirstStrs.forEach(s => memberFirsts.push(parseSeqKey(s)));
                             }
 
-                            // MODIFIED: Added nullable rule check
                             if (refModifier === "List" || refModifier === "Option" || this.nullable.has(refName)) {
                                 memberFirsts.push([]);
                             }

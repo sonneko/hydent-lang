@@ -48,8 +48,6 @@ export type Rule = BranchRule | ProductRule;
 
 export type Grammar = Rule[];
 
-// --- Lexer Types & Implementation ---
-
 export type TokenKind =
     | 'Branch' | 'Product' | 'With'
     | 'LBrace' | 'RBrace' | 'Colon' | 'Star' | 'Question'
@@ -77,6 +75,6 @@ export const TOKEN_PATTERNS: Array<{ kind: TokenKind; regex: RegExp }> = [
     { kind: 'Colon', regex: /^:/ },
     { kind: 'Star', regex: /^\*/ },
     { kind: 'Question', regex: /^\?/ },
-    { kind: 'StringLiteral', regex: /^"([^"]*)"/ }, // グループキャプチャあり
+    { kind: 'StringLiteral', regex: /^"([^"]*)"/ },
     { kind: 'Identifier', regex: /^[a-zA-Z_][a-zA-Z0-9_]*/ },
 ];

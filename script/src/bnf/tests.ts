@@ -66,10 +66,9 @@ describe("BNF Analyzer - LL(2) Disambiguation & Fallback", () => {
         const typeBranch = findFunc(ir, "Type");
 
         assert(typeBranch.kind === "branch", "Type should be a branch");
-        // "Int" が共通なので Peek0 では判定不可
+
         assert(typeBranch.branchesJudgebleInPeek0.length === 0, "Should not be judgeable in Peek0");
         
-        // Peek1 で "Double" があれば IntDouble
         assert(typeBranch.branchesJudgebleInPeek1.some((b: any) => 
             b.astTypeName === "IntDouble" && b.secondTerminal === "Keyword::DoubleInt"
         ), "IntDouble should be judgeable in Peek1 via DoubleInt");
