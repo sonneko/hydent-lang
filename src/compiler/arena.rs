@@ -75,7 +75,7 @@ where
 
 impl Arena {
     #[cfg(not(miri))]
-    pub const BLOCK_SIZE: usize = 128 * 1024 * 8; // 128KB
+    pub const BLOCK_SIZE: usize = 1024 * 1024 * 8; // 1MB
 
     #[cfg(miri)]
     pub const BLOCK_SIZE: usize = 128; // 128 byte in test
@@ -119,7 +119,9 @@ impl Arena {
             start = 0;
         }
         let ptr = unsafe {
-            *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())).add(start) as *mut T
+            let pages_vec_ptr = (*self.ptrs).get();
+            let page_base_ptr = *(*pages_vec_ptr).as_ptr().add(self.page_index.get());
+            page_base_ptr.add(start) as *mut T
         };
         self.index.set(start + size);
         unsafe {
