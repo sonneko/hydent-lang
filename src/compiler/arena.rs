@@ -1,13 +1,4 @@
-//! # Arena Allocator
-//!
-//! This module provides an arena allocator for the Hydent compiler. Arena allocation
-//! is a memory management technique where memory for a group of objects is
-//! allocated from a single large block of memory. This can be more efficient
-//! than allocating each object individually, especially for a large number of
-//! small objects.
-//!
-//! The `Arena` struct is the main entry point to the arena allocator. It
-//! provides methods for allocating objects and vectors within the arena.
+//! ArenaAlocator implement
 //!
 //! # Unsafe(**Important**)
 //! The contents of `ArenaBox` or `ArenaIter` will live as long as `Arena`.
@@ -23,14 +14,12 @@ use std::alloc::{alloc, Layout};
 
 static ALIGNMENT: usize = 64;
 
-/// A memory arena for allocating objects.
 pub struct Arena {
     index: Cell<usize>,
     page_index: Cell<usize>,
     ptrs: Box<UnsafeCell<Vec<*mut u8>>>,
 }
 
-/// A smart pointer for an object allocated in an `Arena`.
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct ArenaBox<T: Copy> {
     ptr: *mut T,
@@ -45,7 +34,6 @@ impl<T: Copy> Deref for ArenaBox<T> {
     }
 }
 
-/// A list of objects allocated in an `Arena`.
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct ArenaIter<T: Copy> {
     page: usize,
@@ -87,7 +75,7 @@ where
 
 impl Arena {
     #[cfg(not(miri))]
-    pub const BLOCK_SIZE: usize = 32 * 1024; // 32KB
+    pub const BLOCK_SIZE: usize = 128 * 1024 * 8; // 128KB
 
     #[cfg(miri)]
     pub const BLOCK_SIZE: usize = 128; // 128 byte in test
@@ -96,7 +84,7 @@ impl Arena {
         let layout = unsafe { Layout::from_size_align_unchecked(Self::BLOCK_SIZE, ALIGNMENT) };
         let ptr = unsafe { alloc(layout) };
         if ptr.is_null() {
-            panic!("Out of memory");
+            panic!("Out of memory in arena alocator");
         }
         Self {
             index: Cell::new(0),
@@ -125,13 +113,12 @@ impl Arena {
         }
         let size = layout.size();
         let align = layout.align();
-        // indexをalignの倍数まで引き上げ
-        let mut start = (self.index.get() + align - 1) & !(align - 1);
+        let mut start = (self.index.get() + align - 1) & !(align - 1); // alignment
         if size + start > Self::BLOCK_SIZE {
             self.grow();
             start = 0;
         }
-        let ptr = unsafe { self.get_page_base_ptr().add(start) as *mut T };
+        let ptr = unsafe { *((*(*self.ptrs).get()).as_ptr().add(self.page_index.get())).add(start) as *mut T };
         self.index.set(start + size);
         unsafe {
             ptr.write(value);
@@ -166,23 +153,24 @@ impl Arena {
         let each_layout = Layout::new::<T>();
         let align = each_layout.align();
         let size = each_layout.size();
-        // indexをalignの倍数まで引き上げ
         let start = (self.index.get() + align - 1) & !(align - 1);
         self.index.set(start);
         let start_page = self.page_index.get();
 
         let mut counter = 0;
+        let mut page_ptr = unsafe {*((*(*self.ptrs).get()).as_ptr().add(self.page_index.get()))};
 
         for value in value {
             if self.index.get() + size <= Self::BLOCK_SIZE {
-                let ptr: *mut T = unsafe { self.get_tip_ptr() };
+                let ptr: *mut T = unsafe { page_ptr.add(self.index.get()) as *mut T };
                 self.index.set(self.index.get() + size);
                 unsafe {
                     ptr.write(value);
                 }
             } else {
                 self.grow();
-                let ptr: *mut T = unsafe { self.get_tip_ptr() };
+                page_ptr = unsafe {*((*(*self.ptrs).get()).as_ptr().add(self.page_index.get()))};
+                let ptr: *mut T = unsafe { page_ptr.add(self.index.get()) as *mut T };
                 self.index.set(size);
                 unsafe { ptr.write(value) }
             }
@@ -221,17 +209,6 @@ impl Arena {
         self.index.set(0);
     }
 
-    unsafe fn get_tip_ptr<T>(&self) -> *mut T {
-        let vec_ptr = (*self.ptrs).get();
-        let page_ptr = *((*vec_ptr).as_ptr().add(self.page_index.get()));
-        page_ptr.add(self.index.get()) as *mut T
-    }
-
-    unsafe fn get_page_base_ptr(&self) -> *mut u8 {
-        let vec_ptr = (*self.ptrs).get();
-        // page_index が指すページのポインタを直接取得
-        *((*vec_ptr).as_ptr().add(self.page_index.get()))
-    }
 }
 
 impl Drop for Arena {

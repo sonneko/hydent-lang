@@ -56,15 +56,15 @@ jobs:
       - name: Check formatting
         run: cargo +stable fmt --all -- --check
 
-      - name: Clippy
-        run: cargo +stable clippy -- -D warnings
-
       - name: Run Miri
         run: |
           cargo +nightly miri setup
           cargo +nightly miri test --lib
         env:
           MIRIFLAGS: "-Zmiri-ignore-leaks" 
+
+      - name: Clippy
+        run: cargo +stable clippy -- -D warnings
 
       - name: Test
         run: cargo +stable test --verbose
