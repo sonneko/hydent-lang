@@ -99,3 +99,4 @@
 "#line_comment", "LineComment"
 "#block_comment", "BlockComment"
 "#identifier", "Token::Identifier($Span$)"
+"_", "_"

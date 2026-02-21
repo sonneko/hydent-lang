@@ -16,10 +16,8 @@ import {
 // Utility Types & Helpers
 // ----------------------------------------------------------------------------
 
-// トークン列（長さ0, 1, 2）。First集合の要素として使用。
 type TokenSeq = RustTokenTypeName[];
 
-// 文字列化してSet/Mapのキーにするためのヘルパー
 function seqKey(seq: TokenSeq): string {
     return seq.join(",");
 }
@@ -29,7 +27,6 @@ function parseSeqKey(key: string): TokenSeq {
     return key.split(",") as RustTokenTypeName[];
 }
 
-// 2つのトークン列を連結し、長さk=2に切り詰める
 function concatSeq(a: TokenSeq, b: TokenSeq): TokenSeq {
     const combined = [...a, ...b];
     return combined.slice(0, 2);
@@ -76,15 +73,14 @@ class TokenMap {
 // Analyzer
 // ----------------------------------------------------------------------------
 
-class Analyzer {
+export class Analyzer {
     private grammar: Grammar;
     private tokenMap: TokenMap;
     private ruleMap: Map<string, Rule>;
 
-    // 計算結果のキャッシュ
-    private nullable: Set<string> = new Set();
-    private firstSets: Map<string, Set<string>> = new Map(); // Key: ASTName, Value: Set<SeqString>
-    private followSets: Map<string, Set<string>> = new Map(); // Key: ASTName, Value: Set<TokenString>
+    public nullable: Set<string> = new Set();
+    private firstSets: Map<string, Set<string>> = new Map();
+    private followSets: Map<string, Set<string>> = new Map();
 
     public constructor(grammar: Grammar, tokenMap?: Record<string, string>) {
         this.grammar = grammar;
@@ -97,12 +93,10 @@ class Analyzer {
     }
 
     public analyze(): IR {
-        // 1. 不動点反復法による各種セットの計算
         this.computeNullable();
         this.computeFirst();
         this.computeFollow();
 
-        // 2. IR生成
         const funcs: ParserFunction[] = [];
         for (const rule of this.grammar) {
             switch (rule.kind) {
@@ -117,8 +111,7 @@ class Analyzer {
         return funcs;
     }
 
-    // --- Fixed Point Iteration: Nullable ---
-    private computeNullable() {
+    public computeNullable() {
         let changed = true;
         while (changed) {
             changed = false;
@@ -127,7 +120,6 @@ class Analyzer {
                 let isNullable = false;
 
                 if (rule.kind === "Branch") {
-                    // どれか一つのバリアントがNullableならNullable
                     for (const v of rule.variants) {
                         if (this.nullable.has(v.name)) {
                             isNullable = true;
@@ -135,10 +127,8 @@ class Analyzer {
                         }
                     }
                 } else if (rule.kind === "Product") {
-                    // 全ての必須フィールドがNullableならNullable
                     let allNullable = true;
                     if (rule.members.length === 0) {
-                        // 空プロダクトはNullable（文法上ありえる場合）
                         allNullable = true;
                     } else {
                         for (const m of rule.members) {
@@ -147,7 +137,7 @@ class Analyzer {
                                 break;
                             } else {
                                 if (m.type.modifier === "Option" || m.type.modifier === "List") {
-                                    continue; // これらは常に空を許容
+                                    continue;
                                 }
                                 if (!this.nullable.has(m.type.name)) {
                                     allNullable = false;
@@ -167,9 +157,7 @@ class Analyzer {
         }
     }
 
-    // --- Fixed Point Iteration: First(k=2) ---
     private computeFirst() {
-        // 初期化
         for (const rule of this.grammar) {
             this.firstSets.set(rule.name, new Set());
         }
@@ -191,9 +179,7 @@ class Analyzer {
                         }
                     }
                 } else if (rule.kind === "Product") {
-                    // プロダクトのFirst集合を計算 (要素の連結)
-                    // Product: A B C ...
-                    let seqs: TokenSeq[] = [[]]; // Start with epsilon sequence
+                    let seqs: TokenSeq[] = [[]];
 
                     for (const m of rule.members) {
                         let memberFirsts: TokenSeq[] = [];
@@ -202,28 +188,23 @@ class Analyzer {
                             const t = this.tokenMap.get(m.value);
                             memberFirsts = [[t]];
                         } else {
-                            // NonTerminal
                             const refName = m.type.name;
                             const refModifier = m.type.modifier;
 
-                            // 参照先のFirstを取得
                             const subFirstStrs = this.firstSets.get(refName);
                             if (subFirstStrs) {
                                 subFirstStrs.forEach(s => memberFirsts.push(parseSeqKey(s)));
                             }
                             
-                            // Modifier処理
-                            if (refModifier === "List" || refModifier === "Option") {
-                                memberFirsts.push([]); // Epsilon
+                            // MODIFIED: Added nullable rule check
+                            if (refModifier === "List" || refModifier === "Option" || this.nullable.has(refName)) {
+                                memberFirsts.push([]);
                             }
                         }
 
-                        // 直積計算: current seqs * memberFirsts
                         const nextSeqs: TokenSeq[] = [];
                         for (const base of seqs) {
                             for (const suffix of memberFirsts) {
-                                // baseが既に長さ2ならsuffixを見ても変わらないが、
-                                // baseが短い場合は連結する
                                 if (base.length >= 2) {
                                     nextSeqs.push(base); 
                                 } else {
@@ -232,14 +213,11 @@ class Analyzer {
                             }
                         }
                         seqs = nextSeqs;
-                        
-                        // 最適化: 全てのシーケンスが長さ2以上になったら以降のメンバーを見る必要はない
-                        // (ただし、Nullableチェックがあるので単純にはbreakできないが、k=2の範囲では十分)
                         if (seqs.every(s => s.length >= 2)) break;
                     }
 
                     for (const s of seqs) {
-                        if (s.length > 0) { // 空シーケンス(完全なepsilon)はFirst集合には含めないのが一般的だが、実装都合による
+                        if (s.length > 0) {
                              currentSet.add(seqKey(s));
                         }
                     }
@@ -252,26 +230,16 @@ class Analyzer {
         }
     }
 
-    // --- Fixed Point Iteration: Follow ---
     private computeFollow() {
-        // 初期化
         for (const rule of this.grammar) {
             this.followSets.set(rule.name, new Set());
         }
-
-        // ルート要素や特定の開始記号にEOFを入れるべきだが、
-        // ここでは全ルールの依存関係から解決する。
 
         let changed = true;
         while (changed) {
             changed = false;
             for (const rule of this.grammar) {
                 if (rule.kind !== "Product") continue;
-
-                // Rule -> A B C
-                // Follow(B) += First(C)
-                // If Nullable(C), Follow(B) += Follow(C) ... and so on
-                // If C is last, Follow(C) += Follow(Rule)
 
                 const members = rule.members;
                 for (let i = 0; i < members.length; i++) {
@@ -280,14 +248,10 @@ class Analyzer {
 
                     const targetName = current.type.name;
                     const targetFollow = this.followSets.get(targetName);
-                    if (!targetFollow) continue; // Should not happen
+                    if (!targetFollow) continue;
 
                     const oldSize = targetFollow.size;
-
-                    // 後続の要素を確認
                     let allSubsequentNullable = true;
-                    
-                    // Look ahead at neighbors
                     let lookaheadSeqs: TokenSeq[] = [[]];
 
                     for (let j = i + 1; j < members.length; j++) {
@@ -311,7 +275,6 @@ class Analyzer {
                             }
                         }
 
-                        // lookaheadSeqs に nextFirsts を結合
                         const nextLookaheads: TokenSeq[] = [];
                         for (const base of lookaheadSeqs) {
                             for (const suffix of nextFirsts) {
@@ -319,20 +282,15 @@ class Analyzer {
                             }
                         }
                         lookaheadSeqs = nextLookaheads;
-                        
-                        // First(k=1)だけでFollowは十分なことが多いが、ここはFirst集合の計算結果(TokenSeq)を利用
-                        // Follow集合自体は通常 Terminal の Set (k=1)
-                        if (!allSubsequentNullable) break; // これ以降は見なくて良い
+                        if (!allSubsequentNullable) break;
                     }
 
-                    // Add First sets of subsequent parts to Follow
                     for (const seq of lookaheadSeqs) {
                         if (seq.length > 0) {
-                            targetFollow.add(seq[0] as string); // Add first token
+                            targetFollow.add(seq[0] as string);
                         }
                     }
 
-                    // If everything after is nullable, add Follow(Rule)
                     if (allSubsequentNullable) {
                         const ruleFollow = this.followSets.get(rule.name);
                         if (ruleFollow) {
@@ -350,16 +308,11 @@ class Analyzer {
         }
     }
 
-    // --- Generation Logic ---
-
     private analyzeBranchRule(rule: BranchRule): BranchParserFunction {
-        // バリアントごとのFirst集合を取得し、衝突判定を行う
-        // Map<FirstToken, Map<SecondToken, VariantName[]>>
-
         const mapPeek0: Record<string, string[]> = {};
         const mapPeek1: Record<string, Record<string, string[]>> = {};
-
-        const variantInfo: { name: string, seqs: TokenSeq[] }[] = [];
+        // NEW: Track sequences that end exactly at length 1
+        const mapPeek1Fallback: Record<string, string[]> = {}; 
 
         for (const v of rule.variants) {
             const vSet = this.firstSets.get(v.name);
@@ -367,10 +320,9 @@ class Analyzer {
             if (vSet) {
                 vSet.forEach(s => seqs.push(parseSeqKey(s)));
             }
-            variantInfo.push({ name: v.name, seqs });
 
             for (const seq of seqs) {
-                if (seq.length === 0) continue; // Skip epsilon in branching logic (handled via nullable?)
+                if (seq.length === 0) continue;
                 
                 const t0 = seq[0] as string;
                 if (!mapPeek0[t0]) mapPeek0[t0] = [];
@@ -381,47 +333,45 @@ class Analyzer {
                     if (!mapPeek1[t0]) mapPeek1[t0] = {};
                     if (!mapPeek1[t0][t1]) mapPeek1[t0][t1] = [];
                     if (!mapPeek1[t0][t1].includes(v.name)) mapPeek1[t0][t1].push(v.name);
+                } else {
+                    // NEW: Fallback logic for length-1 sequences
+                    if (!mapPeek1Fallback[t0]) mapPeek1Fallback[t0] = [];
+                    if (!mapPeek1Fallback[t0].includes(v.name)) mapPeek1Fallback[t0].push(v.name);
                 }
             }
         }
 
         const branchesJudgebleInPeek0: BranchParserFunction["branchesJudgebleInPeek0"] = [];
         const branchesJudgebleInPeek1: BranchParserFunction["branchesJudgebleInPeek1"] = [];
+        const branchesFallbackInPeek1: BranchParserFunction["branchesFallbackInPeek1"] = [];
         const branchesNeedBacktrack: BranchParserFunction["branchesNeedBacktrack"] = [];
         const expectedTerminals: RustTokenTypeName[] = [];
 
-        // 分類
         for (const t0 in mapPeek0) {
             expectedTerminals.push(tokenName(t0));
             const variants = mapPeek0[t0];
 
             if (variants.length === 1) {
-                // Peek0だけで確定
                 branchesJudgebleInPeek0.push({
                     astTypeName: astName(variants[0]),
                     firstTerminal: tokenName(t0),
                 });
             } else {
-                // Peek0で衝突 -> Peek1を確認
-                const secondMap = mapPeek1[t0];
-                if (!secondMap) {
-                    // 情報不足、または全て長さ1で衝突 -> バックトラック
-                    // 典型例: A -> "x", B -> "x"
-                     variants.forEach(v => {
+                // Peek0 conflict -> Check Peek1 and Fallbacks
+                const secondMap = mapPeek1[t0] || {};
+                const fallbacks = mapPeek1Fallback[t0] || [];
+
+                // If multiple branches terminate at length 1 on the exact same token, that's ambiguous.
+                if (fallbacks.length > 1) {
+                    fallbacks.forEach(v => {
                         branchesNeedBacktrack.push({
                             astTypeName: astName(v),
                             firstTerminal: tokenName(t0),
-                            secondTerminal: tokenName("Unknown"), // 便宜上
+                            secondTerminal: tokenName("_"),
                         });
                     });
-                    continue;
                 }
 
-                // t0 で始まる全てのバリアントについて、t1で区別できるか確認
-                // 注意: variantがt0のみ(長さ1)の場合、t1は存在しない(Follow依存)。
-                // ここでは単純化のため、First集合に含まれる情報だけで判断する。
-                
-                // secondMapに含まれる各t1について
                 for (const t1 in secondMap) {
                     const varsInT1 = secondMap[t1];
                     if (varsInT1.length === 1) {
@@ -431,10 +381,7 @@ class Analyzer {
                             secondTerminal: tokenName(t1),
                         });
                     } else {
-                        // Peek1でも衝突
-                         varsInT1.forEach(v => {
-                            // 重複追加を防ぐロジックが必要だが、IRの定義上リストなので追加
-                            // ただし同じ組み合わせを除外するなどのフィルタが必要かも
+                        varsInT1.forEach(v => {
                             branchesNeedBacktrack.push({
                                 astTypeName: astName(v),
                                 firstTerminal: tokenName(t0),
@@ -443,10 +390,17 @@ class Analyzer {
                         });
                     }
                 }
+
+                // NEW: If exactly 1 fallback exists, it's the unambiguous choice if Peek1 tokens miss
+                if (fallbacks.length === 1) {
+                    branchesFallbackInPeek1.push({
+                        astTypeName: astName(fallbacks[0]),
+                        firstTerminal: tokenName(t0),
+                    });
+                }
             }
         }
 
-        // Sync points (Follow set)
         const syncPointsTerminals: RustTokenTypeName[] = [];
         const follow = this.followSets.get(rule.name);
         if (follow) {
@@ -461,34 +415,25 @@ class Analyzer {
             syncPointsTerminals,
             branchesJudgebleInPeek0,
             branchesJudgebleInPeek1,
+            branchesFallbackInPeek1, // Added to IR
             branchesNeedBacktrack
         };
     }
 
     private analyzeProductRule(rule: ProductRule): ProductParserFunction {
         const elements: ProductParserFunction["elements"] = [];
-        
         for (const member of rule.members) {
             switch (member.kind) {
                 case "Field":
                     switch (member.type.modifier) {
                         case "None":
-                            elements.push({
-                                kind: "normal",
-                                astTypeName: astName(member.type.name)
-                            });
+                            elements.push({ kind: "normal", astTypeName: astName(member.type.name) });
                             break;
                         case "Option":
-                            elements.push({
-                                kind: "option",
-                                astTypeName: astName(member.type.name)
-                            });
+                            elements.push({ kind: "option", astTypeName: astName(member.type.name) });
                             break;
                         case "List":
-                            elements.push({
-                                kind: "repeat",
-                                astTypeName: astName(member.type.name)
-                            });
+                            elements.push({ kind: "repeat", astTypeName: astName(member.type.name) });
                             break;
                     }
                     break;

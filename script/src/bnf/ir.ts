@@ -33,6 +33,10 @@ export type BranchParserFunction = {
         firstTerminal: RustTokenTypeName,
         secondTerminal: RustTokenTypeName,
     }[],
+    branchesFallbackInPeek1: {
+        astTypeName: RustASTTypeName,
+        firstTerminal: RustTokenTypeName,
+    }[],
     branchesNeedBacktrack: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
