@@ -4,16 +4,19 @@ use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
 use crate::tokenizer::tokens::Token;
 
-pub trait BaseParser {
+pub trait BaseParser: Sized {
     type Error: IParseErr;
-    fn peek<const N: usize>(&self) -> Option<&Token>;
+    fn peek<const N: usize>(&self) -> Option<Token>;
     fn consume_token(&mut self) -> Option<Token>;
     fn expect(&mut self, expected: Token) -> Result<(), Self::Error>;
     fn repeat<T: ASTNode>(
         &mut self,
         hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T>;
-    fn alloc_box<T: ASTNode>(&mut self, item: T) -> ArenaBox<T>;
+    fn alloc_box<T: ASTNode>(
+        &mut self,
+        hook: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<ArenaBox<T>, Self::Error>;
     fn get_errors_arena(&self) -> &Arena;
     fn report_error(&self, error: Self::Error);
     fn backtrack<T: ASTNode>(
@@ -26,21 +29,21 @@ pub trait BaseParser {
 #[derive(Clone, Copy)]
 pub struct Enviroment {}
 
-impl<I> BaseParser for Parser<'_, I>
-where
-    I: Iterator<Item = Token>,
-{
+impl BaseParser for Parser<'_> {
     type Error = ParseErr;
-    fn alloc_box<T: ASTNode>(&mut self, value: T) -> ArenaBox<T> {
-        self.ctx.ast_arena.alloc(value)
+    fn alloc_box<T: ASTNode>(
+        &mut self,
+        hook: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<ArenaBox<T>, Self::Error> {
+        Ok(self.ctx.ast_arena.alloc(hook(self)?))
     }
 
-    fn peek<const N: usize>(&self) -> Option<&Token> {
-        self.tokens.peek_n::<N>()
+    fn peek<const N: usize>(&self) -> Option<Token> {
+        self.tokens.peek(N).map(|(token, _)| token)
     }
 
     fn consume_token(&mut self) -> Option<Token> {
-        self.tokens.next()
+        self.tokens.next().map(|(token, _)| token)
     }
 
     fn get_errors_arena(&self) -> &Arena {
@@ -56,7 +59,7 @@ where
             Err(err) => {
                 self.report_error(err);
                 let ret = Some(T::get_error_situation(err)?);
-                while !T::is_sync_point(self.peek::<1>()) {
+                while !T::is_sync_point(self.peek::<0>().as_ref()) {
                     self.consume_token();
                 }
                 self.consume_token();

@@ -9,7 +9,12 @@ fn tokenize_helper(input: &str) -> Vec<Token> {
     let source_holder = SourceHolder::new(input);
     let mut symbol_factory = SymbolFactory::new(source_holder);
     let tokenizer = Tokenizer::new(input, &mut symbol_factory);
-    tokenizer.tokenize().expect("Tokenization failed")
+    tokenizer
+        .tokenize()
+        .expect("Tokenization failed")
+        .into_iter()
+        .map(|(token, _)| token)
+        .collect()
 }
 
 #[test]

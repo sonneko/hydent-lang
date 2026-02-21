@@ -5,6 +5,7 @@ use crate::compiler::{
 use crate::diagnostic::CompilerDiagnostic;
 use crate::parser::{errors::ParseErr, parse::Parser};
 use crate::tokenizer::errors::TokenizeErr;
+use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
 
 #[cfg(test)]
@@ -49,7 +50,7 @@ impl Query for ParseFileQuery {
                 .map_err(<TokenizeErr as Into<Box<dyn CompilerDiagnostic>>>::into)?
         };
 
-        let parser = Parser::new(tokens.into_iter().peekable(), ctx);
+        let parser = Parser::new(TokenStream::new(tokens), ctx);
         let ast = parser
             .parse()
             .map_err(<ParseErr as Into<Box<dyn CompilerDiagnostic>>>::into);

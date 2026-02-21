@@ -8,6 +8,7 @@ import {
     IR,
     ParserFunction,
     ProductParserFunction,
+    RustASTTypeName,
     RustTokenTypeName,
     tokenName
 } from "./ir";
@@ -108,6 +109,7 @@ export class Analyzer {
                     break;
             }
         }
+        this.computeCycle(funcs);
         return funcs;
     }
 
@@ -195,7 +197,7 @@ export class Analyzer {
                             if (subFirstStrs) {
                                 subFirstStrs.forEach(s => memberFirsts.push(parseSeqKey(s)));
                             }
-                            
+
                             // MODIFIED: Added nullable rule check
                             if (refModifier === "List" || refModifier === "Option" || this.nullable.has(refName)) {
                                 memberFirsts.push([]);
@@ -206,7 +208,7 @@ export class Analyzer {
                         for (const base of seqs) {
                             for (const suffix of memberFirsts) {
                                 if (base.length >= 2) {
-                                    nextSeqs.push(base); 
+                                    nextSeqs.push(base);
                                 } else {
                                     nextSeqs.push(concatSeq(base, suffix));
                                 }
@@ -218,7 +220,7 @@ export class Analyzer {
 
                     for (const s of seqs) {
                         if (s.length > 0) {
-                             currentSet.add(seqKey(s));
+                            currentSet.add(seqKey(s));
                         }
                     }
                 }
@@ -267,7 +269,7 @@ export class Analyzer {
 
                             const fs = this.firstSets.get(nName);
                             if (fs) fs.forEach(s => nextFirsts.push(parseSeqKey(s)));
-                            
+
                             if (nMod !== "List" && nMod !== "Option" && !this.nullable.has(nName)) {
                                 allSubsequentNullable = false;
                             } else {
@@ -308,11 +310,108 @@ export class Analyzer {
         }
     }
 
+    private computeCycle(funcs: ParserFunction[]): ParserFunction[] {
+        const graph = new Map<RustASTTypeName, RustASTTypeName[]>();
+        this.grammar.forEach(rule => {
+            switch (rule.kind) {
+                case "Branch":
+                    rule.variants.forEach(v => {
+                        const target = graph.get(astName(rule.name));
+                        if (target === undefined) {
+                            graph.set(astName(rule.name), [astName(v.name)]);
+                        } else {
+                            target.push(astName(v.name))
+                        }
+                    });
+                    break;
+                case "Product":
+                    rule.members.forEach(v => {
+                        if (v.kind === "Field" && v.type.modifier !== "List") {
+                            const target = graph.get(astName(rule.name));
+                            if (target === undefined) {
+                                graph.set(astName(rule.name), [astName(v.type.name)]);
+                            } else {
+                                target.push(astName(v.type.name))
+                            }
+                        }
+                    });
+                    break;
+            }
+        });
+
+        const visiting = new Set<RustASTTypeName>();
+        const visited = new Set<RustASTTypeName>();
+        const shouldBeBoxed = new Set<string>();
+
+        const visit = (node: RustASTTypeName) => {
+            if (visited.has(node)) {
+                return;
+            }
+            visiting.add(node);
+            for (const to of graph.get(node) ?? []) {
+                if (visiting.has(to)) {
+                    shouldBeBoxed.add(`${node}:${to}`);
+                } else {
+                    visit(to);
+                }
+            }
+            visiting.delete(node);
+            visited.add(node);
+        }
+
+        const startNodes = Array.from(graph.keys()).sort();
+
+        for (const node of startNodes) {
+            if (visited.has(node)) continue;
+            visit(node);
+        }
+
+        Array.from(shouldBeBoxed).forEach(v => {
+            const separated = v.split(":");
+            const from = astName(separated[0]);
+            const to = astName(separated[1]);
+            for (const f of funcs) {
+                if (f.astTypeName !== from) continue;
+                switch (f.kind) {
+                    case "branch":
+                        [...f.branchesFallbackInPeek1, ...f.branchesJudgebleInPeek0, ...f.branchesJudgebleInPeek1, ...f.branchesNeedBacktrack].forEach(b => {
+                            if (b.astTypeName === to) {
+                                b.isBoxed = true;
+                            }
+                        });
+                        break;
+                    case "product":
+                        f.elements.forEach(e => {
+                            if (e.kind === "terminal") return;
+                            if (e.astTypeName === to) {
+                                switch (e.kind) {
+                                    case "boxed":
+                                    case "normal":
+                                        e.kind = "boxed";
+                                        break;
+                                    case "repeat":
+                                        break;
+                                    case "option":
+                                    case "optionWithBox":
+                                        e.kind = "optionWithBox";
+                                        break;
+                                }
+                            }
+                        });
+                        break;
+                    case "hook":
+                        break;
+                }
+            }
+        });
+
+        return funcs;
+    }
+
     private analyzeBranchRule(rule: BranchRule): BranchParserFunction {
         const mapPeek0: Record<string, string[]> = {};
         const mapPeek1: Record<string, Record<string, string[]>> = {};
-        // NEW: Track sequences that end exactly at length 1
-        const mapPeek1Fallback: Record<string, string[]> = {}; 
+        const mapPeek1Fallback: Record<string, string[]> = {};
 
         for (const v of rule.variants) {
             const vSet = this.firstSets.get(v.name);
@@ -323,7 +422,7 @@ export class Analyzer {
 
             for (const seq of seqs) {
                 if (seq.length === 0) continue;
-                
+
                 const t0 = seq[0] as string;
                 if (!mapPeek0[t0]) mapPeek0[t0] = [];
                 if (!mapPeek0[t0].includes(v.name)) mapPeek0[t0].push(v.name);
@@ -334,7 +433,6 @@ export class Analyzer {
                     if (!mapPeek1[t0][t1]) mapPeek1[t0][t1] = [];
                     if (!mapPeek1[t0][t1].includes(v.name)) mapPeek1[t0][t1].push(v.name);
                 } else {
-                    // NEW: Fallback logic for length-1 sequences
                     if (!mapPeek1Fallback[t0]) mapPeek1Fallback[t0] = [];
                     if (!mapPeek1Fallback[t0].includes(v.name)) mapPeek1Fallback[t0].push(v.name);
                 }
@@ -355,19 +453,19 @@ export class Analyzer {
                 branchesJudgebleInPeek0.push({
                     astTypeName: astName(variants[0]),
                     firstTerminal: tokenName(t0),
+                    isBoxed: false,
                 });
             } else {
-                // Peek0 conflict -> Check Peek1 and Fallbacks
                 const secondMap = mapPeek1[t0] || {};
                 const fallbacks = mapPeek1Fallback[t0] || [];
 
-                // If multiple branches terminate at length 1 on the exact same token, that's ambiguous.
                 if (fallbacks.length > 1) {
                     fallbacks.forEach(v => {
                         branchesNeedBacktrack.push({
                             astTypeName: astName(v),
                             firstTerminal: tokenName(t0),
                             secondTerminal: tokenName("_"),
+                            isBoxed: false,
                         });
                     });
                 }
@@ -379,6 +477,7 @@ export class Analyzer {
                             astTypeName: astName(varsInT1[0]),
                             firstTerminal: tokenName(t0),
                             secondTerminal: tokenName(t1),
+                            isBoxed: false,
                         });
                     } else {
                         varsInT1.forEach(v => {
@@ -386,16 +485,17 @@ export class Analyzer {
                                 astTypeName: astName(v),
                                 firstTerminal: tokenName(t0),
                                 secondTerminal: tokenName(t1),
+                                isBoxed: false,
                             });
                         });
                     }
                 }
 
-                // NEW: If exactly 1 fallback exists, it's the unambiguous choice if Peek1 tokens miss
                 if (fallbacks.length === 1) {
                     branchesFallbackInPeek1.push({
                         astTypeName: astName(fallbacks[0]),
                         firstTerminal: tokenName(t0),
+                        isBoxed: false,
                     });
                 }
             }
@@ -415,7 +515,7 @@ export class Analyzer {
             syncPointsTerminals,
             branchesJudgebleInPeek0,
             branchesJudgebleInPeek1,
-            branchesFallbackInPeek1, // Added to IR
+            branchesFallbackInPeek1,
             branchesNeedBacktrack
         };
     }

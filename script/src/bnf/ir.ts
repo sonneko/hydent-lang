@@ -16,6 +16,7 @@ export type HookParserFunction = {
     kind: "hook",
     functionName: RustFunctionName,
     astTypeName: RustASTTypeName,
+    isBoxed: boolean,
 };
 
 export type BranchParserFunction = {
@@ -27,20 +28,24 @@ export type BranchParserFunction = {
     branchesJudgebleInPeek0: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
+        isBoxed: boolean,
     }[],
     branchesJudgebleInPeek1: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
         secondTerminal: RustTokenTypeName,
+        isBoxed: boolean,
     }[],
     branchesFallbackInPeek1: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
+        isBoxed: boolean,
     }[],
     branchesNeedBacktrack: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,
         secondTerminal: RustTokenTypeName,
+        isBoxed: boolean,
     }[],
 };
 
@@ -60,6 +65,9 @@ export type ProductParserFunction = {
         astTypeName: RustASTTypeName,
     } | {
         kind: "option",
+        astTypeName: RustASTTypeName,
+    } | {
+        kind: "optionWithBox",
         astTypeName: RustASTTypeName,
     } | {
         kind: "terminal",

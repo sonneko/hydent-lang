@@ -1,71 +1,977 @@
 product Module {
-    declarations: *TopLevelDeclaration
+    declarations: *TopLevelStatement
 }
 
-branch TopLevelDeclaration {
-    Function
+branch TopLevelStatement {
+    ItemWithModifiers
+    ImportDeclaration
+    Annotation
 }
 
-product Function {
-    "fn" name: Identifier "(" 
-        params: *Parameter with "comma_separated_params"
-    ")" return_type: ?TypeLiteral
-        body: BlockExpression
+product ItemWithModifiers {
+    docs: *DocComment
+    is_public: ?PubKeyword
+    decl: ItemDeclaration
 }
 
-product Parameter {
-    name: Identifier
+product DocComment with "#doc_comment"
+product PubKeyword { "pub" }
+
+branch ItemDeclaration {
+    StaticVariableDeclaration
+    ClassDeclaration
+    EnumDeclaration
+    StructDeclaration
+    FunctionDeclaration
+    ProtocolDeclaration
+    ModuleDeclaration
+    TypeAliasDeclaration
 }
 
-product BlockExpression {
+product ImportDeclaration {
+    "import"
+    targets: ImportTargets
+    "from"
+    source: StringLiteral
+    ";"
+}
+
+branch ImportTargets {
+    ImportSpecific
+    ImportAllAs
+}
+
+product ImportSpecific {
     "{"
-        statements: *Statement
-        final_expr: ?Expression
+    targets: ?IdentifierList
     "}"
 }
 
-branch Statement {
-    ExpressionStmt
-    Assignment
-    Return
+product ImportAllAs {
+    "*"
+    "as"
+    alias: Identifier
 }
 
-product ExpressionStmt {
+product StaticVariableDeclaration {
+    "static"
+    name: Identifier
+    "="
+    value: Expression
+    ";"
+}
+
+product ClassDeclaration {
+    "class"
+    name: Identifier
+    generics: ?Generics
+    protocol: ?ImplementsProtocol
+    "{"
+    members: *ClassMember
+    "}"
+}
+
+branch ClassMember {
+    ClassFunction
+    FieldDeclaration
+    ClassTypeAlias
+}
+
+product ClassFunction {
+    docs: *DocComment
+    is_public: ?PubKeyword
+    decl: FunctionDeclaration
+}
+
+product FieldDeclaration {
+    docs: *DocComment
+    is_public: ?PubKeyword
+    modifier: FieldModifier
+    name: Identifier
+    ":"
+    type_lit: TypeLiteral
+    ";"
+}
+
+branch FieldModifier {
+    FinalKw
+    MutKw
+}
+product FinalKw { "final" }
+product MutKw { "mut" }
+
+product ClassTypeAlias {
+    docs: *DocComment
+    is_public: ?PubKeyword
+    decl: TypeAliasDeclaration
+}
+
+product EnumDeclaration {
+    "enum"
+    name: Identifier
+    generics: ?Generics
+    protocol: ?ImplementsProtocol
+    "{"
+    members: *EnumMember
+    "}"
+}
+
+branch EnumMember {
+    EnumFunction
+    EnumVariant
+}
+
+product EnumFunction {
+    docs: *DocComment
+    is_public: ?PubKeyword
+    decl: FunctionDeclaration
+}
+
+product EnumVariant {
+    docs: *DocComment
+    name: Identifier
+    types: ?TupleType
+    ","
+}
+
+product StructDeclaration {
+    "struct"
+    name: Identifier
+    body: StructBody
+}
+
+branch StructBody {
+    StructBlockBody
+    StructTupleBody
+    StructEmptyBody
+}
+
+product StructBlockBody {
+    "{"
+    fields: *FieldDeclaration
+    "}"
+}
+
+product StructTupleBody {
+    types: TupleType
+    ";"
+}
+
+product StructEmptyBody {
+    ";"
+}
+
+product FunctionDeclaration {
+    is_extern: ?ExternKeyword
+    is_async: ?AsyncKeyword
+    "fn"
+    name: Identifier
+    generics: ?Generics
+    "("
+    params: ?ParamsWithTypes
+    ")"
+    return_type: ?ReturnType
+    panics: ?PanicsKeyword
+    body: ?BlockExpression
+}
+
+product ExternKeyword { "extern" }
+product AsyncKeyword { "async" }
+product PanicsKeyword { "panics" }
+
+product ReturnType {
+    "->"
+    type_lit: TypeLiteral
+}
+
+product ParamsWithTypes {
+    head: ParamWithType
+    tails: *ParamWithTypeTail
+}
+
+product ParamWithTypeTail {
+    ","
+    param: ParamWithType
+}
+
+product ParamWithType {
+    mut_kw: ?MutKw
+    id_or_this: ParamId
+    type_annotation: ?TypeAnnotation
+    init: ?ParamInit
+}
+
+branch ParamId {
+    Identifier
+    ThisKw
+}
+product ThisKw { "this" }
+
+product ParamInit {
+    "="
+    expr: Expression
+}
+
+product ProtocolDeclaration {
+    "protocol"
+    name: Identifier
+    protocol: ?ImplementsProtocol
+    "{"
+    members: *ProtocolMember
+    "}"
+}
+
+branch ProtocolMember {
+    ClassFunction
+    ClassTypeAlias
+}
+
+product ModuleDeclaration {
+    "module"
+    name: Identifier
+    "{"
+    declarations: *TopLevelStatement
+    "}"
+}
+
+product Annotation {
+    "@"
+    name: Identifier
+    args: *LiteralNode
+}
+
+product TypeAliasDeclaration {
+    "type"
+    name: Identifier
+    generics: ?Generics
+    "="
+    type_lit: TypeLiteral
+    ";"
+}
+
+product Generics {
+    "<"
+    params: GenericParamList
+    ">"
+}
+
+product GenericParamList {
+    head: GenericParamDef
+    tails: *GenericParamTail
+}
+
+product GenericParamTail {
+    ","
+    param: GenericParamDef
+}
+
+product GenericParamDef {
+    name: Identifier
+    bound: ?GenericBound
+}
+
+product GenericBound {
+    ":"
+    type_lit: TypeLiteral
+    tails: *GenericBoundTail
+}
+
+product GenericBoundTail {
+    "&"
+    type_lit: TypeLiteral
+}
+
+product ImplementsProtocol {
+    ":"
+    protocols: AccesserList
+}
+
+product AccesserList {
+    head: Accesser
+    tails: *AccesserListTail
+}
+
+product AccesserListTail {
+    ","
+    accesser: Accesser
+}
+
+product IdentifierList {
+    head: Identifier
+    tails: *IdentifierListTail
+}
+
+product IdentifierListTail {
+    ","
+    id: Identifier
+}
+
+// ==========================================
+// Statements
+// ==========================================
+
+branch Statement {
+    VariableDeclaration
+    ReturnStatement
+    BreakStatement
+    ContinueStatement
+    ExprOrAssignmentStatement
+}
+
+product VariableDeclaration {
+    keyword: VarKeyword
+    pattern: Pattern
+    type_annotation: ?TypeAnnotation
+    init: ?VarInit
+    ";"
+}
+
+branch VarKeyword { LetKw ConstKw }
+product LetKw { "let" }
+product ConstKw { "const" }
+
+product VarInit {
+    "="
+    expr: Expression
+}
+
+product ReturnStatement {
+    "return"
+    expr: ?Expression
+    ";"
+}
+
+product BreakStatement {
+    "break"
+    expr: ?Expression
+    ";"
+}
+
+product ContinueStatement {
+    "continue"
+    ";"
+}
+
+product ExprOrAssignmentStatement {
+    ignore: ?IgnoreKeyword
+    expr: Expression
+    tail: ?StatementTail
+}
+product IgnoreKeyword { "ignore" }
+
+branch StatementTail {
+    AssignmentTail
+    ExprSemiTail
+}
+
+product AssignmentTail {
+    op: AssignmentOp
     expr: Expression
     ";"
 }
 
-product Assignment {
-    "let" name: Identifier "=" value: Expression ";"
+product ExprSemiTail {
+    ";"
 }
 
-product Return {
-    "return" value: ?Expression ";"
+branch AssignmentOp {
+    AssignOp AddAssignOp SubAssignOp MulAssignOp DivAssignOp
+}
+product AssignOp { "=" }
+product AddAssignOp { "+=" }
+product SubAssignOp { "-=" }
+product MulAssignOp { "*=" }
+product DivAssignOp { "/=" }
+
+// ==========================================
+// Expressions (Operator Precedence)
+// ==========================================
+
+product Expression {
+    head: LogicalAndExpr
+    tails: *LogicalOrTail
 }
 
-branch Expression {
-    LiteralAST
-    FunctionCall
+product LogicalOrTail {
+    "||"
+    expr: LogicalAndExpr
 }
 
-product LiteralAST {
-    value: StringLiteral
+product LogicalAndExpr {
+    head: BitwiseOrExpr
+    tails: *LogicalAndTail
 }
 
-product FunctionCall {
-    name: Identifier "("
-        args: *Expression with "comma_separated_exprs"
+product LogicalAndTail {
+    "&&"
+    expr: BitwiseOrExpr
+}
+
+product BitwiseOrExpr {
+    head: BitwiseXorExpr
+    tails: *BitwiseOrTail
+}
+
+product BitwiseOrTail {
+    "|"
+    expr: BitwiseXorExpr
+}
+
+product BitwiseXorExpr {
+    head: BitwiseAndExpr
+    tails: *BitwiseXorTail
+}
+
+product BitwiseXorTail {
+    "^"
+    expr: BitwiseAndExpr
+}
+
+product BitwiseAndExpr {
+    head: EqualityExpr
+    tails: *BitwiseAndTail
+}
+
+product BitwiseAndTail {
+    "&"
+    expr: EqualityExpr
+}
+
+product EqualityExpr {
+    head: RelationalExpr
+    tails: *EqualityTail
+}
+
+product EqualityTail {
+    op: EqualityOp
+    expr: RelationalExpr
+}
+
+branch EqualityOp { EqOp NeqOp }
+product EqOp { "==" }
+product NeqOp { "!=" }
+
+product RelationalExpr {
+    head: ShiftExpr
+    tails: *RelationalTail
+}
+
+product RelationalTail {
+    op: RelationalOp
+    expr: ShiftExpr
+}
+
+branch RelationalOp { LtOp LteOp GtOp GteOp }
+product LtOp { "<" }
+product LteOp { "<=" }
+product GtOp { ">" }
+product GteOp { ">=" }
+
+product ShiftExpr {
+    head: AdditiveExpr
+    tails: *ShiftTail
+}
+
+product ShiftTail {
+    op: ShiftOp
+    expr: AdditiveExpr
+}
+
+branch ShiftOp { ShlOp ShrOp }
+product ShlOp { "<<" }
+product ShrOp { ">>" }
+
+product AdditiveExpr {
+    head: MultiplicativeExpr
+    tails: *AdditiveTail
+}
+
+product AdditiveTail {
+    op: AdditiveOp
+    expr: MultiplicativeExpr
+}
+
+branch AdditiveOp { AddOp SubOp }
+product AddOp { "+" }
+product SubOp { "-" }
+
+product MultiplicativeExpr {
+    head: PowerExpr
+    tails: *MultiplicativeTail
+}
+
+product MultiplicativeTail {
+    op: MultiplicativeOp
+    expr: PowerExpr
+}
+
+branch MultiplicativeOp { MulOp DivOp RemOp }
+product MulOp { "*" }
+product DivOp { "/" }
+product RemOp { "%" }
+
+product PowerExpr {
+    head: PrefixExpr
+    tails: *PowerTail
+}
+
+product PowerTail {
+    "**"
+    expr: PrefixExpr
+}
+
+branch PrefixExpr {
+    PrefixOpExpr
+    PrimaryExpr
+}
+
+product PrefixOpExpr {
+    op: PrefixOp
+    expr: PrefixExpr
+}
+
+branch PrefixOp { NotOp BitNotOp NegOp }
+product NotOp { "!" }
+product BitNotOp { "~" }
+product NegOp { "-" }
+
+// ==========================================
+// Primary Expressions (Postfix grouping)
+// ==========================================
+
+product PrimaryExpr {
+    try_kw: ?TryKeyword
+    await_kw: ?AwaitKeyword
+    base: BaseExpr
+    postfixes: *PostfixOp
+}
+
+product TryKeyword { "try" }
+product AwaitKeyword { "await" }
+
+branch BaseExpr {
+    IfCommonExpr
+    MatchExpression
+    LoopExpression
+    WhileCommonExpr
+    ForCommonExpr
+    PipeExpression
+    BlockExpression
+    ArrayLiteral
+    ParenExpr
+    LiteralNode
+    Identifier
+}
+
+branch PostfixOp {
+    MethodOrFieldOp
+    CallOp
+    IndexOp
+    StructLiteralOp
+    CastOp
+}
+
+product MethodOrFieldOp {
+    "."
+    name: Identifier
+    args: ?CallArgs
+}
+
+product CallOp {
+    args: CallArgs
+}
+
+product CallArgs {
+    "("
+    params: ?ExpressionList
     ")"
 }
 
-branch TypeLiteral {
-    IntType
+product IndexOp {
+    "["
+    expr: Expression
+    "]"
 }
 
-product IntType {
-    "Int"
+product StructLiteralOp {
+    "{"
+    fields: ?StructLiteralFields
+    "}"
 }
+
+product StructLiteralFields {
+    head: StructFieldInit
+    tails: *StructFieldTail
+}
+
+product StructFieldTail {
+    ","
+    field: StructFieldInit
+}
+
+product StructFieldInit {
+    name: Identifier
+    value: ?StructFieldInitValue
+}
+
+product StructFieldInitValue {
+    ":"
+    expr: Expression
+}
+
+product CastOp {
+    "as"
+    type_lit: TypeLiteral
+}
+
+// ---------------------------
+// Control Flows
+// ---------------------------
+
+product IfCommonExpr {
+    "if"
+    cond: IfCondition
+    body: BlockExpression
+    else_clause: ?ElseClause
+}
+
+branch IfCondition {
+    IfLetCond
+    NormalCond
+}
+
+product IfLetCond {
+    "let"
+    pattern: Pattern
+    "="
+    expr: Expression
+}
+
+product NormalCond {
+    expr: Expression
+}
+
+product ElseClause {
+    "else"
+    body: ElseBody
+}
+
+branch ElseBody {
+    IfCommonExpr
+    BlockExpression
+}
+
+product MatchExpression {
+    "match"
+    expr: Expression
+    "{"
+    arms: *MatchArm
+    "}"
+}
+
+product MatchArm {
+    pattern: Pattern
+    guard: ?IfGuard
+    "=>"
+    expr: Expression
+    comma: ?CommaToken
+}
+product CommaToken { "," }
+
+product LoopExpression {
+    "loop"
+    label: ?Expression
+    body: BlockExpression
+}
+
+product WhileCommonExpr {
+    "while"
+    cond: IfCondition
+    body: BlockExpression
+}
+
+product ForCommonExpr {
+    "for"
+    expr_or_pattern: Expression
+    body: ForBody
+}
+
+branch ForBody {
+    ForInBlock
+    ForPipelineBlock
+}
+
+product ForInBlock {
+    "in"
+    iterable: Expression
+    body: BlockExpression
+}
+
+product ForPipelineBlock {
+    "{"
+    arms: *PipelineArm
+    "}"
+}
+
+product PipeExpression {
+    "pipe"
+    expr: Expression
+    "{"
+    arms: *PipelineArm
+    "}"
+}
+
+product PipelineArm {
+    "|>"
+    pattern: Pattern
+    guard: ?IfGuard
+    "=>"
+    expr: Expression
+}
+
+product IfGuard {
+    "if"
+    expr: Expression
+}
+
+product BlockExpression {
+    "{"
+    statements: *Statement
+    "}"
+}
+
+product ArrayLiteral {
+    "["
+    items: ?ExpressionList
+    "]"
+}
+
+product ParenExpr {
+    "("
+    items: ?ParenItemList
+    ")"
+    arrow: ?ClosureArrow
+}
+
+product ParenItemList {
+    head: ParenItem
+    tails: *ParenItemTail
+}
+
+product ParenItemTail {
+    ","
+    item: ParenItem
+}
+
+product ParenItem {
+    mut_kw: ?MutKw
+    expr: Expression
+    type_annotation: ?TypeAnnotation
+}
+
+product ClosureArrow {
+    "->"
+    expr: Expression
+}
+
+product TypeAnnotation {
+    ":"
+    type_lit: TypeLiteral
+}
+
+product ExpressionList {
+    head: Expression
+    tails: *ExpressionTail
+}
+
+product ExpressionTail {
+    ","
+    expr: Expression
+}
+
+// ==========================================
+// Patterns
+// ==========================================
+
+product Pattern {
+    base: PatternBase
+    range_tail: ?RangePatternTail
+}
+
+branch PatternBase {
+    WildcardPattern
+    LiteralPattern
+    ParenPattern
+    IdentOrAccesserPattern
+}
+
+product WildcardPattern { "_" }
+product LiteralPattern { lit: LiteralNode }
+
+product ParenPattern {
+    "("
+    patterns: ?PatternList
+    ")"
+}
+
+product IdentOrAccesserPattern {
+    head: Identifier
+    tails: *AccesserTail
+    binding_or_struct: ?BindingOrStruct
+}
+
+branch BindingOrStruct {
+    BindingTail
+    StructPatternTail
+    TupleStructPatternTail
+}
+
+product BindingTail {
+    "@"
+    pat: Pattern
+}
+
+product StructPatternTail {
+    "{"
+    fields: ?StructPatternFields
+    "}"
+}
+
+product TupleStructPatternTail {
+    "("
+    patterns: ?PatternList
+    ")"
+}
+
+product RangePatternTail {
+    op: RangeOp
+    end: PatternBase
+}
+
+branch RangeOp { RangeExc RangeInc }
+product RangeExc { ".." }
+product RangeInc { "..=" }
+
+product PatternList {
+    head: Pattern
+    tails: *PatternTail
+}
+
+product PatternTail {
+    ","
+    pat: Pattern
+}
+
+product StructPatternFields {
+    head: StructPatternField
+    tails: *StructPatternFieldTail
+}
+
+product StructPatternFieldTail {
+    ","
+    field: StructPatternField
+}
+
+product StructPatternField {
+    name: Identifier
+    value: ?StructPatternFieldValue
+}
+
+product StructPatternFieldValue {
+    ":"
+    pat: Pattern
+}
+
+// ==========================================
+// Types
+// ==========================================
+
+branch TypeLiteral {
+    ImplType
+    TypeofType
+    TupleType
+    PrimitiveType
+    NamedType
+}
+
+product ImplType {
+    "impl"
+    type_lit: TypeLiteral
+}
+
+product TypeofType {
+    "typeof"
+    expr: Expression
+}
+
+product TupleType {
+    "("
+    types: ?TypeList
+    ")"
+}
+
+branch PrimitiveType {
+    BoolType IntType DoubleIntType FloatType DoubleFloatType
+    CharType UsizeType AnyType NeverType VoidType
+}
+product BoolType { "Bool" }
+product IntType { "Int" }
+product DoubleIntType { "DoubleInt" }
+product FloatType { "Float" }
+product DoubleFloatType { "DoubleFloat" }
+product CharType { "Char" }
+product UsizeType { "Usize" }
+product AnyType { "Any" }
+product NeverType { "Never" }
+product VoidType { "Void" }
+
+product NamedType {
+    head: Identifier
+    tails: *AccesserTail
+    generics: ?GenericArgs
+}
+
+product GenericArgs {
+    "<"
+    types: TypeList
+    ">"
+}
+
+product TypeList {
+    head: TypeLiteral
+    tails: *TypeTail
+}
+
+product TypeTail {
+    ","
+    type_lit: TypeLiteral
+}
+
+product Accesser {
+    head: Identifier
+    tails: *AccesserTail
+}
+
+product AccesserTail {
+    "::"
+    id: Identifier
+}
+
+// ==========================================
+// Terminals
+// ==========================================
 
 product Identifier with "#identifier"
-
 product StringLiteral with "#string"
+product CharLiteral with "#char"
+product IntLiteral with "#int"
+product FloatLiteral with "#float"
+product BoolLiteral with "#bool"
+
+branch LiteralNode {
+    StringLiteral
+    CharLiteral
+    IntLiteral
+    FloatLiteral
+    BoolLiteral
+}

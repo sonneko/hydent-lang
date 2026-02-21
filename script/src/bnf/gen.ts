@@ -27,7 +27,7 @@ class Generator {
         ret += `use crate::compiler::symbol::Symbol;\n`;
         ret += `use crate::parser::base_parser::BaseParser;\n`;
         ret += `use crate::parser::errors::{IParseErr, ParseErr};\n`;
-        ret += `use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Token};\n\n`;
+        ret += `use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Comment, Token};\n\n`;
         ret += `#[allow(clippy::wildcard_imports)]\n`;
         ret += `use crate::parser::generated_ast::*;\n\n`;
         ret += `#[allow(non_snake_case)]\n`;
@@ -40,11 +40,11 @@ class Generator {
     private generateBranchParseFunction(func: BranchParserFunction): string {
         let ret = "";
         ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {\n`;
-        
+
         // Handle empty branches (edge case)
-        if (func.branchesJudgebleInPeek0.length === 0 && 
-            func.branchesJudgebleInPeek1.length === 0 && 
-            (func.branchesFallbackInPeek1 || []).length === 0 && 
+        if (func.branchesJudgebleInPeek0.length === 0 &&
+            func.branchesJudgebleInPeek1.length === 0 &&
+            (func.branchesFallbackInPeek1 || []).length === 0 &&
             func.branchesNeedBacktrack.length === 0) {
             ret += `        Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment()))\n`;
             ret += `    }\n`;
@@ -55,7 +55,11 @@ class Generator {
 
         // 1. Simple Peek<0> matches
         for (const branch of func.branchesJudgebleInPeek0) {
-            ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
+            if (branch.isBoxed) {
+                ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
+            } else {
+                ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
+            }
         }
 
         // 2. Complex matches (Peek<1> required or Backtrack required)
@@ -71,7 +75,11 @@ class Generator {
 
             const peek1 = func.branchesJudgebleInPeek1.filter(b => b.firstTerminal === t0);
             for (const branch of peek1) {
-                ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
+                if (branch.isBoxed) {
+                    ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
+                } else {
+                    ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
+                }
             }
 
             const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
@@ -83,7 +91,11 @@ class Generator {
             } else {
                 const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
                 if (fallback) {
-                    ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.parse_${fallback.astTypeName}()?)),\n`;
+                    if (fallback.isBoxed) {
+                        ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.alloc_box(|this| this.parse_${fallback.astTypeName}())?),\n`;
+                    } else {
+                        ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.parse_${fallback.astTypeName}()?)),\n`;
+                    }
                 } else {
                     ret += `                    _ => Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment())),\n`;
                 }
@@ -97,7 +109,7 @@ class Generator {
         ret += `            _ => Err(Self::Error::build(\n`;
         ret += `                self.get_errors_arena(),\n`;
         ret += `                ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
-        const expected = Array.from(new Set(func.expectedTerminals.filter(t => !t.includes("$"))));
+        const expected = Array.from(new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_"))));
         ret += `                [${expected.join(", ")}],\n`;
         ret += `                self.enviroment(),\n`;
         ret += `            )),\n`;
@@ -121,7 +133,7 @@ class Generator {
                     ret += `        let ${element.astTypeName} = self.parse_${element.astTypeName}()?;\n`;
                     break;
                 case "boxed":
-                    ret += `        let ${element.astTypeName} = self.alloc(self.parse_${element.astTypeName}()?);\n`;
+                    ret += `        let ${element.astTypeName} = self.alloc_box(|this| this.parse_${element.astTypeName}())?;\n`;
                     break;
                 case "option":
                     ret += `        let ${element.astTypeName} = self.parse_${element.astTypeName}().ok();\n`;
@@ -187,7 +199,7 @@ class Generator {
         let ret = "";
         ret += `#[derive(Copy, Clone, Debug, std::hash::Hash, PartialEq, Eq)]\n`;
         ret += `pub enum ${func.astTypeName} {\n`;
-        
+
         const allVariants = [
             ...func.branchesJudgebleInPeek0,
             ...func.branchesJudgebleInPeek1,
@@ -195,16 +207,21 @@ class Generator {
             ...func.branchesNeedBacktrack
         ];
         let dublicateRemoved = new Set(allVariants.map(branch => branch.astTypeName));
-        
+
         for (const typeName of dublicateRemoved) {
-            ret += `    ${typeName}(${typeName}),\n`;
+            const isBoxed = allVariants.some(branch => branch.astTypeName === typeName && branch.isBoxed);
+            if (isBoxed) {
+                ret += `    ${typeName}(ArenaBox<${typeName}>),\n`;
+            } else {
+                ret += `    ${typeName}(${typeName}),\n`;
+            }
         }
         ret += `    Invalid,\n`;
         ret += `}\n\n`;
 
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const hasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
-        const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$")).join(", ");
+        const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$") && !t.includes("_")).join(", ");
         ret += `    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
@@ -232,6 +249,9 @@ class Generator {
                     break;
                 case "option":
                     ret += `    pub ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
+                    break;
+                case "optionWithBox":
+                    ret += `    pub ${element.astTypeName}: ArenaBox<Option<${element.astTypeName}>>,\n`;
                     break;
                 case "repeat":
                     ret += `    pub ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;

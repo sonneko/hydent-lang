@@ -25,7 +25,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    pub fn tokenize(mut self) -> Return<Vec<Token>> {
+    pub fn tokenize(mut self) -> Return<Vec<(Token, Span)>> {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
 
         while let Some(b) = self.peek() {
@@ -85,7 +85,8 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
 
         tokens.push(Token::EndOfFile);
-        Ok(tokens)
+        todo!()
+        // TODO: add logic to return (Token, Span)
     }
 
     // --- low level helpers ---
