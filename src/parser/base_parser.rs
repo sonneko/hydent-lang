@@ -54,6 +54,7 @@ impl BaseParser for Parser<'_> {
         &mut self,
         mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T> {
+        // TODO: may be there is a logical mistake
         self.ctx.ast_arena.alloc_with(|| match parser_fn(self) {
             Ok(value) => Some(value),
             Err(err) => {

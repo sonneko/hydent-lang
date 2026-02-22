@@ -132,16 +132,19 @@ class Generator {
         for (const element of func.elements) {
             switch (element.kind) {
                 case "normal":
-                    ret += `        let ${element.astTypeName} = self.parse_${element.astTypeName}()?;\n`;
+                    ret += `        let v_${element.astTypeName} = self.parse_${element.astTypeName}()?;\n`;
                     break;
                 case "boxed":
-                    ret += `        let ${element.astTypeName} = self.alloc_box(|this| this.parse_${element.astTypeName}())?;\n`;
+                    ret += `        let v_${element.astTypeName} = self.alloc_box(|this| this.parse_${element.astTypeName}())?;\n`;
                     break;
                 case "option":
-                    ret += `        let ${element.astTypeName} = self.parse_${element.astTypeName}().ok();\n`;
+                    ret += `        let v_${element.astTypeName} = self.parse_${element.astTypeName}().ok();\n`;
                     break;
                 case "repeat":
-                    ret += `        let ${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName});\n`;
+                    ret += `        let v_${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName});\n`;
+                    break;
+                case "optionWithBox":
+                    ret += `        let v_${element.astTypeName} = self.alloc_box(Self::parse_${element.astTypeName}).ok();\n`;
                     break;
                 case "terminal":
                     if (!element.tokenTypeName.includes("$")) {
@@ -153,7 +156,7 @@ class Generator {
         ret += `        Ok(${func.astTypeName} {\n`;
         for (const element of func.elements.sort()) {
             if (element.kind !== "terminal") {
-                ret += `            ${element.astTypeName},\n`;
+                ret += `            ${element.astTypeName}: v_${element.astTypeName},\n`;
             }
         }
         ret += `        })\n`;
@@ -254,7 +257,7 @@ class Generator {
                     ret += `    pub ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
                     break;
                 case "optionWithBox":
-                    ret += `    pub ${element.astTypeName}: ArenaBox<Option<${element.astTypeName}>>,\n`;
+                    ret += `    pub ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
                     break;
                 case "repeat":
                     ret += `    pub ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
