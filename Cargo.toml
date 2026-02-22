@@ -5,8 +5,6 @@ edition = "2021"
 description = "Compiler for hydent-lang"
 
 [dependencies]
-pest = "2.8.5"
-pest_derive = "2.8.5"
 phf = { version = "0.13.1", features = ["macros"] }
 inkwell = { version = "0.8.0", features = ["llvm21-1"] }
 clap = { version = "4.5.57", features = ["derive"] }
