@@ -1,5 +1,5 @@
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
-use crate::parser::ast::ASTNode;
+use crate::parser::ast_node::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
 use crate::tokenizer::tokens::Token;
@@ -11,17 +11,17 @@ pub trait BaseParser: Sized {
     fn expect(&mut self, expected: Token) -> Result<(), Self::Error>;
     fn repeat<T: ASTNode>(
         &mut self,
-        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+        parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T>;
     fn alloc_box<T: ASTNode>(
         &mut self,
-        hook: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
+        parser_fn: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<ArenaBox<T>, Self::Error>;
     fn get_errors_arena(&self) -> &Arena;
     fn report_error(&self, error: Self::Error);
     fn backtrack<T: ASTNode>(
         &mut self,
-        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+        parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error>;
     fn enviroment(&self) -> Enviroment;
 }
@@ -33,9 +33,9 @@ impl BaseParser for Parser<'_> {
     type Error = ParseErr;
     fn alloc_box<T: ASTNode>(
         &mut self,
-        hook: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
+        parser_fn: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<ArenaBox<T>, Self::Error> {
-        Ok(self.ctx.ast_arena.alloc(hook(self)?))
+        Ok(self.ctx.ast_arena.alloc(parser_fn(self)?))
     }
 
     fn peek<const N: usize>(&self) -> Option<Token> {
@@ -52,9 +52,9 @@ impl BaseParser for Parser<'_> {
 
     fn repeat<T: ASTNode>(
         &mut self,
-        mut hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+        mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> ArenaIter<T> {
-        self.ctx.ast_arena.alloc_with(|| match hook(self) {
+        self.ctx.ast_arena.alloc_with(|| match parser_fn(self) {
             Ok(value) => Some(value),
             Err(err) => {
                 self.report_error(err);
@@ -98,10 +98,19 @@ impl BaseParser for Parser<'_> {
 
     fn backtrack<T: ASTNode>(
         &mut self,
-        hook: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+        mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error> {
-        // TODO: implement with buffer
-        unimplemented!()
+        self.tokens.checkpoint();
+        let node = parser_fn(self);
+        match node {
+            Ok(_) => {
+                self.tokens.commit();
+            }
+            Err(_) => {
+                self.tokens.rollback();
+            }
+        }
+        node
     }
 
     fn enviroment(&self) -> Enviroment {

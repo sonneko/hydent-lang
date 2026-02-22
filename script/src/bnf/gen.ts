@@ -85,8 +85,12 @@ class Generator {
             const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
             if (backtrack.length > 0) {
                 ret += `                    _ => {\n`;
-                ret += `                        // Backtrack required for multi-sequence collision\n`;
-                ret += `                        unimplemented!("backtrack needed for ${t0}");\n`;
+                for (const b of backtrack) {
+                    ret += `                        if let Ok(node) = self.backtrack(|this| this.parse_${b.astTypeName}()) {\n`;
+                    ret += `                            return Ok(${func.astTypeName}::${b.astTypeName}(node));\n`;
+                    ret += `                        };\n`;
+                }
+                ret += `                        Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment()))`;
                 ret += `                    }\n`;
             } else {
                 const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);

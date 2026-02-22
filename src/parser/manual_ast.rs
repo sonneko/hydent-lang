@@ -1,6 +1,6 @@
 use crate::{
     compiler::{span::Span, symbol::Symbol},
-    parser::ast::{ASTNode, SyncPointBitMap},
+    parser::ast_node::{ASTNode, SyncPointBitMap},
     parser::errors::ParseErr,
 };
 
