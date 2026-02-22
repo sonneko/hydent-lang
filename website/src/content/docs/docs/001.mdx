@@ -1,0 +1,55 @@
+---
+title: Create your first hydent project
+description: How to use hyt, hydent official tool.
+---
+
+**hyt** is a tool for effient developing in hydent. We insistly recommend you to use it.
+
+hyt has a lot of functions, though we introduce one of them, a function to run hydent.
+
+Let's move to in your workspace directory and then make an empty file named "hello_world.hyt".
+
+Open your file and copy and paste below.
+
+```hello_world.hyt
+import { println } from "std/io";
+
+fn main() {
+    println("Hello World!");
+}
+
+```
+
+then...
+
+```bash
+$ hyt run hello_world.hyt
+```
+
+You will see "Hello World!" message. This is the easiest way to run hydent. hyt interpreted your program.
+
+If you want to run it more faster, you should add "--build" flag.
+
+```bash
+$ hyt run hello_world.hyt --build
+```
+
+"hyt" will compile hello_world.hyt into machine code in a little long time, and instantly run the binary. It's very first!
+
+You will run your program in interpreter to check if your program run collectly, then compile it into binary runnable in high speed, and release.
+
+If you want to use multiple files, you can create workspace and manage by hyt.
+
+```bash
+$ hyt new your_workspace_name
+```
+
+hyt creates directory and a few files.
+
+```tree
+your_workspace_name
+├── src
+│   └── main.hyt
+├── deps.json
+└── .gitignore
+```
