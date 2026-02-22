@@ -6,6 +6,7 @@ import { analyze } from "./parser_gen/analyze";
 import { generate } from "./parser_gen/gen";
 import { generateASTSizeCheckerRustTest, parseASTSizeCheckerResult } from "./parser_gen/check_ast_size";
 import { astName } from "./parser_gen/ir";
+import { generateTokenTypeMap } from "./parser_gen/tokenmap_gen";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
 const AST_FILE_PATH = "../spec/frontend/ast.json";
@@ -14,11 +15,17 @@ const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
 const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
 const AST_SIZE_CHECKER_FILE_PATH = "../src/parser/tests/ast_size_checker.rs";
 const AST_SIZE_REPORT_FILE_PATH = "../spec/frontend/ast_size.json";
+const TOKEN_MAP_FILE_PATH = "../src/tokenizer/generated_tokenmap.rs"
 
 function main() {
     fs.mkdirSync("../spec/frontend", { recursive: true });
 
     const mode = process.argv[2] === "ci" ? "ci" : "dev";
+
+    console.log("🤖 Generating TokenMap...");
+    const tokenMapCode = generateTokenTypeMap();
+    fs.writeFileSync(TOKEN_MAP_FILE_PATH, tokenMapCode, "utf8");
+    console.log("✅ TokenMap written to src/tokenizer/generated_tokenmap.rs");
 
     console.log("🤖 Generating AST...");
     const source = fs.readFileSync(BNF_FILE_PATH, "utf8");

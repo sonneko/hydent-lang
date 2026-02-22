@@ -149,7 +149,6 @@ fn test_string_escape_sequences() {
     }
 }
 
-
 #[test]
 fn test_complex_scientific_notation() {
     let input = "1.0e+10 1.0E-10 1e5";

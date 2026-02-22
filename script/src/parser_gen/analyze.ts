@@ -29,7 +29,7 @@ function concatSeq(a: TokenSeq, b: TokenSeq): TokenSeq {
     return combined.slice(0, 2);
 }
 
-class TokenMap {
+export class TokenMap {
     private map: Record<string, string>;
 
     public constructor(record?: Record<string, string>) {
@@ -39,7 +39,7 @@ class TokenMap {
         }
         const map = new Map<string, string>();
         try {
-            const csv = readFileSync('../assets/token_map.csv', 'utf8');
+            const csv = readFileSync('../assets/tokenmap.csv', 'utf8');
             csv.split('\n').forEach(line => {
                 const parts = line.split('"');
                 if (parts.length >= 4 && parts[1] && parts[3]) {
@@ -59,6 +59,10 @@ class TokenMap {
             return tokenName("UnknownToken");
         }
         return tokenName(val);
+    }
+
+    public getAll(): Record<string, string> {
+        return this.map;
     }
 }
 
