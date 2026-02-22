@@ -233,6 +233,13 @@ class Generator {
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n`;
         ret += `}\n\n`;
+
+        ret += `impl ${func.astTypeName} {\n`;
+        for (const typeName of []) {
+
+        }
+        ret += `}\n`;
+
         return ret;
     }
 
@@ -248,19 +255,19 @@ class Generator {
         for (const element of func.elements) {
             switch (element.kind) {
                 case "normal":
-                    ret += `    pub ${element.astTypeName}: ${element.astTypeName},\n`;
+                    ret += `    pub(super) ${element.astTypeName}: ${element.astTypeName},\n`;
                     break;
                 case "boxed":
-                    ret += `    pub ${element.astTypeName}: ArenaBox<${element.astTypeName}>,\n`;
+                    ret += `    pub(super) ${element.astTypeName}: ArenaBox<${element.astTypeName}>,\n`;
                     break;
                 case "option":
-                    ret += `    pub ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
+                    ret += `    pub(super) ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
                     break;
                 case "optionWithBox":
-                    ret += `    pub ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
+                    ret += `    pub(super) ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
                     break;
                 case "repeat":
-                    ret += `    pub ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
+                    ret += `    pub(super) ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
                     break;
             }
         }
@@ -273,6 +280,37 @@ class Generator {
         ret += `        None\n`;
         ret += `    }\n`;
         ret += `}\n\n`;
+
+
+        ret += `impl ${func.astTypeName} {\n`;
+        for (const typeName of func.elements
+            .filter(element => element.kind !== "terminal")
+            .sort()
+        ) {
+            let returnType;
+            switch (typeName.kind) {
+                case "boxed":
+                    returnType = `ArenaBox<${typeName.astTypeName}>`;
+                    break;
+                case "option":
+                    returnType = `Option<${typeName.astTypeName}>`;
+                    break;
+                case "optionWithBox":
+                    returnType = `Option<ArenaBox<${typeName.astTypeName}>>`;
+                    break;
+                case "normal":
+                    returnType = typeName.astTypeName;
+                    break;
+                case "repeat":
+                    returnType = `ArenaIter<${typeName.astTypeName}>`;
+                    break;
+            }
+            ret += `    pub fn ${typeName.astTypeName}(&self) -> &${returnType} {\n`;
+            ret += `        &self.${typeName.astTypeName}\n`;
+            ret += `    }\n\n`;
+        }
+        ret += `}\n`;
+
         return ret;
     }
 
