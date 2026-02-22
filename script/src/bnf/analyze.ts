@@ -514,10 +514,18 @@ export class Analyzer {
                 case "Field":
                     switch (member.type.modifier) {
                         case "None":
-                            elements.push({ kind: "normal", astTypeName: astName(member.type.name) });
+                            if (member.note.includes("boxed")) {
+                                elements.push({ kind: "boxed", astTypeName: astName(member.type.name) });
+                            } else {
+                                elements.push({ kind: "normal", astTypeName: astName(member.type.name) });
+                            }
                             break;
                         case "Option":
-                            elements.push({ kind: "option", astTypeName: astName(member.type.name) });
+                            if (member.note.includes("boxed")) {
+                                elements.push({ kind: "optionWithBox", astTypeName: astName(member.type.name) });
+                            } else {
+                                elements.push({ kind: "option", astTypeName: astName(member.type.name) });
+                            }
                             break;
                         case "List":
                             elements.push({ kind: "repeat", astTypeName: astName(member.type.name) });
