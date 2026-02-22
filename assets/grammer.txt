@@ -3,7 +3,7 @@ product Module {
 }
 
 branch TopLevelStatement {
-    ItemWithModifiers
+    ItemWithModifiers with "boxed"
     ImportDeclaration
     Annotation
 }
@@ -11,7 +11,7 @@ branch TopLevelStatement {
 product ItemWithModifiers {
     docs: *DocComment
     is_public: ?PubKeyword
-    decl: ItemDeclaration
+    decl: ItemDeclaration with "boxed"
 }
 
 product DocComment with "#doc_comment"
@@ -80,7 +80,7 @@ branch ClassMember {
 product ClassFunction {
     docs: *DocComment
     is_public: ?PubKeyword
-    decl: FunctionDeclaration
+    decl: FunctionDeclaration with "boxed"
 }
 
 product FieldDeclaration {
@@ -124,7 +124,7 @@ branch EnumMember {
 product EnumFunction {
     docs: *DocComment
     is_public: ?PubKeyword
-    decl: FunctionDeclaration
+    decl: FunctionDeclaration with "boxed"
 }
 
 product EnumVariant {
@@ -168,7 +168,7 @@ product FunctionDeclaration {
     name: Identifier
     generics: ?Generics
     "("
-    params: ?ParamsWithTypes
+    params: ?ParamsWithTypes with "boxed"
     ")"
     return_type: ?ReturnType
     panics: ?PanicsKeyword
@@ -185,7 +185,7 @@ product ReturnType {
 }
 
 product ParamsWithTypes {
-    head: ParamWithType
+    head: ParamWithType with "boxed"
     tails: *ParamWithTypeTail
 }
 
@@ -197,7 +197,7 @@ product ParamWithTypeTail {
 product ParamWithType {
     mut_kw: ?MutKw
     id_or_this: ParamId
-    type_annotation: ?TypeAnnotation
+    type_annotation: ?TypeAnnotation with "option"
     init: ?ParamInit
 }
 
@@ -251,7 +251,7 @@ product TypeAliasDeclaration {
 
 product Generics {
     "<"
-    params: GenericParamList
+    params: GenericParamList with "boxed"
     ">"
 }
 
@@ -320,7 +320,7 @@ branch Statement {
 
 product VariableDeclaration {
     keyword: VarKeyword
-    pattern: Pattern
+    pattern: Pattern with "boxed"
     type_annotation: ?TypeAnnotation
     init: ?VarInit
     ";"
@@ -388,13 +388,13 @@ product DivAssignOp { "/=" }
 // ==========================================
 
 product Expression {
-    head: LogicalAndExpr
+    head: LogicalAndExpr with "boxed"
     tails: *LogicalOrTail
 }
 
 product LogicalOrTail {
     "||"
-    expr: LogicalAndExpr
+    expr: LogicalAndExpr with "boxed"
 }
 
 product LogicalAndExpr {
@@ -404,7 +404,7 @@ product LogicalAndExpr {
 
 product LogicalAndTail {
     "&&"
-    expr: BitwiseOrExpr
+    expr: BitwiseOrExpr with "boxed"
 }
 
 product BitwiseOrExpr {
@@ -542,7 +542,7 @@ product NegOp { "-" }
 product PrimaryExpr {
     try_kw: ?TryKeyword
     await_kw: ?AwaitKeyword
-    base: BaseExpr
+    base: BaseExpr with "boxed"
     postfixes: *PostfixOp
 }
 
@@ -642,7 +642,7 @@ branch IfCondition {
 
 product IfLetCond {
     "let"
-    pattern: Pattern
+    pattern: Pattern with "boxed"
     "="
     expr: Expression
 }
@@ -670,7 +670,7 @@ product MatchExpression {
 }
 
 product MatchArm {
-    pattern: Pattern
+    pattern: Pattern with "boxed"
     guard: ?IfGuard
     "=>"
     expr: Expression
@@ -723,7 +723,7 @@ product PipeExpression {
 
 product PipelineArm {
     "|>"
-    pattern: Pattern
+    pattern: Pattern with "boxed"
     guard: ?IfGuard
     "=>"
     expr: Expression
@@ -754,7 +754,7 @@ product ParenExpr {
 }
 
 product ParenItemList {
-    head: ParenItem
+    head: ParenItem with "boxed"
     tails: *ParenItemTail
 }
 
@@ -794,7 +794,7 @@ product ExpressionTail {
 // ==========================================
 
 product Pattern {
-    base: PatternBase
+    base: PatternBase with "boxed"
     range_tail: ?RangePatternTail
 }
 
