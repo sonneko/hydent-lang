@@ -4,3 +4,4 @@ repomix-output.xml
 spec/
 .vscode
 TODO.txt
+.env

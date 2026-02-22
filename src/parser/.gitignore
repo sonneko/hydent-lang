@@ -1,2 +1,3 @@
 generated_parser.rs
 generated_ast.rs
+tests/ast_size_checker.rs

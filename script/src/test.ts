@@ -1,4 +1,4 @@
-import "./bnf/tests";
+import "./parser_gen/tests";
 
 export function describe(name: string, fn: () => void) {
     console.log(`\n=== Testing: ${name} ===`);
