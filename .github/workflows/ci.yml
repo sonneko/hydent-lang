@@ -50,10 +50,12 @@ jobs:
         with:
           components: miri
 
+      - name: Run script
+        run: npm start -- ci
+        working-directory: ./script
+
       - name: Build
         run: cargo +stable build --verbose
-        env:
-          IS_CI_ENV: ci
 
       - name: Check formatting
         run: cargo +stable fmt --all -- --check

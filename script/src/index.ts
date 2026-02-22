@@ -20,7 +20,7 @@ function main() {
 
     const mode = process.argv[2] === "ci" ? "ci" : "dev";
 
-    console.log("🤖 Generating AST...")
+    console.log("🤖 Generating AST...");
     const source = fs.readFileSync(BNF_FILE_PATH, "utf8");
     const ast = parse(source);
     fs.writeFileSync(AST_FILE_PATH, JSON.stringify(ast, null, 2), "utf8");
