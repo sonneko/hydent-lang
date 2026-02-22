@@ -81,7 +81,7 @@ function main() {
     if (mode === "ci") {
         console.log("🤖 formatting generated rust files ")
         try {
-            execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH}`);
+            execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH} ${AST_SIZE_CHECKER_FILE_PATH} ${TOKEN_MAP_FILE_PATH}`);
         } catch (e) {
             console.warn(`⚠️ rustfmt not found or failed because of syntax error`)
         }

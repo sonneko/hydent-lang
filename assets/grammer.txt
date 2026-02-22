@@ -399,7 +399,7 @@ product LogicalOrTail {
 
 product LogicalAndExpr {
     head: BitwiseOrExpr
-    tails: *LogicalAndTail
+    tails: *LogicalAndTail with "boxed"
 }
 
 product LogicalAndTail {
