@@ -23,68 +23,74 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    pub fn tokenize(mut self) -> Result<Vec<(Token, Span)>, TokenizeErr> {
+    pub fn tokenize(mut self) -> (Vec<(Token, Span)>, Vec<(TokenizeErr, Span)>) {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
+        let mut errors = Vec::new();
 
         while let Some(b) = self.peek() {
-            match b {
+            let begin = self.current_pos;
+            let next = match b {
                 b' ' | b'\t' | b'\r' | b'\n' => {
                     self.advance();
+                    continue;
                 }
                 b'/' => {
                     if let Some(next) = self.peek_at(1) {
                         match next {
-                            b'/' => {
-                                tokens.push(self.read_line_comment()?);
-                            }
-                            b'*' => {
-                                tokens.push(self.read_block_comment()?);
-                            }
+                            b'/' => self.read_line_comment(),
+                            b'*' => self.read_block_comment(),
                             b'=' => {
                                 self.advance_n(2);
-                                tokens.push(Token::Operator(Operator::DivideAssign));
+                                Ok(Token::Operator(Operator::DivideAssign))
                             }
                             _ => {
                                 self.advance();
-                                tokens.push(Token::Operator(Operator::Divide));
+                                Ok(Token::Operator(Operator::Divide))
                             }
                         }
                     } else {
                         self.advance();
-                        tokens.push(Token::Operator(Operator::Divide));
+                        Ok(Token::Operator(Operator::Divide))
                     }
                 }
-                b'"' => tokens.push(self.read_string_literal()?),
-                b'\'' => tokens.push(self.read_char_literal()?),
-                b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
-                    tokens.push(self.read_identifier_or_keyword());
-                }
-                b'0'..=b'9' => {
-                    tokens.push(self.read_number_literal()?);
-                }
+                b'"' => self.read_string_literal(),
+                b'\'' => self.read_char_literal(),
+                b'a'..=b'z' | b'A'..=b'Z' | b'_' => Ok(self.read_identifier_or_keyword()),
+                b'0'..=b'9' => self.read_number_literal(),
                 b'.' => {
                     if self.consume_str(b"..=") {
-                        tokens.push(Token::Operator(Operator::RangeInclusive));
+                        Ok(Token::Operator(Operator::RangeInclusive))
                     } else if self.consume_str(b"..") {
-                        tokens.push(Token::Operator(Operator::RangeExclusive));
+                        Ok(Token::Operator(Operator::RangeExclusive))
                     } else {
                         self.advance();
-                        tokens.push(Token::Operator(Operator::MemberAccess));
+                        Ok(Token::Operator(Operator::MemberAccess))
                     }
                 }
                 _ => {
                     if let Some(op) = self.read_operator_or_delimiter() {
-                        tokens.push(op);
+                        Ok(op)
                     } else {
-                        return Err(TokenizeErr::UnknownToken(self.current_pos));
+                        Err(TokenizeErr::UnknownToken(self.current_pos))
                     }
                 }
+            };
+
+            match next {
+                Ok(token) => tokens.push((token, Span::new(begin, self.current_pos))),
+                Err(err) => {
+                    errors.push((err, Span::new(begin, self.current_pos)));
+                    tokens.push((Token::Invalid, Span::new(begin, self.current_pos)));
+                },
             }
         }
 
-        tokens.push(Token::EndOfFile);
-        todo!()
-        // TODO: add logic to return (Token, Span)
+        tokens.push((
+            Token::EndOfFile,
+            Span::new(self.current_pos, self.current_pos),
+        ));
+
+        (tokens, errors)
     }
 
     // --- low level helpers ---

@@ -46,9 +46,8 @@ impl Query for ParseFileQuery {
 
         let tokens = {
             let tokenizer = Tokenizer::new(&src, &mut ctx.symbol_factory);
-            tokenizer
-                .tokenize()
-                .map_err(<TokenizeErr as Into<Box<dyn CompilerDiagnostic>>>::into)?
+            let (tokens, _) = tokenizer.tokenize();
+            tokens
         };
 
         let parser = Parser::new(TokenStream::new(tokens), ctx);

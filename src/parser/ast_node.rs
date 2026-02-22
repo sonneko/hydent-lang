@@ -18,6 +18,7 @@ pub trait ASTNode:
                 Token::Identifier(_) => set.identifier,
                 Token::EndOfFile => set.eof,
                 Token::Comment(_) => set.comments,
+                Token::Invalid => false,
             }
         } else {
             false

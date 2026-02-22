@@ -12,6 +12,7 @@ pub enum Token {
     Operator(Operator),
     Comment(Comment),
     Delimiter(Delimiter),
+    Invalid,
     EndOfFile,
 }
 
@@ -157,6 +158,7 @@ impl std::fmt::Display for Token {
             Self::Keyword(keyword) => write!(f, "{} keyword", keyword),
             Self::Literal(literal) => write!(f, "{}", literal),
             Self::Operator(operator) => write!(f, "{} operator", operator),
+            Self::Invalid => write!(f, "invalid token"),
         }
     }
 }
