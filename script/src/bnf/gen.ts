@@ -54,7 +54,7 @@ class Generator {
         ret += `        match self.peek::<0>() {\n`;
 
         // 1. Simple Peek<0> matches
-        for (const branch of func.branchesJudgebleInPeek0) {
+        for (const branch of func.branchesJudgebleInPeek0.sort()) {
             if (branch.isBoxed) {
                 ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
             } else {
@@ -63,18 +63,18 @@ class Generator {
         }
 
         // 2. Complex matches (Peek<1> required or Backtrack required)
-        const complexFirstTerminals = Array.from(new Set([
+        const complexFirstTerminals = [...new Set([
             ...func.branchesJudgebleInPeek1.map(b => b.firstTerminal),
             ...func.branchesNeedBacktrack.map(b => b.firstTerminal),
             ...(func.branchesFallbackInPeek1 || []).map(b => b.firstTerminal)
-        ]));
+        ])];
 
-        for (const t0 of complexFirstTerminals) {
+        for (const t0 of complexFirstTerminals.sort()) {
             ret += `            Some(${t0.replace(/\$.*\$/, "_")}) => {\n`;
             ret += `                match self.peek::<1>() {\n`;
 
             const peek1 = func.branchesJudgebleInPeek1.filter(b => b.firstTerminal === t0);
-            for (const branch of peek1) {
+            for (const branch of peek1.sort()) {
                 if (branch.isBoxed) {
                     ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
                 } else {
@@ -109,7 +109,7 @@ class Generator {
         ret += `            _ => Err(Self::Error::build(\n`;
         ret += `                self.get_errors_arena(),\n`;
         ret += `                ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
-        const expected = Array.from(new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_"))));
+        const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
         ret += `                [${expected.join(", ")}],\n`;
         ret += `                self.enviroment(),\n`;
         ret += `            )),\n`;
@@ -149,7 +149,7 @@ class Generator {
             }
         }
         ret += `        Ok(${func.astTypeName} {\n`;
-        for (const element of func.elements) {
+        for (const element of func.elements.sort()) {
             if (element.kind !== "terminal") {
                 ret += `            ${element.astTypeName},\n`;
             }
@@ -165,7 +165,7 @@ class Generator {
 
     public generateASTType(ir: IR): string {
         let decls = [];
-        for (const element of ir) {
+        for (const element of ir.sort()) {
             switch (element.kind) {
                 case "branch":
                     decls.push(this.generateBranchASTType(element));
@@ -185,11 +185,11 @@ class Generator {
         ret += `//  In "/src/parser/generated_ast.rs"\n`;
         ret += `// ==========================================\n\n`;
         ret += `#![allow(non_snake_case)]\n`;
-        ret += `#![allow(clippy::large_enum_variant)]   // TODO: delete this line`;
+        ret += `#![allow(clippy::large_enum_variant)]   // TODO: delete this line\n`;
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
-        ret += `use crate::parser::ast::ASTNode;\n`;
-        ret += `use crate::parser::ast::SyncPointBitMap;\n`;
+        ret += `use crate::parser::ast_node::ASTNode;\n`;
+        ret += `use crate::parser::ast_node::SyncPointBitMap;\n`;
         ret += `use crate::parser::errors::ParseErr;\n`;
         ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator};\n\n`;
         ret += decls.join("");
@@ -207,9 +207,9 @@ class Generator {
             ...(func.branchesFallbackInPeek1 || []),
             ...func.branchesNeedBacktrack
         ];
-        let dublicateRemoved = new Set(allVariants.map(branch => branch.astTypeName));
+        let dublicateRemoved = [...new Set(allVariants.map(branch => branch.astTypeName))];
 
-        for (const typeName of dublicateRemoved) {
+        for (const typeName of dublicateRemoved.sort()) {
             const isBoxed = allVariants.some(branch => branch.astTypeName === typeName && branch.isBoxed);
             if (isBoxed) {
                 ret += `    ${typeName}(ArenaBox<${typeName}>),\n`;

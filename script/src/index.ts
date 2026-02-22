@@ -27,7 +27,7 @@ function main() {
             return Object.fromEntries(value);
         }
         if (value instanceof Set) {
-            return Array.from(value);
+            return [...value];
         }
         return value;
     }, 2), "utf8");

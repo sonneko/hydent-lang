@@ -72,7 +72,7 @@ export class Analyzer {
     private followSets: Map<string, Set<string>> = new Map();
 
     public constructor(grammar: Grammar, tokenMap?: Record<string, string>) {
-        this.grammar = grammar;
+        this.grammar = [...grammar].sort((a, b) => a.name.localeCompare(b.name));
         this.tokenMap = new TokenMap(tokenMap);
         this.ruleMap = new Map();
 
@@ -346,14 +346,14 @@ export class Analyzer {
             visited.add(node);
         }
 
-        const startNodes = Array.from(graph.keys()).sort();
+        const startNodes = [...graph.keys()].sort();
 
         for (const node of startNodes) {
             if (visited.has(node)) continue;
             visit(node);
         }
 
-        Array.from(shouldBeBoxed).forEach(v => {
+        [...shouldBeBoxed].sort().forEach(v => {
             const separated = v.split(":");
             const from = astName(separated[0]);
             const to = astName(separated[1]);

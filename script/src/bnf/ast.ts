@@ -66,7 +66,7 @@ export type Token =
     | { kind: 'StringLiteral'; value: string }
     | { kind: 'EOF' };
 
-export const TOKEN_PATTERNS: Array<{ kind: TokenKind; regex: RegExp }> = [
+export const TOKEN_PATTERNS: { kind: TokenKind; regex: RegExp }[] = [
     { kind: 'Branch', regex: /^branch\b/ },
     { kind: 'Product', regex: /^product\b/ },
     { kind: 'With', regex: /^with\b/ },
