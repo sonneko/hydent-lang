@@ -7,6 +7,7 @@ import { generate } from "./parser_gen/gen";
 import { generateASTSizeCheckerRustTest, parseASTSizeCheckerResult } from "./parser_gen/check_ast_size";
 import { astName } from "./parser_gen/ir";
 import { generateTokenTypeMap } from "./parser_gen/tokenmap_gen";
+import { generateMermaidHtml } from "./parser_gen/gen_mermaid";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
 const AST_FILE_PATH = "../spec/frontend/ast.json";
@@ -15,7 +16,8 @@ const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
 const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
 const AST_SIZE_CHECKER_FILE_PATH = "../src/parser/tests/ast_size_checker.rs";
 const AST_SIZE_REPORT_FILE_PATH = "../spec/frontend/ast_size.json";
-const TOKEN_MAP_FILE_PATH = "../src/tokenizer/generated_tokenmap.rs"
+const TOKEN_MAP_FILE_PATH = "../src/tokenizer/generated_tokenmap.rs";
+const MERMAID_GRAMMAR_FILE_PATH = "../spec/frontend/mermaid_grammar.html";
 
 function main() {
     fs.mkdirSync("../spec/frontend", { recursive: true });
@@ -51,6 +53,11 @@ function main() {
     fs.writeFileSync(PARSER_FILE_PATH, parser[0], "utf8");
     fs.writeFileSync(AST_TYPE_FILE_PATH, parser[1], "utf8");
     console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
+
+    console.log("🤖 Generating Mermaid format grammar diagram...")
+    const mermaid = generateMermaidHtml(ast);
+    fs.writeFileSync(MERMAID_GRAMMAR_FILE_PATH, mermaid, "utf8");
+    console.log("✅ Mermaid format grammar diagram written to spec/frontend/mermaid_grammar.html");
 
     if (mode === "ci") {
         console.log("🤖 Checking AST type size...");
