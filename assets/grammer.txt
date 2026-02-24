@@ -398,8 +398,8 @@ product LogicalOrTail {
 }
 
 product LogicalAndExpr {
-    head: BitwiseOrExpr
-    tails: *LogicalAndTail with "boxed"
+    head: BitwiseOrExpr with "boxed"
+    tails: *LogicalAndTail
 }
 
 product LogicalAndTail {

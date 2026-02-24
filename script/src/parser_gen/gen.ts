@@ -212,9 +212,9 @@ class Generator {
             ...(func.branchesFallbackInPeek1 || []),
             ...func.branchesNeedBacktrack
         ];
-        let dublicateRemoved = [...new Set(allVariants.map(branch => branch.astTypeName))];
+        let dublicateRemoved = [...new Set(allVariants.map(branch => branch.astTypeName))].sort();
 
-        for (const typeName of dublicateRemoved.sort()) {
+        for (const typeName of dublicateRemoved) {
             const isBoxed = allVariants.some(branch => branch.astTypeName === typeName && branch.isBoxed);
             if (isBoxed) {
                 ret += `    ${typeName}(ArenaBox<${typeName}>),\n`;
@@ -235,8 +235,30 @@ class Generator {
         ret += `}\n\n`;
 
         ret += `impl ${func.astTypeName} {\n`;
-        for (const typeName of []) {
+        const everyVariants = (() => {
+            const list = [...func.branchesFallbackInPeek1, ...func.branchesJudgebleInPeek0, ...func.branchesJudgebleInPeek1, ...func.branchesNeedBacktrack];
+            const taken = [...new Map(
+                list.map(item => {
+                    const key = `${item.astTypeName}-${item.isBoxed}`;
+                    return [key, { name: item.astTypeName, isBoxed: item.isBoxed }];
+                })
+            )];
+            return [...new Set(taken)].map(v => v[1]).sort();
+        })();
+        for (const variant of everyVariants) {
+            let returnType;
+            if (variant.isBoxed) {
+                returnType = "ArenaBox<" + variant.name + ">";
+            } else {
+                returnType = variant.name;
+            }
 
+            ret += `    pub fn expect_${variant.name}(&self) -> Option<&${returnType}> {\n`;
+            ret += `        match self {\n`;
+            ret += `            Self::${variant.name}(v) => Some(&*v),\n`;
+            ret += `            _ => None,\n`;
+            ret += `        }\n`;
+            ret += `    }\n\n`;
         }
         ret += `}\n`;
 

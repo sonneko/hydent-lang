@@ -27,5 +27,5 @@ export function parseASTSizeCheckerResult(result: string): { ast: RustASTTypeNam
         const ast = astName(separed[0]);
         const size = parseInt(separed[1]);
         return { ast, size };
-    });
+    }).filter((_, i) => i > 0);
 }

@@ -69,9 +69,10 @@ function main() {
         const astSizes = parseASTSizeCheckerResult(sizeChekerResult);
         fs.writeFileSync(AST_SIZE_REPORT_FILE_PATH, JSON.stringify(astSizes, null, 2), "utf8")
         console.log("* AST type size report written to spec/frontend/ast_size.json");
-        const tooBigSizeAsts = astSizes.filter(({ size }) => size > 1024 /* 128 Byte */);
+        const tooBigSizeAsts = astSizes.filter(({ size }) => size > 256 /* 32 Byte */);
         if (tooBigSizeAsts.length === 0) {
-            console.log("✅ Checked if no AST types have too big sizes");
+            const maxSize = astSizes.reduce((pre, curr) => pre.size > curr.size ? pre : curr).size;
+            console.log(`✅ Checked if no AST types have too big sizes. Max size is ${maxSize}, which is less than 256 bits.`);
         } else {
             console.log("⚠️ " + tooBigSizeAsts.map(({ ast }) => ast).join(", ") + " has too big size.")
             console.warn("⚠️ AST types have too big sizes. see spec/frontend/ast_size.json and add `with \"box\"` to grammar.txt");
