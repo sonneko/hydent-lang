@@ -52,11 +52,21 @@ impl QueryId {
     }
 }
 
+type Storage<T> = HashMap<TypeId, HashMap<HashedQueryFrom, T>>;
+
 pub struct Database {
     current_rivision: Revision,
-    queries: HashMap<TypeId, Box<dyn Any>>,
+    queries_outputs: Storage<Box<dyn Any /* Query::To */>>,
+    queries_metadata: Storage<QueryMetadata>,
     stack: Vec<QueryId>,
 }
+
+pub struct QueryMetadata {
+    verified_at: Revision,
+    changed_at: Revision,
+    dependencies: Vec<QueryId>,
+}
+
 impl Database {
     fn fetch<Q: Query>(&mut self, from: Q::From) -> Result<Q::To, QuerySysFetchErr> {
         // 1. check there is no dependent cycle
@@ -70,20 +80,21 @@ impl Database {
 
         // 3. save that parent query depends on this query
         if let Some(parent_query) = self.stack.last() {
-            self.find(*parent_query).unwrap().dependencies.push(current_query);
+            self.find_query_metadata_mut(*parent_query).unwrap().dependencies.push(current_query);
         } else {
             // This query is root
         }
 
         // 4. check if there is a verified cached result
-        let to = if let Some(slot) = self.find::<Q>(current_query) {
-            if slot.verified_at == self.current_rivision {
+        let to = if let Some(_) = self.find_query_output::<Q>(current_query) {
+            let metadata = self.find_query_metadata(current_query).unwrap() as &QueryMetadata;
+            if metadata.verified_at == self.current_rivision {
                 // verified to have runned in this rivision
-                slot.to.clone()
+                self.find_query_output::<Q>(current_query).unwrap().clone()
             } else {
                 // let's check if the cach can be used
                 if self.check_query_is_up_to_date(current_query) {
-                    slot.to.clone()
+                    self.find_query_output::<Q>(current_query).unwrap().clone()
                 } else {
                     Q::run(self, from)
                 }
@@ -104,26 +115,20 @@ impl Database {
         todo!()
     }
 
-    fn find<Q: Query>(&self, query_id: QueryId) -> Option<&Slot<Q>> {
-        let found = self.queries.get(&TypeId::of::<Q>());
-        let storage = found.map(|q| q.downcast_ref::<Storage<Q>>().unwrap())?;
-        Some(storage.find(&query_id.from)?)
+    fn find_query_output<Q: Query>(&self, query_id: QueryId) -> Option<&Q::To> {
+        assert_eq!(query_id.query_type, TypeId::of::<Q>());
+        let found = self.queries_outputs.get(&TypeId::of::<Q>())?;
+        let storage = found.get(&query_id.from)?;
+        Some(storage.downcast_ref::<Q::To>().unwrap())
     }
-}
 
-pub struct Storage<Q: Query> {
-    revision: Revision,
-    data: HashMap<HashedQueryFrom, Slot<Q>>,
-}
-impl<Q: Query> Storage<Q> {
-    fn find(&self, from: &HashedQueryFrom) -> Option<&Slot<Q>> {
-        self.data.get(from)
+    fn find_query_metadata_mut(&mut self, query_id: QueryId) -> Option<&mut QueryMetadata> {
+        let found = self.queries_metadata.get_mut(&query_id.query_type)?;
+        Some(found.get_mut(&query_id.from)?)
     }
-}
 
-pub struct Slot<Q: Query> {
-    to: Q::To,
-    verified_at: Revision,
-    changed_at: Revision,
-    dependencies: Vec<QueryId>,
+    fn find_query_metadata(&self, query_id: QueryId) -> Option<&QueryMetadata> {
+        let found = self.queries_metadata.get(&query_id.query_type)?;
+        Some(found.get(&query_id.from)?)
+    }
 }

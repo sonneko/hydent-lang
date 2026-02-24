@@ -1,5 +1,5 @@
 use crate::compiler::{
-    arena::Arena, context::frontend::CompilerFrontendContext, query_sys::Query,
+    arena::Arena, context::frontend::CompilerFrontendContext,
     source_holder::SourceHolder, symbol::SymbolFactory,
 };
 use crate::diagnostic::CompilerDiagnostic;
@@ -7,6 +7,7 @@ use crate::parser::{errors::ParseErr, parse::Parser};
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
+use crate::compiler::runtime::{Engine, Query};
 
 
 #[cfg(test)]
@@ -34,8 +35,8 @@ pub struct ParseFileQuery;
 impl Query for ParseFileQuery {
     type From = String;
     type To = ();
-    fn run(
-        db: &crate::compiler::query_sys::Database,
+    fn run<E: Engine>(
+        engine: &E,
         src: Self::From,
     ) -> Self::To {
         let source_holder = SourceHolder::new(&src);
