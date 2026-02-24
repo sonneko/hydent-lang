@@ -82,3 +82,7 @@ pub trait CompilerDiagnostic: Send + Sync + 'static {
         ))
     }
 }
+
+pub fn diagnose_and_finish(diagnostics: Vec<Box<dyn CompilerDiagnostic>>) -> ! {
+    todo!()
+}
