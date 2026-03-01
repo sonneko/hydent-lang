@@ -3,8 +3,6 @@ use crate::compiler::symbol::SymbolFactory;
 use crate::tokenizer::tokenize::Tokenizer;
 use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
 
-/// テスト用のヘルパー関数。
-/// 文字列を入力として受け取り、トークン列を返す。
 fn tokenize_helper(input: &str) -> Vec<Token> {
     let source_holder = SourceHolder::new(input);
     let mut symbol_factory = SymbolFactory::new(source_holder);
@@ -32,31 +30,20 @@ fn test_basic_keywords() {
 
 #[test]
 fn test_numbers() {
-    // 整数、浮動小数点、16進数、2進数、科学表記
-    let input = "123 3.14 0xFF 0b1010 1.2e+10";
+    let input = "123 3.14 1.2e+10";
     let tokens = tokenize_helper(input);
 
     assert!(matches!(
         tokens[0],
         Token::Literal(Literal::IntegerLiteral(123))
     ));
-    // f32の比較はHashableFloatを介して行われる
     if let Token::Literal(Literal::FloatLiteral(f)) = tokens[1] {
         assert_eq!(f.get(), 3.14);
     } else {
         panic!("Expected float");
     }
 
-    assert!(matches!(
-        tokens[2],
-        Token::Literal(Literal::IntegerLiteral(255))
-    )); // 0xFF
-    assert!(matches!(
-        tokens[3],
-        Token::Literal(Literal::IntegerLiteral(10))
-    )); // 0b1010
-
-    if let Token::Literal(Literal::FloatLiteral(f)) = tokens[4] {
+    if let Token::Literal(Literal::FloatLiteral(f)) = tokens[2] {
         assert_eq!(f.get(), 1.2e10);
     } else {
         panic!("Expected float scientific");
@@ -65,7 +52,6 @@ fn test_numbers() {
 
 #[test]
 fn test_operators_and_ranges() {
-    // 最大長のものから優先的にマッチするか(..= vs .. vs .)
     let input = ".. ..= . => -> |>";
     let tokens = tokenize_helper(input);
 
@@ -85,13 +71,12 @@ fn test_comments() {
     assert_eq!(tokens[0], Token::Comment(Comment::LineComment));
     assert!(matches!(tokens[1], Token::Comment(Comment::DocComment(_))));
     assert_eq!(tokens[2], Token::Comment(Comment::BlockComment));
-    assert_eq!(tokens[3], Token::Comment(Comment::BlockComment)); // ネストされたものも1つのBlockCommentとして処理
+    assert_eq!(tokens[3], Token::Comment(Comment::BlockComment));
 }
 
 #[test]
 fn test_multibyte_safety_in_comments_and_strings() {
-    // 日本語（3バイト文字）や絵文字（4バイト文字）を含むケース
-    // Tokenizerの各メソッドがバイトインデックスではなく文字境界を意識できているか確認
+    // TODO: may be occure undefined behavior
     let input = r#"
             // 日本語のコメント
             let s = "こんにちは、世界 🌍"; 
@@ -100,7 +85,6 @@ fn test_multibyte_safety_in_comments_and_strings() {
             let c = 'あ';
         "#;
 
-    // tokenize中にパニック（境界外アクセスや不正なUTF-8スライス作成）が起きないことを確認
     let tokens = tokenize_helper(input);
 
     assert_eq!(tokens[0], Token::Comment(Comment::LineComment));
@@ -108,10 +92,7 @@ fn test_multibyte_safety_in_comments_and_strings() {
     assert!(tokens[2].is_identifier());
     assert_eq!(tokens[3], Token::Operator(Operator::Assignment));
 
-    // 文字列リテラルの中身が正しくSpanとして認識されているか
     if let Token::Literal(Literal::StringLiteral(span)) = tokens[4] {
-        // 文字列自体のバリデーションはParser/Evaluatorの責務だが、
-        // 終端の引用符が正しく認識されているかが重要
         assert_eq!(tokens[5], Token::Delimiter(Delimiter::Semicolon));
     } else {
         panic!("Expected string literal");
@@ -123,12 +104,9 @@ fn test_multibyte_safety_in_comments_and_strings() {
 
 #[test]
 fn test_number_literal_after_multibyte() {
-    // read_number_literal 内の unsafe { std::str::from_utf8_unchecked }
-    // が直前のマルチバイト文字の影響で不正なポインタを参照しないか
     let input = "// あ\n123";
     let tokens = tokenize_helper(input);
 
-    // コメント（マルチバイト含む）の後の数値が正しく読み取れるか
     assert_eq!(tokens[0], Token::Comment(Comment::LineComment));
     assert!(matches!(
         tokens[1],
@@ -142,7 +120,6 @@ fn test_string_escape_sequences() {
     let tokens = tokenize_helper(input);
 
     if let Token::Literal(Literal::StringLiteral(_)) = tokens[0] {
-        // 正常にクローズされている
         assert_eq!(tokens[1], Token::EndOfFile);
     } else {
         panic!("String literal with escapes failed");

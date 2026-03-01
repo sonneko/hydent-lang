@@ -45,7 +45,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 b'"' => self.read_string_literal(),
                 b'\'' => self.read_char_literal(),
                 b'/' if self.peek_at(1) == Some(b'/') => self.read_line_comment(),
-                b'/' if self.peek_at(2) == Some(b'*') => self.read_block_comment(),
+                b'/' if self.peek_at(1) == Some(b'*') => self.read_block_comment(),
                 _ => self.read_operator_or_delimiter(),
             };
 
