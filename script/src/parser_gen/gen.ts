@@ -205,9 +205,10 @@ class Generator {
     private generateVisitorTrait(ir: IR): string {
         let ret = "";
         ret += `pub trait ASTVisitor {\n`;
+        ret += `    type ReturnType;`;
         const elements = [...new Set(ir.map(({astTypeName}) => astTypeName))].sort((pre, curr) => pre.localeCompare(curr));
         for (const element of elements) {
-            ret += `    fn visit_${element}(&mut self, node: &${element});\n`;
+            ret += `    fn visit_${element}(&mut self, node: &${element}) -> Self::ReturnType;\n`;
         }
         ret += `}\n\n`;
 
@@ -371,104 +372,108 @@ class Generator {
         ret += "use crate::parser::ast_node::ASTNode;\n";
         ret += "use crate::parser::generated_ast::*;\n";
         ret += "\n";
-        ret += "pub struct ASTPrinter<'a> {\n";
+        ret += "pub struct ASTPrinter<'a, 'f, 'b> {\n";
         ret += "    arena: &'a Arena,\n";
         ret += "    indent: usize,\n";
-        ret += "    out: String,\n";
+        ret += "    writer: &'f mut std::fmt::Formatter<'b>,\n";
         ret += "}\n";
         ret += "\n";
-        ret += "impl<'a> ASTPrinter<'a> {\n";
-        ret += "    pub fn new(arena: &'a Arena) -> Self {\n";
-        ret += "        Self { arena, indent: 0, out: String::new() }\n";
+        ret += "impl<'a, 'f, 'b> ASTPrinter<'a, 'f, 'b> {\n";
+        ret += "    pub fn new(arena: &'a Arena, writer: &'f mut std::fmt::Formatter<'b>) -> Self {\n";
+        ret += "        Self { arena, indent: 0 , writer}\n";
         ret += "    }\n";
         ret += "\n";
-        ret += "    fn write_indent(&mut self) {\n";
-        ret += "        for _ in 0..self.indent { self.out.push_str(\"  \"); }\n";
+        ret += "    fn write_indent(&mut self) -> Result<(), std::fmt::Error> {\n";
+        ret += "        for _ in 0..self.indent { self.write(\"  \")?; }\n";
+        ret += "        Ok(())\n";
         ret += "    }\n";
         ret += "\n";
-        ret += "    pub fn load(&mut self) -> &str {\n";
-        ret += "        &self.out\n";
+        ret += "    pub fn write(&mut self, s: &'static str) -> Result<(), std::fmt::Error> {\n";
+        ret += "        self.writer.write_str(s);\n";
+        ret += "        Ok(())\n";
         ret += "    }\n";
         ret += "}\n\n";
         ret += "#[allow(clippy::single_char_add_str)]\n";
-        ret += `impl<'a> ASTVisitor for ASTPrinter<'a> {\n`;
+        ret += `impl<'a, 'f, 'b> ASTVisitor for ASTPrinter<'a, 'f, 'b> {\n`;
+        ret += `    type ReturnType = Result<(), std::fmt::Error>;\n`;
         for (const func of ir) {
-            ret += `    fn visit_${func.astTypeName}(&mut self, node: &${func.astTypeName}) {\n`;
-            ret += `        self.write_indent();\n`;
+            ret += `    fn visit_${func.astTypeName}(&mut self, node: &${func.astTypeName}) -> Result<(), std::fmt::Error> {\n`;
+            ret += `        self.write_indent()?;\n`;
             
             if (func.kind === "branch") {
-                ret += `        self.out.push_str("${func.astTypeName}::");\n`;
+                ret += `        self.write("${func.astTypeName}::")?;\n`;
                 ret += `        match node {\n`;
                 
                 const variants = this.getUniqueVariants(func);
                 for (const variant of variants) {
                     if (variant.isBoxed) {
                         ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
-                        ret += `                self.out.push_str("${variant.name}(\\n");\n`;
+                        ret += `                self.write("${variant.name}(\\n")?;\n`;
                         ret += `                self.indent += 1;\n`;
                         ret += `                v.get(self.arena).accept(self);\n`;
                         ret += `                self.indent -= 1;\n`;
-                        ret += `                self.write_indent();\n`;
-                        ret += `                self.out.push_str(")\\n");\n`;
+                        ret += `                self.write_indent()?;\n`;
+                        ret += `                self.write(")\\n")?;\n`;
                         ret += `            }\n`;
                     } else {
                         ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
-                        ret += `                self.out.push_str("${variant.name}(\\n");\n`;
+                        ret += `                self.write("${variant.name}(\\n")?;\n`;
                         ret += `                self.indent += 1;\n`;
                         ret += `                v.accept(self);\n`;
                         ret += `                self.indent -= 1;\n`;
-                        ret += `                self.write_indent();\n`;
-                        ret += `                self.out.push_str(")\\n");\n`;
+                        ret += `                self.write_indent()?;\n`;
+                        ret += `                self.write(")\\n")?;\n`;
                         ret += `            }\n`;
                     }
                 }
-                ret += `            ${func.astTypeName}::Invalid => self.out.push_str("Invalid\\n"),\n`;
+                ret += `            ${func.astTypeName}::Invalid => self.write("Invalid\\n")?,\n`;
                 ret += `        }\n`;
 
             } else if (func.kind === "product") {
-                ret += `        self.out.push_str("${func.astTypeName} {\\n");\n`;
+                ret += `        self.write("${func.astTypeName} {\\n")?;\n`;
                 ret += `        self.indent += 1;\n`;
 
                 for (const el of func.elements) {
                     if (el.kind === "terminal") continue;
 
-                    ret += `        self.write_indent();\n`;
-                    ret += `        self.out.push_str("${el.astTypeName}: ");\n`;
+                    ret += `        self.write_indent()?;\n`;
+                    ret += `        self.write("${el.astTypeName}: ")?;\n`;
 
                     switch (el.kind) {
                         case "normal":
-                            ret += `        self.out.push_str("\\n");\n`;
+                            ret += `        self.write("\\n")?;\n`;
                             ret += `        node.${el.astTypeName}.accept(self);\n`;
                             break;
                         case "boxed":
-                            ret += `        self.out.push_str("(Boxed)\\n");\n`;
+                            ret += `        self.write("(Boxed)\\n")?;\n`;
                             ret += `        (node.${el.astTypeName}.get(self.arena)).accept(self);\n`;
                             break;
                         case "option":
-                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("\\n"); v.accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            ret += `if let Some(v) = &node.${el.astTypeName} { self.write("\\n")?; v.accept(self); } else { self.write("None\\n")?; }\n`;
                             break;
                         case "optionWithBox":
-                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get(self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            ret += `if let Some(v) = &node.${el.astTypeName} { self.write("(Boxed)\\n")?; v.get(self.arena).accept(self); } else { self.write("None\\n")?; }\n`;
                             break;
                         case "repeat":
-                            ret += `        self.out.push_str("[\\n");\n`;
+                            ret += `        self.write("[\\n")?;\n`;
                             ret += `        self.indent += 1;\n`;
                             ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) { item.accept(self); }\n`;
                             ret += `        self.indent -= 1;\n`;
-                            ret += `        self.write_indent();\n`;
-                            ret += `        self.out.push_str("],\\n");\n`;
+                            ret += `        self.write_indent()?;\n`;
+                            ret += `        self.write("],\\n")?;\n`;
                             break;
                     }
                 }
 
                 ret += `        self.indent -= 1;\n`;
-                ret += `        self.write_indent();\n`;
-                ret += `        self.out.push_str("}\\n");\n`;
+                ret += `        self.write_indent()?;\n`;
+                ret += `        self.write("}\\n")?;\n`;
 
             } else if (func.kind === "hook") {
-                ret += `        self.out.push_str("<HookedNode:${func.astTypeName}>\\n");\n`;
+                ret += `        self.write("<HookedNode:${func.astTypeName}>\\n")?;\n`;
             }
 
+            ret += "        Ok(())\n";
             ret += `    }\n\n`;
         }
         ret += `}`

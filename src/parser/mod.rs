@@ -1,6 +1,7 @@
 use crate::compiler::runtime::{Engine, Query};
 use crate::diagnostic::CompilerDiagnostic;
-use crate::parser::{errors::ParseErr, parse::Parser};
+use crate::parser::ast::ASTVisitor;
+use crate::parser::{errors::ParseErr, generated_ast_printer::ASTPrinter, parse::Parser};
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
@@ -13,6 +14,7 @@ use crate::{
     },
     utility::read_file_query::ReadFileQuery,
 };
+use std::fmt::Display;
 
 #[cfg(test)]
 mod tests;
@@ -36,6 +38,13 @@ pub struct Ast<'src> {
     diagnostics: Vec<Box<dyn CompilerDiagnostic>>,
     ast_arena: Arena,
     symbols: SymbolFactory<'src>,
+}
+
+impl<'src> Display for Ast<'src> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut printer = ASTPrinter::new(&self.ast_arena, f);
+        printer.visit_Module(self.ast.get(&self.ast_arena))
+    }
 }
 
 pub struct ParseFileQuery;

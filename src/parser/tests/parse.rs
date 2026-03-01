@@ -39,10 +39,7 @@ fn parse(source: &str) -> (Module, Arena, Arena) {
 fn test_parse() {
     let (mut ast, mut arena, _) = parse("fn main(){} fn d() {}");
 
-    let mut printer = ASTPrinter::new(&arena);
-    printer.visit_Module(&mut ast);
-
-    println!("{}", printer.load());
+    println!("{:?}", ast);
     // Module {
     //     TopeLvelStatement: []
     // }
