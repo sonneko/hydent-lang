@@ -24,7 +24,7 @@ fn parse(source: &str) -> (Module, Arena, Arena) {
             TokenStream::new(tokens),
             CompilerFrontendContext {
                 source: SourceHolder::new(&source),
-                symbol_factory: symbols,
+                symbol_factory: &mut symbols,
                 ast_arena: &mut ast_arena,
                 errors_arena: &mut errors_arena,
             },

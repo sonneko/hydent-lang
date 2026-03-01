@@ -12,7 +12,7 @@ use crate::compiler::symbol::SymbolFactory;
 /// managing source code, symbols, and AST allocation.
 pub struct CompilerFrontendContext<'ctx> {
     pub source: SourceHolder<'ctx>,
-    pub symbol_factory: SymbolFactory<'ctx>,
+    pub symbol_factory: &'ctx SymbolFactory<'ctx>,
     pub ast_arena: &'ctx Arena,
     pub errors_arena: &'ctx Arena,
 }
@@ -77,11 +77,12 @@ impl<'ctx> CompilerFrontendContext<'ctx> {
         source: &'ctx str,
         ast_arena: &'ctx Arena,
         errors_arena: &'ctx Arena,
+        symbol_factory: &'ctx SymbolFactory<'ctx>,
     ) -> CompilerFrontendContext<'ctx> {
         let source_holder = SourceHolder::new(source);
         Self {
             source: source_holder,
-            symbol_factory: SymbolFactory::new(source_holder),
+            symbol_factory,
             ast_arena,
             errors_arena,
         }
