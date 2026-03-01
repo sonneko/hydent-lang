@@ -195,7 +195,7 @@ class Generator {
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
         ret += `use crate::parser::ast_node::ASTNode;\n`;
-        ret += `use crate::parser::ast_node::SyncPointBitMap;\n`;
+        ret += `use crate::parser::ast_node::TokenBitMap;\n`;
         ret += `use crate::parser::errors::ParseErr;\n`;
         ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator};\n\n`;
         ret += decls.join("");
@@ -241,7 +241,10 @@ class Generator {
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const hasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
         const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$") && !t.includes("_")).join(", ");
-        ret += `    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
+        const firstHasIdentifier = func.firstTerminals.some(t => t.includes("Identifier"));
+        const firstPoints = func.firstTerminals.filter(t => !t.includes("$")).join(", ");
+        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
@@ -311,9 +314,12 @@ class Generator {
         }
         ret += `}\n\n`;
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
-        const hasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
+        const syncHasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
         const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$")).join(", ");
-        ret += `    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
+        const firstHasIdentifier = func.firstTerminals.some(t => t.includes("Identifier"));
+        const firstPoints = func.firstTerminals.filter(t => !t.includes("$")).join(", ");
+        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;

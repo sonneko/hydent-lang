@@ -102,6 +102,26 @@ export class Analyzer {
             }
         }
         this.computeCycle(funcs);
+
+        const allRules = this.grammar.map(v => v.name);
+        allRules.forEach(name => {
+            const firstSets = this.firstSets.get(name)!;
+            const followSets = this.followSets.get(name)!;
+            const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
+            if (intersection.size !== 0) {
+                console.warn(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
+                funcs
+                    .filter(v => v.kind !== "hook")
+                    .filter(v => v.astTypeName === name)
+                    .forEach(s => s.firstAndFollowConflict = true);
+                if (this.nullable.has(name)) {
+                    console.error(`❌ LL(1) Conflict in Nullable Rule "${name}":`);
+                    console.error(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")}`);
+                    throw new Error("Grammar conflict");
+                }
+            }
+        });
+        
         return funcs;
     }
 
@@ -498,12 +518,20 @@ export class Analyzer {
             follow.forEach(t => syncPointsTerminals.push(tokenName(t)));
         }
 
+        let firstTerminals: RustTokenTypeName[] = [];
+        const firstSets = this.firstSets.get(rule.name);
+        if (firstSets) {
+            firstTerminals = [...firstSets].map(tokenName);
+        }
+
         return {
             kind: "branch",
             functionName: fnName(rule.name),
             astTypeName: astName(rule.name),
             expectedTerminals,
             syncPointsTerminals,
+            firstTerminals,
+            firstAndFollowConflict: false,
             branchesJudgebleInPeek0,
             branchesJudgebleInPeek1,
             branchesFallbackInPeek1,
@@ -551,11 +579,19 @@ export class Analyzer {
             follow.forEach(t => syncPointsTerminals.push(tokenName(t)));
         }
 
+        let firstTerminals: RustTokenTypeName[] = [];
+        const firstSets = this.firstSets.get(rule.name);
+        if (firstSets) {
+            firstTerminals = [...firstSets].map(tokenName);
+        }
+
         return {
             kind: "product",
             functionName: fnName(rule.name),
             astTypeName: astName(rule.name),
             syncPointsTerminals,
+            firstAndFollowConflict: false,
+            firstTerminals,
             elements,
         };
     }

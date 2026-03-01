@@ -1,6 +1,6 @@
 use crate::{
     compiler::{span::Span, symbol::Symbol},
-    parser::ast_node::{ASTNode, SyncPointBitMap},
+    parser::ast_node::{ASTNode, TokenBitMap},
     parser::errors::ParseErr,
 };
 
@@ -9,7 +9,8 @@ pub struct Identifier {
     pub symbol: Symbol,
 }
 impl ASTNode for Identifier {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -21,7 +22,8 @@ pub struct StringLiteral {
     pub span: Span,
 }
 impl ASTNode for StringLiteral {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -31,7 +33,8 @@ impl ASTNode for StringLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct CharLiteral {}
 impl ASTNode for CharLiteral {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -41,7 +44,8 @@ impl ASTNode for CharLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct IntLiteral {}
 impl ASTNode for IntLiteral {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -51,7 +55,8 @@ impl ASTNode for IntLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct FloatLiteral {}
 impl ASTNode for FloatLiteral {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -61,7 +66,8 @@ impl ASTNode for FloatLiteral {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct BoolLiteral {}
 impl ASTNode for BoolLiteral {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -73,7 +79,8 @@ pub struct DocComment {
     pub(super) span: Span,
 }
 impl ASTNode for DocComment {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -83,7 +90,8 @@ impl ASTNode for DocComment {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct LineComment {}
 impl ASTNode for LineComment {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
@@ -93,7 +101,8 @@ impl ASTNode for LineComment {
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct BlockComment {}
 impl ASTNode for BlockComment {
-    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
+    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
+    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }

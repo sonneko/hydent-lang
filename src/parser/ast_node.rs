@@ -5,31 +5,26 @@ use crate::tokenizer::tokens::Token;
 pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
-    const SYNC_POINT_SETS: SyncPointBitMap;
+    const SYNC_POINT_SETS: TokenBitMap;
+    const FIRST_SETS: TokenBitMap;
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
     fn accept<V: ASTVisitor>(&self, visitor: &mut V);
 
-    fn is_sync_point(token: Option<&Token>) -> bool {
-        let set = Self::SYNC_POINT_SETS;
-        if let Some(&token) = token {
-            match token {
-                Token::Keyword(keyword) => (1 << (keyword as u8)) & set.keywords != 0,
-                Token::Operator(operator) => (1 << (operator as u8)) & set.operators != 0,
-                Token::Delimiter(delimiter) => (1 << (delimiter as u8)) & set.delimiter != 0,
-                Token::Literal(_) => set.literals,
-                Token::Identifier(_) => set.identifier,
-                Token::EndOfFile => set.eof,
-                Token::Comment(_) => set.comments,
-                Token::Invalid => false,
-            }
-        } else {
-            false
-        }
+    fn is_follow_sets(token: &Option<Token>) -> bool {
+        Self::is_sync_point(token)
+    }
+
+    fn is_sync_point(token: &Option<Token>) -> bool {
+        Self::SYNC_POINT_SETS.contains(token)
+    }
+
+    fn is_first_sets(token: &Option<Token>) -> bool {
+        Self::FIRST_SETS.contains(token)
     }
 }
 
-pub struct SyncPointBitMap {
+pub struct TokenBitMap {
     keywords: u64,
     operators: u64,
     delimiter: u64,
@@ -39,7 +34,7 @@ pub struct SyncPointBitMap {
     eof: bool,
 }
 
-impl SyncPointBitMap {
+impl TokenBitMap {
     pub const fn build_map(identifier: bool, tokens: &[Token]) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
@@ -66,6 +61,23 @@ impl SyncPointBitMap {
             comments: false,
             identifier,
             eof: false,
+        }
+    }
+
+    pub fn contains(&self, token: &Option<Token>) -> bool {
+        if let &Some(token) = token {
+            match token {
+                Token::Keyword(keyword) => (1 << (keyword as u8)) & self.keywords != 0,
+                Token::Operator(operator) => (1 << (operator as u8)) & self.operators != 0,
+                Token::Delimiter(delimiter) => (1 << (delimiter as u8)) & self.delimiter != 0,
+                Token::Literal(_) => self.literals,
+                Token::Identifier(_) => self.identifier,
+                Token::EndOfFile => self.eof,
+                Token::Comment(_) => self.comments,
+                Token::Invalid => false,
+            }
+        } else {
+            false
         }
     }
 }
