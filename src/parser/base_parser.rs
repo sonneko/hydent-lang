@@ -8,7 +8,7 @@ pub trait BaseParser: Sized {
     type Error: IParseErr;
     fn peek<const N: usize>(&self) -> Option<Token>;
     fn consume_token(&mut self) -> Option<Token>;
-    fn expect(&mut self, expected: Token) -> Result<(), Self::Error>;
+    fn expect(&mut self, expected: &'static Token) -> Result<(), Self::Error>;
     fn repeat<T: ASTNode>(
         &mut self,
         parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
@@ -95,16 +95,16 @@ impl BaseParser for Parser<'_> {
         })
     }
 
-    fn expect(&mut self, expected: Token) -> Result<(), Self::Error> {
+    fn expect(&mut self, expected: &'static Token) -> Result<(), Self::Error> {
         let found = self.consume_token();
         if let Some(found) = found {
-            if found == expected {
+            if found == *expected {
                 Ok(())
             } else {
                 Err(ParseErr::build(
                     self.get_errors_arena(),
                     matches!(expected, Token::Identifier(_)),
-                    [expected],
+                    std::array::from_ref(expected),
                     self.enviroment(),
                 ))
             }
@@ -112,7 +112,7 @@ impl BaseParser for Parser<'_> {
             Err(ParseErr::build(
                 self.get_errors_arena(),
                 matches!(expected, Token::Identifier(_)),
-                [expected],
+                std::array::from_ref(expected),
                 self.enviroment(),
             ))
         }

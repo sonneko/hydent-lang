@@ -16,7 +16,7 @@ impl GeneratedParser for Parser<'_> {
             Err(Self::Error::build(
                 self.get_errors_arena(),
                 true,
-                [],
+                &[],
                 self.enviroment(),
             ))
         }
@@ -28,7 +28,7 @@ impl GeneratedParser for Parser<'_> {
             Err(Self::Error::build(
                 self.get_errors_arena(),
                 false,
-                [],
+                &[],
                 self.enviroment(),
             ))
         }

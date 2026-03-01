@@ -44,7 +44,7 @@ class Generator {
             func.branchesJudgebleInPeek1.length === 0 &&
             (func.branchesFallbackInPeek1 || []).length === 0 &&
             func.branchesNeedBacktrack.length === 0) {
-            ret += `        Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment()))\n`;
+            ret += `        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
             ret += `    }\n`;
             return ret;
         }
@@ -88,7 +88,7 @@ class Generator {
                     ret += `                            return Ok(${func.astTypeName}::${b.astTypeName}(node));\n`;
                     ret += `                        };\n`;
                 }
-                ret += `                        Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment()))`;
+                ret += `                        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))`;
                 ret += `                    }\n`;
             } else {
                 const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
@@ -99,7 +99,7 @@ class Generator {
                         ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.parse_${fallback.astTypeName}()?)),\n`;
                     }
                 } else {
-                    ret += `                    _ => Err(Self::Error::build(self.get_errors_arena(), false, [], self.enviroment())),\n`;
+                    ret += `                    _ => Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment())),\n`;
                 }
             }
 
@@ -112,7 +112,7 @@ class Generator {
         ret += `                self.get_errors_arena(),\n`;
         ret += `                ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
         const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
-        ret += `                [${expected.join(", ")}],\n`;
+        ret += `                &[${expected.join(", ")}],\n`;
         ret += `                self.enviroment(),\n`;
         ret += `            )),\n`;
 
@@ -148,7 +148,7 @@ class Generator {
                     break;
                 case "terminal":
                     if (!element.tokenTypeName.includes("$")) {
-                        ret += `        self.expect(${element.tokenTypeName})?;\n`;
+                        ret += `        self.expect(&${element.tokenTypeName})?;\n`;
                     }
                     break;
             }
