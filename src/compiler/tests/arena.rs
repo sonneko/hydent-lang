@@ -40,14 +40,13 @@ fn test_arena_alloc_iter() {
 fn test_arena_large_allocation() {
     // Test allocation that exceeds a single block size
     let arena = Arena::new();
-    let count = 1000_000; // Should be enough to trigger multiple blocks
-    let mut iter = arena.alloc_iter(0..count);
-    let mut reader = iter.into_ref(&arena);
+    let count = 1000000000; // Should be enough to trigger multiple blocks
+    let mut iter = arena.alloc_iter(0..count).into_ref(&arena);
 
     for i in 0..count {
-        assert_eq!(reader.next().as_deref(), Some(&i));
+        assert_eq!(iter.next().as_deref(), Some(&i));
     }
-    assert_eq!(reader.next(), None);
+    assert_eq!(iter.next(), None);
 }
 
 #[test]
@@ -56,10 +55,10 @@ fn test_arena_large_allocation() {
     // Test allocation that exceeds a single block size
     let arena = Arena::new();
     let count = 1000; // Should be enough to trigger multiple blocks
-    let mut iter = arena.alloc_iter(0..count);
+    let mut iter = arena.alloc_iter(0..count).into_ref(&arena);
 
     for i in 0..count {
-        assert_eq!(iter.next(), Some(i));
+        assert_eq!(iter.next().as_deref(), Some(&i));
     }
     assert_eq!(iter.next(), None);
 }
