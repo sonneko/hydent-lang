@@ -400,7 +400,7 @@ class Generator {
                         ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
                         ret += `                self.out.push_str("${variant.name}(\\n");\n`;
                         ret += `                self.indent += 1;\n`;
-                        ret += `                v.get(&self.arena).accept(self);\n`;
+                        ret += `                v.get(self.arena).accept(self);\n`;
                         ret += `                self.indent -= 1;\n`;
                         ret += `                self.write_indent();\n`;
                         ret += `                self.out.push_str(")\\n");\n`;
@@ -431,19 +431,21 @@ class Generator {
 
                     switch (el.kind) {
                         case "normal":
-                            ret += `self.out.push_str("\\n"); node.${el.astTypeName}.accept(self);\n`;
+                            ret += `        self.out.push_str("\\n");\n`;
+                            ret += `        node.${el.astTypeName}.accept(self);\n`;
                             break;
                         case "boxed":
-                            ret += `self.out.push_str("(Boxed)\\n"); (node.${el.astTypeName}.get(&self.arena)).accept(self);\n`;
+                            ret += `        self.out.push_str("(Boxed)\\n");\n`;
+                            ret += `        (node.${el.astTypeName}.get(self.arena)).accept(self);\n`;
                             break;
                         case "option":
                             ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("\\n"); v.accept(self); } else { self.out.push_str("None\\n"); }\n`;
                             break;
                         case "optionWithBox":
-                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get(&self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get(self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
                             break;
                         case "repeat":
-                            ret += `self.out.push_str("[\\n");\n`;
+                            ret += `        self.out.push_str("[\\n");\n`;
                             ret += `        self.indent += 1;\n`;
                             ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) { item.accept(self); }\n`;
                             ret += `        self.indent -= 1;\n`;

@@ -310,3 +310,9 @@ impl<T: Copy + std::hash::Hash> std::hash::Hash for ArenaIter<T> {
         self.len.hash(state);
     }
 }
+
+impl Default for Arena {
+    fn default() -> Self {
+        Self::new()
+    }
+}

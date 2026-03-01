@@ -13,7 +13,5 @@ pub struct HirGenerateQuery;
 impl Query for HirGenerateQuery {
     type From = ast::Module;
     type To = ();
-    fn run<E: crate::compiler::runtime::Engine>(engine: &E, src: Self::From) -> Self::To {
-        
-    }
+    fn run<E: crate::compiler::runtime::Engine>(engine: &E, src: Self::From) -> Self::To {}
 }

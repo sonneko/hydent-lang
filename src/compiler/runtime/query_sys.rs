@@ -89,7 +89,7 @@ impl Database {
         }
 
         // 4. check if there is a verified cached result
-        let to = if let Some(_) = self.find_query_output::<Q>(current_query) {
+        let to = if self.find_query_output::<Q>(current_query).is_some() {
             let metadata = self.find_query_metadata(current_query).unwrap() as &QueryMetadata;
             if metadata.verified_at == self.current_rivision {
                 // verified to have runned in this rivision
@@ -104,8 +104,7 @@ impl Database {
             }
         } else {
             // no cached result, run the query
-            let to = Q::run(self, from);
-            to
+            Q::run(self, from)
         };
 
         // 4. remove this query from stack
