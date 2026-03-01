@@ -40,6 +40,18 @@ pub struct Ast<'src> {
     symbols: SymbolFactory<'src>,
 }
 
+impl Ast<'_> {
+    fn new(ast: generated_ast::Module, arena: Arena) -> Self {
+        let ast = arena.alloc(ast);
+        Self {
+            ast,
+            diagnostics: Vec::new(),
+            ast_arena: arena,
+            symbols: SymbolFactory::new(SourceHolder::new("")),
+        }
+    }
+}
+
 impl<'src> Display for Ast<'src> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut printer = ASTPrinter::new(&self.ast_arena, f);

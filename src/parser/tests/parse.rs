@@ -4,10 +4,7 @@ use crate::{
         symbol::SymbolFactory,
     },
     parser::{
-        ast::{ASTVisitor, Module},
-        errors::ParseErr,
-        generated_ast_printer::ASTPrinter,
-        parse::Parser,
+        Ast, ast::{ASTVisitor, Module}, errors::ParseErr, generated_ast_printer::ASTPrinter, parse::Parser
     },
     tokenizer::{token_stream::TokenStream, tokenize::Tokenizer},
 };
@@ -37,12 +34,7 @@ fn parse(source: &str) -> (Module, Arena, Arena) {
 
 #[test]
 fn test_parse() {
-    let (mut ast, mut arena, _) = parse("fn main(){} fn d() {}");
-
-    println!("{:?}", ast);
-    // Module {
-    //     TopeLvelStatement: []
-    // }
-
-    // TODO: Gemini! Your task is here.
+    let (ast, arena, _) = parse("fn main(){} fn d() {}");
+    let ast = Ast::new(ast, arena);
+    println!("\n\n{}", ast);
 }
