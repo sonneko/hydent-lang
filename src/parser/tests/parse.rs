@@ -4,7 +4,11 @@ use crate::{
         symbol::SymbolFactory,
     },
     parser::{
-        Ast, ast::{ASTVisitor, Module}, errors::ParseErr, generated_ast_printer::ASTPrinter, parse::Parser
+        ast::{ASTVisitor, Module},
+        errors::ParseErr,
+        generated_ast_printer::ASTPrinter,
+        parse::Parser,
+        Ast,
     },
     tokenizer::{token_stream::TokenStream, tokenize::Tokenizer},
 };

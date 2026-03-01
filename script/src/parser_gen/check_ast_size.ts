@@ -20,7 +20,7 @@ export function generateASTSizeCheckerRustTest(astTypes: RustASTTypeName[]): str
     return ret;
 }
 
-export function parseASTSizeCheckerResult(result: string): { ast: RustASTTypeName, size: number}[] {
+export function parseASTSizeCheckerResult(result: string): { ast: RustASTTypeName, size: number }[] {
     const report = result.substring(result.indexOf("===BEGIN_REPORT===") + 18, result.indexOf("===END_REPORT===") - 16);
     return report.split("\n").map(line => {
         const separed = line.split(":");

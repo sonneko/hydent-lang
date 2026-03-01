@@ -197,11 +197,13 @@ class Parser {
         } else {
             this.consumeKeyword("With");
             const terminal = this.consumeStringLiteral();
-            return { kind: 'Product', name, members: [{
-                "kind": "Terminal",
-                "value": terminal,
-                "note": "",
-            }] }
+            return {
+                kind: 'Product', name, members: [{
+                    "kind": "Terminal",
+                    "value": terminal,
+                    "note": "",
+                }]
+            }
         }
 
     }

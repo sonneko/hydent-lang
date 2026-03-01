@@ -121,7 +121,7 @@ export class Analyzer {
                 }
             }
         });
-        
+
         return funcs;
     }
 
