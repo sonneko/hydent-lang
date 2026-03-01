@@ -31,41 +31,41 @@ pub mod ast {
     pub use crate::parser::generated_ast::*;
 }
 
-pub struct ParseResult {
-    pub ast: generated_ast::Module,
-    pub diagnostics: Vec<Box<dyn CompilerDiagnostic>>,
+pub struct Ast<'src> {
+    ast: ArenaBox<generated_ast::Module>,
+    diagnostics: Vec<Box<dyn CompilerDiagnostic>>,
+    ast_arena: Arena,
+    symbols: SymbolFactory<'src>,
 }
 
 pub struct ParseFileQuery;
 impl Query for ParseFileQuery {
     type From = String;
     type To = ();
-    fn run<E: Engine>(
-        engine: &E,
-        src: Self::From,
-    ) -> Self::To {
-        let source_holder = SourceHolder::new(&src);
-        let ast_arena = Arena::new();
-        let errors_arena = Arena::new();
-        let mut ctx = CompilerFrontendContext {
-            source: source_holder,
-            symbol_factory: SymbolFactory::new(source_holder),
-            ast_arena: &ast_arena,
-            errors_arena: &ast_arena,
-        };
+    fn run<E: Engine>(engine: &E, src_path: Self::From) -> Self::To {
+        // let src = engine.fetch::<ReadFileQuery>(src_path);
+        // let source_holder = SourceHolder::new(&src);
+        // let ast_arena = Arena::new();
+        // let errors_arena = Arena::new();
+        // let mut ctx = CompilerFrontendContext {
+        //     source: source_holder,
+        //     symbol_factory: SymbolFactory::new(source_holder),
+        //     ast_arena: &ast_arena,
+        //     errors_arena: &ast_arena,
+        // };
 
-        let tokens = {
-            let tokenizer = Tokenizer::new(&src, &mut ctx.symbol_factory);
-            let (tokens, _) = tokenizer.tokenize();
-            tokens
-        };
+        // let tokens = {
+        //     let tokenizer = Tokenizer::new(&src, &mut ctx.symbol_factory);
+        //     let (tokens, _) = tokenizer.tokenize();
+        //     tokens
+        // };
 
-        let parser = Parser::new(TokenStream::new(tokens), ctx);
-        let ast = parser
-            .parse()
-            .map_err(<ParseErr as Into<Box<dyn CompilerDiagnostic>>>::into);
+        // let parser = Parser::new(TokenStream::new(tokens), ctx);
+        // let ast = parser
+        //     .parse()
+        //     .map_err(<ParseErr as Into<Box<dyn CompilerDiagnostic>>>::into);
 
-        // TODO: construct parse result and return
+        // // TODO: construct parse result and return
 
         todo!()
     }
