@@ -38,7 +38,8 @@ pub struct SymbolFactory<'src> {
     /// A reference to the source code holder.
     source: SourceHolder<'src>,
     /// The interning table, mapping string slices to their corresponding symbols.
-    map: HashMap<SpanWithRef<'src>, Symbol>,
+    map1: HashMap<SpanWithRef<'src>, Symbol>,
+    map2: HashMap<Symbol, SpanWithRef<'src>>,
 }
 
 /// Implementation block for `SymbolFactory`.
@@ -56,7 +57,10 @@ impl<'src> SymbolFactory<'src> {
     /// * `src` - A reference to the `SourceHolder` containing the source code.
     pub fn new(src: SourceHolder<'src>) -> Self {
         Self {
-            map: HashMap::with_capacity(
+            map1: HashMap::with_capacity(
+                src.len() * 2 / RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH + 1,
+            ),
+            map2: HashMap::with_capacity(
                 src.len() * 2 / RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH + 1,
             ),
             source: src,
@@ -81,13 +85,14 @@ impl<'src> SymbolFactory<'src> {
     pub fn from_span(&mut self, span: Span) -> Symbol {
         // Create a temporary `SpanWithRef` to perform the lookup.
         let span_with_ref = span.with_ref(self.source);
-        if let Some(&symbol) = self.map.get(&span_with_ref) {
+        if let Some(&symbol) = self.map1.get(&span_with_ref) {
             symbol
         } else {
             // If the symbol is not found, create a new one.
             let symbol_id = self.now_symbol_id;
             let symbol = Symbol(symbol_id);
-            self.map.insert(span.with_ref(self.source), symbol);
+            self.map1.insert(span.with_ref(self.source), symbol);
+            self.map2.insert(symbol, span.with_ref(self.source));
             self.now_symbol_id += 1;
             symbol
         }
@@ -109,5 +114,9 @@ impl<'src> SymbolFactory<'src> {
     #[inline]
     pub fn from_range(&mut self, begin: usize, end: usize) -> Symbol {
         self.from_span(Span::new(begin, end))
+    }
+
+    pub fn get(&self, symbol: &Symbol) -> SpanWithRef<'src> {
+        *self.map2.get(symbol).unwrap()
     }
 }
