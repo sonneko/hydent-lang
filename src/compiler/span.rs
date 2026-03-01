@@ -45,11 +45,18 @@ impl Span {
 }
 
 /// A `Span` with a reference to the source code it refers to.
+#[derive(Clone, Copy)]
 pub struct SpanWithRef<'src> {
     /// The underlying span.
     span: Span,
     /// A reference to the source code of the span.
     reference: &'src str,
+}
+
+impl<'src> SpanWithRef<'src> {
+    pub fn get_ref(&self) -> &'src str {
+        self.reference
+    }
 }
 
 /// Implementation of `Hash` for `SpanWithRef` to allow hashing based on the referenced string.
