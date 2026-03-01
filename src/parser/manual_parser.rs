@@ -5,6 +5,7 @@ use crate::parser::errors::IParseErr;
 use crate::parser::generated_ast;
 use crate::parser::generated_parser::GeneratedParser;
 use crate::parser::Parser;
+use crate::tokenizer::tokens::Comment;
 use crate::tokenizer::tokens::Literal;
 use crate::tokenizer::tokens::Token;
 
@@ -34,7 +35,16 @@ impl GeneratedParser for Parser<'_> {
         }
     }
     fn parse_DocComment(&mut self) -> Result<generated_ast::DocComment, Self::Error> {
-        unimplemented!()
+        if let Some(Token::Comment(Comment::DocComment(span))) = self.peek::<0>() {
+            Ok(generated_ast::DocComment { span })
+        } else {
+            Err(Self::Error::build(
+                self.get_errors_arena(),
+                false,
+                &[],
+                self.enviroment(),
+            ))
+        }
     }
 
     fn parse_CharLiteral(&mut self) -> Result<generated_ast::CharLiteral, Self::Error> {
