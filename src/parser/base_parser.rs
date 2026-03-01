@@ -24,6 +24,7 @@ pub trait BaseParser: Sized {
         parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error>;
     fn enviroment(&self) -> Enviroment;
+    fn now_span(&self) -> Span;
 }
 
 #[derive(Clone, Copy)]
@@ -143,5 +144,9 @@ impl BaseParser for Parser<'_> {
     fn enviroment(&self) -> Enviroment {
         // TODO: consider Environment structure
         unimplemented!()
+    }
+
+    fn now_span(&self) -> Span {
+        self.tokens.get_now_span()
     }
 }

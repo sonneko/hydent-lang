@@ -15,6 +15,7 @@ pub trait IParseErr {
         expected: &'static [Token; N],
         found: Enviroment,
     ) -> Self;
+    fn is_endoffile_error(&self) -> bool;
 }
 
 impl IParseErr for ParseErr {
@@ -25,7 +26,10 @@ impl IParseErr for ParseErr {
         found: Enviroment,
     ) -> Self {
         Self { expected, found }
-        }
+    }
+
+    fn is_endoffile_error(&self) -> bool {
+        self.found.current == Token::EndOfFile
     }
 }
 

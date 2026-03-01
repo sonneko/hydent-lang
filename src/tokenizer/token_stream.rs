@@ -37,6 +37,13 @@ impl TokenStream {
     pub fn is_eof(&self) -> bool {
         self.cursor >= self.tokens.len()
     }
+
+    pub fn get_now_span(&self) -> Span {
+        self.tokens
+            .get(self.cursor)
+            .map(|(_, span)| *span)
+            .unwrap_or_else(|| self.tokens.last().map(|(_, span)| *span).unwrap())
+    }
 }
 
 impl std::iter::Iterator for TokenStream {
