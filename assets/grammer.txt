@@ -408,7 +408,7 @@ product LogicalAndTail {
 }
 
 product BitwiseOrExpr {
-    head: BitwiseXorExpr
+    head: BitwiseXorExpr with "boxed"
     tails: *BitwiseOrTail
 }
 
