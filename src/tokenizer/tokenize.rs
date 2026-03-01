@@ -115,7 +115,13 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         let slice = &self.input[start..self.current_pos];
 
         if slice.len() < 5 {
-            Ok(scan_short_keywords(slice))
+            match scan_short_keywords(slice) {
+                Token::Invalid => {
+                    let symbol = self.symbol_factory.from_range(start, self.current_pos);
+                    Ok(Token::Identifier(symbol))
+                }
+                token => Ok(token),
+            }
         } else {
             match LONG_KEYWORDS_MAP.get(slice) {
                 Some(&keyword) => Ok(keyword),
