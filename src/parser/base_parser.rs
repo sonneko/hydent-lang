@@ -13,7 +13,7 @@ pub trait BaseParser: Sized {
     fn repeat<T: ASTNode>(
         &mut self,
         parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
-    ) -> ArenaIter<T>;
+    ) -> Result<ArenaIter<T>, Self::Error>;
     fn alloc_box<T: ASTNode>(
         &mut self,
         parser_fn: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
@@ -125,7 +125,7 @@ impl BaseParser for Parser<'_> {
 
     fn report_error(&self, err: Self::Error) {
         // TODO: add error to error_pool
-        unimplemented!()
+        println!("occured error: {:?}", err);
     }
 
     fn backtrack<T: ASTNode>(

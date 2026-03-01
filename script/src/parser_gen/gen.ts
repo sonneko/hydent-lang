@@ -141,7 +141,7 @@ class Generator {
                     ret += `        let v_${element.astTypeName} = self.parse_${element.astTypeName}().ok();\n`;
                     break;
                 case "repeat":
-                    ret += `        let v_${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName});\n`;
+                    ret += `        let v_${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName})?;\n`;
                     break;
                 case "optionWithBox":
                     ret += `        let v_${element.astTypeName} = self.alloc_box(Self::parse_${element.astTypeName}).ok();\n`;
