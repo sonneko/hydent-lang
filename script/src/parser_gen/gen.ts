@@ -252,8 +252,8 @@ class Generator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) {\n`;
-        ret += `        visitor.visit_${func.astTypeName}(self);\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
         ret += `    }\n`
         ret += `}\n\n`;
 
@@ -330,8 +330,8 @@ class Generator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) {\n`;
-        ret += `        visitor.visit_${func.astTypeName}(self);\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
         ret += `    }\n`
         ret += `}\n\n`;
 
@@ -374,108 +374,98 @@ class Generator {
 
     public generateAstPrinterImpl(ir: IR): string {
         let ret = "";
-        ret += "use crate::compiler::arena::Arena;\n";
-        ret += "use crate::parser::ast_node::ASTNode;\n";
+        ret += "use crate::compiler::{arena::Arena, symbol::SymbolFactory, source_holder::SourceHolder};\n";
         ret += "use crate::parser::generated_ast::*;\n";
+        ret += "use crate::parser::ast_node::ASTNode;\n";
         ret += "\n";
-        ret += "pub struct ASTPrinter<'a, 'f, 'b> {\n";
-        ret += "    arena: &'a Arena,\n";
-        ret += "    indent: usize,\n";
-        ret += "    writer: &'f mut std::fmt::Formatter<'b>,\n";
+        ret += "pub struct ASTPrinter<'a, 'f, 'b, 'src> {\n";
+        ret += "    pub arena: &'a Arena,\n";
+        ret += "    pub symbols: &'a SymbolFactory<'src>,\n";
+        ret += "    pub source_holder: &'a SourceHolder<'src>,\n";
+        ret += "    pub writer: &'f mut std::fmt::Formatter<'b>,\n";
         ret += "}\n";
         ret += "\n";
-        ret += "impl<'a, 'f, 'b> ASTPrinter<'a, 'f, 'b> {\n";
-        ret += "    pub fn new(arena: &'a Arena, writer: &'f mut std::fmt::Formatter<'b>) -> Self {\n";
-        ret += "        Self { arena, indent: 0 , writer}\n";
-        ret += "    }\n";
-        ret += "\n";
-        ret += "    fn write_indent(&mut self) -> Result<(), std::fmt::Error> {\n";
-        ret += "        for _ in 0..self.indent { self.write(\"  \")?; }\n";
-        ret += "        Ok(())\n";
-        ret += "    }\n";
-        ret += "\n";
-        ret += "    pub fn write(&mut self, s: &'static str) -> Result<(), std::fmt::Error> {\n";
+        ret += "impl<'a, 'f, 'b, 'src> ASTPrinter<'a, 'f, 'b, 'src> {\n";
+        ret += "    fn write(&mut self, s: &str) -> Result<(), std::fmt::Error> {\n";
         ret += "        self.writer.write_str(s);\n";
         ret += "        Ok(())\n";
         ret += "    }\n";
         ret += "}\n\n";
-        ret += `impl<'a, 'f, 'b> ASTVisitor for ASTPrinter<'a, 'f, 'b> {\n`;
-        ret += `    type ReturnType = Result<(), std::fmt::Error>;\n`;
+
+        ret += "#[allow(clippy::unused_unit)]\n";
+        ret += "#[allow(non_snake_case)]\n";
+        ret += "impl<'a, 'f, 'b, 'src> ASTVisitor for ASTPrinter<'a, 'f, 'b, 'src> {\n";
+        ret += "    type ReturnType = Result<(), std::fmt::Error>;\n";
+
         for (const func of ir) {
             ret += `    fn visit_${func.astTypeName}(&mut self, node: &${func.astTypeName}) -> Result<(), std::fmt::Error> {\n`;
-            ret += `        self.write_indent()?;\n`;
-
+            
             if (func.kind === "branch") {
-                ret += `        self.write("${func.astTypeName}::")?;\n`;
                 ret += `        match node {\n`;
-
                 const variants = this.getUniqueVariants(func);
                 for (const variant of variants) {
-                    if (variant.isBoxed) {
-                        ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
-                        ret += `                self.write("${variant.name}(\\n")?;\n`;
-                        ret += `                self.indent += 1;\n`;
-                        ret += `                v.get(self.arena).accept(self);\n`;
-                        ret += `                self.indent -= 1;\n`;
-                        ret += `                self.write_indent()?;\n`;
-                        ret += `                self.write(")\\n")?;\n`;
-                        ret += `            }\n`;
-                    } else {
-                        ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
-                        ret += `                self.write("${variant.name}(\\n")?;\n`;
-                        ret += `                self.indent += 1;\n`;
-                        ret += `                v.accept(self);\n`;
-                        ret += `                self.indent -= 1;\n`;
-                        ret += `                self.write_indent()?;\n`;
-                        ret += `                self.write(")\\n")?;\n`;
-                        ret += `            }\n`;
-                    }
+                    const inner = variant.isBoxed ? "v.get(self.arena)" : "v";
+                    ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
+                    ret += `                self.write(r#"{"kind":"${variant.name}","value":"#)?;\n`;
+                    ret += `                ${inner}.accept(self)?;\n`;
+                    ret += `                self.write("}")?;\n`;
+                    ret += `            }\n`;
                 }
-                ret += `            ${func.astTypeName}::Invalid => self.write("Invalid\\n")?,\n`;
+                ret += `            ${func.astTypeName}::Invalid => self.write("null")?,\n`;
                 ret += `        }\n`;
 
             } else if (func.kind === "product") {
-                ret += `        self.write("${func.astTypeName} {\\n")?;\n`;
-                ret += `        self.indent += 1;\n`;
+                const isManual = func.elements.some(el => el.kind === "terminal" && el.tokenTypeName.includes("$"));
+                
+                if (isManual) {
+                    ret += `        self.write(r#"{"type":"${func.astTypeName}","value":"#)?;\n`;
 
-                for (const el of func.elements) {
-                    if (el.kind === "terminal") continue;
-
-                    ret += `        self.write_indent()?;\n`;
-                    ret += `        self.write("${el.astTypeName}: ")?;\n`;
-
-                    switch (el.kind) {
-                        case "normal":
-                            ret += `        self.write("\\n")?;\n`;
-                            ret += `        node.${el.astTypeName}.accept(self);\n`;
-                            break;
-                        case "boxed":
-                            ret += `        self.write("(Boxed)\\n")?;\n`;
-                            ret += `        (node.${el.astTypeName}.get(self.arena)).accept(self);\n`;
-                            break;
-                        case "option":
-                            ret += `if let Some(v) = &node.${el.astTypeName} { self.write("\\n")?; v.accept(self); } else { self.write("None\\n")?; }\n`;
-                            break;
-                        case "optionWithBox":
-                            ret += `if let Some(v) = &node.${el.astTypeName} { self.write("(Boxed)\\n")?; v.get(self.arena).accept(self); } else { self.write("None\\n")?; }\n`;
-                            break;
-                        case "repeat":
-                            ret += `        self.write("[\\n")?;\n`;
-                            ret += `        self.indent += 1;\n`;
-                            ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) { item.accept(self); }\n`;
-                            ret += `        self.indent -= 1;\n`;
-                            ret += `        self.write_indent()?;\n`;
-                            ret += `        self.write("],\\n")?;\n`;
-                            break;
+                    // WARNING: hardcode identifier and string literal behavior
+                    if (func.astTypeName == "Identifier") {
+                        ret += `        self.write(self.symbols.get(&node.symbol).get_ref())?;\n`;
+                    } else if (func.astTypeName == "StringLiteral") {
+                        ret += `        self.write(node.span.with_ref(*self.source_holder).get_ref())?;\n`;
+                    } else {
+                        ret += `        self.write(&format!(r#""{:?}""#, node))?;\n`;
                     }
+
+                    ret += `        self.write("}")?;\n`;
+                } else {
+                    ret += `        self.write(r#"{"type":"${func.astTypeName}""#)?;\n`;
+                    for (const el of func.elements) {
+                        if (el.kind === "terminal") continue;
+
+                        ret += `        self.write(r#","${el.astTypeName}":"#)?;\n`;
+                        switch (el.kind) {
+                            case "normal":
+                                ret += `        node.${el.astTypeName}.accept(self)?;\n`;
+                                break;
+                            case "boxed":
+                                ret += `        node.${el.astTypeName}.get(self.arena).accept(self)?;\n`;
+                                break;
+                            case "option":
+                                ret += `        if let Some(v) = &node.${el.astTypeName} { v.accept(self)? } else { self.write("null")? };\n`;
+                                break;
+                            case "optionWithBox":
+                                ret += `        if let Some(v) = &node.${el.astTypeName} { v.get(self.arena).accept(self)? } else { self.write("null")? };\n`;
+                                break;
+                            case "repeat":
+                                ret += `        self.write("[")?;\n`;
+                                ret += `        let mut first = true;\n`;
+                                ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) {\n`;
+                                ret += `            if !first { self.write(",")?; }\n`;
+                                ret += `            item.accept(self)?;\n`;
+                                ret += `            first = false;\n`;
+                                ret += `        }\n`;
+                                ret += `        self.write("]")?;\n`;
+                                break;
+                        }
+                    }
+                    ret += `        self.write("}")?;\n`;
                 }
 
-                ret += `        self.indent -= 1;\n`;
-                ret += `        self.write_indent()?;\n`;
-                ret += `        self.write("}\\n")?;\n`;
-
             } else if (func.kind === "hook") {
-                ret += `        self.write("<HookedNode:${func.astTypeName}>\\n")?;\n`;
+                ret += `        self.write(r#"{"type":"${func.astTypeName}","hook":true}"#)?;\n`;
             }
 
             ret += "        Ok(())\n";

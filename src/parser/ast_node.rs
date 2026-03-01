@@ -9,7 +9,7 @@ pub trait ASTNode:
     const FIRST_SETS: TokenBitMap;
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
-    fn accept<V: ASTVisitor>(&self, visitor: &mut V);
+    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
 
     fn is_follow_sets(token: &Option<Token>) -> bool {
         Self::is_sync_point(token)

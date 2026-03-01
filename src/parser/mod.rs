@@ -38,23 +38,30 @@ pub struct Ast<'src> {
     diagnostics: Vec<Box<dyn CompilerDiagnostic>>,
     ast_arena: Arena,
     symbols: SymbolFactory<'src>,
+    source_holder: SourceHolder<'src>,
 }
 
-impl Ast<'_> {
-    fn new(ast: generated_ast::Module, arena: Arena) -> Self {
+impl<'src> Ast<'src> {
+    fn new(ast: generated_ast::Module, arena: Arena, source_holder: SourceHolder<'src>) -> Self {
         let ast = arena.alloc(ast);
         Self {
             ast,
             diagnostics: Vec::new(),
             ast_arena: arena,
             symbols: SymbolFactory::new(SourceHolder::new("")),
+            source_holder,
         }
     }
 }
 
 impl<'src> Display for Ast<'src> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let mut printer = ASTPrinter::new(&self.ast_arena, f);
+        let mut printer = ASTPrinter {
+            symbols: &self.symbols,
+            arena: &self.ast_arena,
+            source_holder: &self.source_holder,
+            writer: f,
+        };
         printer.visit_Module(self.ast.get(&self.ast_arena))
     }
 }
