@@ -207,7 +207,7 @@ class Generator {
         ret += `pub trait ASTVisitor {\n`;
         const elements = [...new Set(ir.map(({astTypeName}) => astTypeName))].sort((pre, curr) => pre.localeCompare(curr));
         for (const element of elements) {
-            ret += `    fn visit_${element}(&mut self, node: &mut ${element});\n`;
+            ret += `    fn visit_${element}(&mut self, node: &${element});\n`;
         }
         ret += `}\n\n`;
 
@@ -245,7 +245,7 @@ class Generator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&mut self, visitor: &mut V) {\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) {\n`;
         ret += `        visitor.visit_${func.astTypeName}(self);\n`;
         ret += `    }\n`
         ret += `}\n\n`;
@@ -317,7 +317,7 @@ class Generator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&mut self, visitor: &mut V) {\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) {\n`;
         ret += `        visitor.visit_${func.astTypeName}(self);\n`;
         ret += `    }\n`
         ret += `}\n\n`;
@@ -346,8 +346,8 @@ class Generator {
                     returnType = `ArenaIter<${typeName.astTypeName}>`;
                     break;
             }
-            ret += `    pub fn ${typeName.astTypeName}(&mut self) -> &mut ${returnType} {\n`;
-            ret += `        &mut self.${typeName.astTypeName}\n`;
+            ret += `    pub fn ${typeName.astTypeName}(&self) -> &${returnType} {\n`;
+            ret += `        &self.${typeName.astTypeName}\n`;
             ret += `    }\n\n`;
         }
         ret += `}\n`;
@@ -384,9 +384,10 @@ class Generator {
         ret += "        &self.out\n";
         ret += "    }\n";
         ret += "}\n\n";
+        ret += "#[allow(clippy::single_char_add_str)]\n";
         ret += `impl<'a> ASTVisitor for ASTPrinter<'a> {\n`;
         for (const func of ir) {
-            ret += `    fn visit_${func.astTypeName}(&mut self, node: &mut ${func.astTypeName}) {\n`;
+            ret += `    fn visit_${func.astTypeName}(&mut self, node: &${func.astTypeName}) {\n`;
             ret += `        self.write_indent();\n`;
             
             if (func.kind === "branch") {
@@ -399,7 +400,7 @@ class Generator {
                         ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
                         ret += `                self.out.push_str("${variant.name}(\\n");\n`;
                         ret += `                self.indent += 1;\n`;
-                        ret += `                v.get_mut(&self.arena).accept(self);\n`;
+                        ret += `                v.get(&self.arena).accept(self);\n`;
                         ret += `                self.indent -= 1;\n`;
                         ret += `                self.write_indent();\n`;
                         ret += `                self.out.push_str(")\\n");\n`;
@@ -433,18 +434,18 @@ class Generator {
                             ret += `self.out.push_str("\\n"); node.${el.astTypeName}.accept(self);\n`;
                             break;
                         case "boxed":
-                            ret += `self.out.push_str("(Boxed)\\n"); (node.${el.astTypeName}.get_mut(&self.arena)).accept(self);\n`;
+                            ret += `self.out.push_str("(Boxed)\\n"); (node.${el.astTypeName}.get(&self.arena)).accept(self);\n`;
                             break;
                         case "option":
-                            ret += `if let Some(v) = &mut node.${el.astTypeName} { self.out.push_str("\\n"); v.accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("\\n"); v.accept(self); } else { self.out.push_str("None\\n"); }\n`;
                             break;
                         case "optionWithBox":
-                            ret += `if let Some(v) = &mut node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get_mut(&self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            ret += `if let Some(v) = &node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get(&self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
                             break;
                         case "repeat":
                             ret += `self.out.push_str("[\\n");\n`;
                             ret += `        self.indent += 1;\n`;
-                            ret += `        for item in node.${el.astTypeName}.into_ref(&self.arena) { item.accept(self); }\n`;
+                            ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) { item.accept(self); }\n`;
                             ret += `        self.indent -= 1;\n`;
                             ret += `        self.write_indent();\n`;
                             ret += `        self.out.push_str("],\\n");\n`;

@@ -49,7 +49,7 @@ impl<T: Copy> ArenaBox<T> {
     }
 
     #[inline]
-    pub fn get_mut<'a>(&self, arena: &'a Arena) -> &'a mut T {
+    pub fn get_mut<'a>(&mut self, arena: &'a mut Arena) -> &'a mut T {
         if std::mem::size_of::<T>() == 0 {
             return unsafe { &mut *NonNull::dangling().as_ptr() };
         }

@@ -127,11 +127,11 @@ impl Database {
 
     fn find_query_metadata_mut(&mut self, query_id: QueryId) -> Option<&mut QueryMetadata> {
         let found = self.queries_metadata.get_mut(&query_id.query_type)?;
-        Some(found.get_mut(&query_id.from)?)
+        found.get_mut(&query_id.from)
     }
 
     fn find_query_metadata(&self, query_id: QueryId) -> Option<&QueryMetadata> {
         let found = self.queries_metadata.get(&query_id.query_type)?;
-        Some(found.get(&query_id.from)?)
+        found.get(&query_id.from)
     }
 }

@@ -8,7 +8,7 @@ pub trait ASTNode:
     const SYNC_POINT_SETS: SyncPointBitMap;
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
-    fn accept<V: ASTVisitor>(&mut self, visitor: &mut V);
+    fn accept<V: ASTVisitor>(&self, visitor: &mut V);
 
     fn is_sync_point(token: Option<&Token>) -> bool {
         let set = Self::SYNC_POINT_SETS;
