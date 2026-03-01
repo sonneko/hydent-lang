@@ -53,18 +53,44 @@ impl BaseParser for Parser<'_> {
     fn repeat<T: ASTNode>(
         &mut self,
         mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
-    ) -> ArenaIter<T> {
-        // TODO: may be there is a logical mistake
-        self.ctx.ast_arena.alloc_with(|| match parser_fn(self) {
-            Ok(value) => Some(value),
-            Err(err) => {
-                self.report_error(err);
-                let ret = Some(T::get_error_situation(err)?);
-                while !T::is_sync_point(self.peek::<0>().as_ref()) {
-                    self.consume_token();
+    ) -> Result<ArenaIter<T>, ParseErr> {
+        self.ctx.ast_arena.start_iter_allocation::<T>();
+        Ok(loop {
+            let parsed = parser_fn(self);
+            if let Err(err) = parsed {
+                if err.is_endoffile_error() {
+                    self.ctx.ast_arena.finish_iter_allocation::<T>();
+                    return Err(err);
                 }
-                self.consume_token();
-                ret
+
+                // check if error occured because repeat item finish or because there is a syntax error
+
+                // TODO: can't implement because of lack of information above.
+                // Parser generator should inform the potential next tokens.
+
+                // Now it never recover error for avoiding infinitely loop.
+
+                // if [error occured because repeat item finish] {
+                //     // need backtrace
+                //     break self.ctx.ast_arena.finish_iter_allocation::<T>();
+                // } else {
+                //     // Let's recover error
+                //     while !T::is_sync_point(self.peek::<0>().as_ref()) {
+                //         self.consume_token();
+                //     }
+                //
+                //     if let Some(placeholder) = T::get_error_situation(err) {
+                //         self.ctx.ast_arena.alloc_iter_item(&placeholder);
+                //     } else {
+                //         // can't recover because T is struct. this error will recover above 1 layer.
+                //         self.ctx.ast_arena.finish_iter_allocation::<T>();
+                //         return Err(err);
+                //     }
+                // }
+
+                break self.ctx.ast_arena.finish_iter_allocation::<T>();
+            } else {
+                self.ctx.ast_arena.alloc_iter_item(&parsed.unwrap());
             }
         })
     }

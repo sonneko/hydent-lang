@@ -4,21 +4,22 @@ use crate::compiler::arena::{Arena, ArenaBox};
 fn test_arena_basic_alloc() {
     let arena = Arena::new();
     let val = arena.alloc(42);
-    assert_eq!(*val, 42);
+    assert_eq!(*val.get(&arena), 42);
 }
 
 #[test]
 fn test_arena_alloc_slice() {
     let arena = Arena::new();
     let data = [1, 2, 3, 4, 5];
-    let mut iter = arena.alloc_slice(data);
+    let mut iter = arena.alloc_iter(data.into_iter());
+    let mut reader = iter.into_ref(&arena);
 
-    assert_eq!(iter.next(), Some(1));
-    assert_eq!(iter.next(), Some(2));
-    assert_eq!(iter.next(), Some(3));
-    assert_eq!(iter.next(), Some(4));
-    assert_eq!(iter.next(), Some(5));
-    assert_eq!(iter.next(), None);
+    assert_eq!(reader.next(), Some(&mut 1));
+    assert_eq!(reader.next(), Some(&mut 2));
+    assert_eq!(reader.next(), Some(&mut 3));
+    assert_eq!(reader.next(), Some(&mut 4));
+    assert_eq!(reader.next(), Some(&mut 5));
+    assert_eq!(reader.next(), None);
 }
 
 #[test]
@@ -26,11 +27,12 @@ fn test_arena_alloc_iter() {
     let arena = Arena::new();
     let data = vec![10, 20, 30];
     let mut iter = arena.alloc_iter(data.into_iter());
+    let mut reader = iter.into_ref(&arena);
 
-    assert_eq!(iter.next(), Some(10));
-    assert_eq!(iter.next(), Some(20));
-    assert_eq!(iter.next(), Some(30));
-    assert_eq!(iter.next(), None);
+    assert_eq!(reader.next(), Some(&mut 10));
+    assert_eq!(reader.next(), Some(&mut 20));
+    assert_eq!(reader.next(), Some(&mut 30));
+    assert_eq!(reader.next(), None);
 }
 
 #[test]
@@ -40,11 +42,12 @@ fn test_arena_large_allocation() {
     let arena = Arena::new();
     let count = 1000_000; // Should be enough to trigger multiple blocks
     let mut iter = arena.alloc_iter(0..count);
+    let mut reader = iter.into_ref(&arena);
 
     for i in 0..count {
-        assert_eq!(iter.next(), Some(i));
+        assert_eq!(reader.next().as_deref(), Some(&i));
     }
-    assert_eq!(iter.next(), None);
+    assert_eq!(reader.next(), None);
 }
 
 #[test]
@@ -70,13 +73,16 @@ fn test_mixed_allocations() {
     let d = arena.alloc(true);
 
     #[cfg(not(miri))]
-    let e: ArenaBox<[u128; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    let e: ArenaBox<[u128; _]> = arena.alloc([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 
-    assert_eq!(*a, 1);
-    assert_eq!(*b, 100);
-    assert_eq!(*c, 200);
-    assert_eq!(*d, true);
+    assert_eq!(a.get(&arena), &1);
+    assert_eq!(b.get(&arena), &100);
+    assert_eq!(c.get(&arena), &200);
+    assert_eq!(d.get(&arena), &true);
 
     #[cfg(not(miri))]
-    assert_eq!(*e, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+    assert_eq!(
+        *e.get(&arena),
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    );
 }
