@@ -1,4 +1,5 @@
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
+use crate::compiler::span::Span;
 use crate::parser::ast_node::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
@@ -27,8 +28,11 @@ pub trait BaseParser: Sized {
     fn now_span(&self) -> Span;
 }
 
-#[derive(Clone, Copy)]
-pub struct Enviroment {}
+#[derive(Clone, Copy, Debug)]
+pub struct Enviroment {
+    pub current: Token,
+    pub span: Span,
+}
 
 impl BaseParser for Parser<'_> {
     type Error = ParseErr;
@@ -143,7 +147,10 @@ impl BaseParser for Parser<'_> {
 
     fn enviroment(&self) -> Enviroment {
         // TODO: consider Environment structure
-        unimplemented!()
+        Enviroment {
+            current: self.peek::<0>().unwrap_or(Token::EndOfFile),
+            span: self.now_span(),
+        }
     }
 
     fn now_span(&self) -> Span {
