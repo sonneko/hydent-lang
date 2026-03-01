@@ -170,6 +170,7 @@ class Generator {
 
     public generateASTType(ir: IR): string {
         let decls = [];
+        decls.push(this.generateVisitorTrait(ir));
         for (const element of ir.sort()) {
             switch (element.kind) {
                 case "branch":
@@ -198,6 +199,18 @@ class Generator {
         ret += `use crate::parser::errors::ParseErr;\n`;
         ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator};\n\n`;
         ret += decls.join("");
+        return ret;
+    }
+
+    private generateVisitorTrait(ir: IR): string {
+        let ret = "";
+        ret += `pub trait ASTVisitor {\n`;
+        const elements = [...new Set(ir.map(({astTypeName}) => astTypeName))].sort((pre, curr) => pre.localeCompare(curr));
+        for (const element of elements) {
+            ret += `    fn visit_${element}(&mut self, node: &mut ${element});\n`;
+        }
+        ret += `}\n\n`;
+
         return ret;
     }
 
@@ -231,7 +244,10 @@ class Generator {
         ret += `    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
-        ret += `    }\n`;
+        ret += `    }\n\n`;
+        ret += `    fn accept<V: ASTVisitor>(&mut self, visitor: &mut V) {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self);\n`;
+        ret += `    }\n`
         ret += `}\n\n`;
 
         ret += `impl ${func.astTypeName} {\n`;
@@ -300,7 +316,10 @@ class Generator {
         ret += `    const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
-        ret += `    }\n`;
+        ret += `    }\n\n`;
+        ret += `    fn accept<V: ASTVisitor>(&mut self, visitor: &mut V) {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self);\n`;
+        ret += `    }\n`
         ret += `}\n\n`;
 
 
@@ -339,12 +358,134 @@ class Generator {
     private generateHookASTType(func: HookParserFunction): string {
         return `pub use crate::parser::manual_ast::${func.astTypeName};\n\n`;
     }
+
+    public generateAstPrinterImpl(ir: IR): string {
+        let ret = "";
+        ret += "use crate::compiler::arena::Arena;\n";
+        ret += "use crate::parser::ast_node::ASTNode;\n";
+        ret += "use crate::parser::generated_ast::*;\n";
+        ret += "\n";
+        ret += "pub struct ASTPrinter<'a> {\n";
+        ret += "    arena: &'a Arena,\n";
+        ret += "    indent: usize,\n";
+        ret += "    out: String,\n";
+        ret += "}\n";
+        ret += "\n";
+        ret += "impl<'a> ASTPrinter<'a> {\n";
+        ret += "    pub fn new(arena: &'a Arena) -> Self {\n";
+        ret += "        Self { arena, indent: 0, out: String::new() }\n";
+        ret += "    }\n";
+        ret += "\n";
+        ret += "    fn write_indent(&mut self) {\n";
+        ret += "        for _ in 0..self.indent { self.out.push_str(\"  \"); }\n";
+        ret += "    }\n";
+        ret += "\n";
+        ret += "    pub fn load(&mut self) -> &str {\n";
+        ret += "        &self.out\n";
+        ret += "    }\n";
+        ret += "}\n\n";
+        ret += `impl<'a> ASTVisitor for ASTPrinter<'a> {\n`;
+        for (const func of ir) {
+            ret += `    fn visit_${func.astTypeName}(&mut self, node: &mut ${func.astTypeName}) {\n`;
+            ret += `        self.write_indent();\n`;
+            
+            if (func.kind === "branch") {
+                ret += `        self.out.push_str("${func.astTypeName}::");\n`;
+                ret += `        match node {\n`;
+                
+                const variants = this.getUniqueVariants(func);
+                for (const variant of variants) {
+                    if (variant.isBoxed) {
+                        ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
+                        ret += `                self.out.push_str("${variant.name}(\\n");\n`;
+                        ret += `                self.indent += 1;\n`;
+                        ret += `                v.get_mut(&self.arena).accept(self);\n`;
+                        ret += `                self.indent -= 1;\n`;
+                        ret += `                self.write_indent();\n`;
+                        ret += `                self.out.push_str(")\\n");\n`;
+                        ret += `            }\n`;
+                    } else {
+                        ret += `            ${func.astTypeName}::${variant.name}(v) => {\n`;
+                        ret += `                self.out.push_str("${variant.name}(\\n");\n`;
+                        ret += `                self.indent += 1;\n`;
+                        ret += `                v.accept(self);\n`;
+                        ret += `                self.indent -= 1;\n`;
+                        ret += `                self.write_indent();\n`;
+                        ret += `                self.out.push_str(")\\n");\n`;
+                        ret += `            }\n`;
+                    }
+                }
+                ret += `            ${func.astTypeName}::Invalid => self.out.push_str("Invalid\\n"),\n`;
+                ret += `        }\n`;
+
+            } else if (func.kind === "product") {
+                ret += `        self.out.push_str("${func.astTypeName} {\\n");\n`;
+                ret += `        self.indent += 1;\n`;
+
+                for (const el of func.elements) {
+                    if (el.kind === "terminal") continue;
+
+                    ret += `        self.write_indent();\n`;
+                    ret += `        self.out.push_str("${el.astTypeName}: ");\n`;
+
+                    switch (el.kind) {
+                        case "normal":
+                            ret += `self.out.push_str("\\n"); node.${el.astTypeName}.accept(self);\n`;
+                            break;
+                        case "boxed":
+                            ret += `self.out.push_str("(Boxed)\\n"); (node.${el.astTypeName}.get_mut(&self.arena)).accept(self);\n`;
+                            break;
+                        case "option":
+                            ret += `if let Some(v) = &mut node.${el.astTypeName} { self.out.push_str("\\n"); v.accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            break;
+                        case "optionWithBox":
+                            ret += `if let Some(v) = &mut node.${el.astTypeName} { self.out.push_str("(Boxed)\\n"); v.get_mut(&self.arena).accept(self); } else { self.out.push_str("None\\n"); }\n`;
+                            break;
+                        case "repeat":
+                            ret += `self.out.push_str("[\\n");\n`;
+                            ret += `        self.indent += 1;\n`;
+                            ret += `        for item in node.${el.astTypeName}.into_ref(&self.arena) { item.accept(self); }\n`;
+                            ret += `        self.indent -= 1;\n`;
+                            ret += `        self.write_indent();\n`;
+                            ret += `        self.out.push_str("],\\n");\n`;
+                            break;
+                    }
+                }
+
+                ret += `        self.indent -= 1;\n`;
+                ret += `        self.write_indent();\n`;
+                ret += `        self.out.push_str("}\\n");\n`;
+
+            } else if (func.kind === "hook") {
+                ret += `        self.out.push_str("<HookedNode:${func.astTypeName}>\\n");\n`;
+            }
+
+            ret += `    }\n\n`;
+        }
+        ret += `}`
+        return ret;
+    }
+
+    private getUniqueVariants(func: BranchParserFunction) {
+        const list = [
+            ...func.branchesJudgebleInPeek0,
+            ...func.branchesJudgebleInPeek1,
+            ...(func.branchesFallbackInPeek1 || []),
+            ...func.branchesNeedBacktrack
+        ];
+        const map = new Map();
+        for (const item of list) {
+            map.set(item.astTypeName, { name: item.astTypeName, isBoxed: item.isBoxed });
+        }
+        return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+    }
 }
 
-export function generate(ir: IR): [string, string] {
+export function generate(ir: IR): [string, string, string] {
     const gen = new Generator();
     return [
         gen.generateParser(ir),
-        gen.generateASTType(ir)
+        gen.generateASTType(ir),
+        gen.generateAstPrinterImpl(ir),
     ]
 }

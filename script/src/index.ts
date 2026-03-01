@@ -14,6 +14,7 @@ const AST_FILE_PATH = "../spec/frontend/ast.json";
 const IR_FILE_PATH = "../spec/frontend/ir.json";
 const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
 const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
+const AST_PRINTER_FILE_PATH = "../src/parser/generated_ast_printer.rs";
 const AST_SIZE_CHECKER_FILE_PATH = "../src/parser/tests/ast_size_checker.rs";
 const AST_SIZE_REPORT_FILE_PATH = "../spec/frontend/ast_size.json";
 const TOKEN_MAP_FILE_PATH = "../src/tokenizer/generated_tokenmap.rs";
@@ -52,7 +53,8 @@ function main() {
     const parser = generate(analysis);
     fs.writeFileSync(PARSER_FILE_PATH, parser[0], "utf8");
     fs.writeFileSync(AST_TYPE_FILE_PATH, parser[1], "utf8");
-    console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs and generated_ast.rs");
+    fs.writeFileSync(AST_PRINTER_FILE_PATH, parser[2], "utf8");
+    console.log("✅ Parser and AST type definition written to src/parser/generated_parser.rs, generated_ast.rs, and generated_ast_printer.rs");
 
     console.log("🤖 Generating Mermaid format grammar diagram...")
     const mermaid = generateMermaidHtml(ast);
@@ -89,7 +91,7 @@ function main() {
     if (mode === "ci") {
         console.log("🤖 formatting generated rust files ")
         try {
-            execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH} ${AST_SIZE_CHECKER_FILE_PATH} ${TOKEN_MAP_FILE_PATH}`);
+            execSync(`rustfmt ${PARSER_FILE_PATH} ${AST_TYPE_FILE_PATH} ${AST_SIZE_CHECKER_FILE_PATH} ${TOKEN_MAP_FILE_PATH} ${AST_PRINTER_FILE_PATH}`);
         } catch (e) {
             console.warn(`⚠️ rustfmt not found or failed because of syntax error`)
         }

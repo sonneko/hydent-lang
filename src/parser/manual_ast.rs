@@ -13,6 +13,7 @@ impl ASTNode for Identifier {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -24,6 +25,7 @@ impl ASTNode for StringLiteral {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -33,6 +35,7 @@ impl ASTNode for CharLiteral {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -42,6 +45,7 @@ impl ASTNode for IntLiteral {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -51,6 +55,7 @@ impl ASTNode for FloatLiteral {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -60,15 +65,19 @@ impl ASTNode for BoolLiteral {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct DocComment {}
+pub struct DocComment {
+    pub(super) span: Span,
+}
 impl ASTNode for DocComment {
     const SYNC_POINT_SETS: SyncPointBitMap = SyncPointBitMap::build_map(false, &[]);
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -78,6 +87,7 @@ impl ASTNode for LineComment {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -87,4 +97,5 @@ impl ASTNode for BlockComment {
     fn get_error_situation(err: ParseErr) -> Option<Self> {
         None
     }
+    fn accept<V: super::ast::ASTVisitor>(&mut self, visitor: &mut V) {}
 }
