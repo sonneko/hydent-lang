@@ -1,11 +1,11 @@
-use std::collections::{HashMap, hash_map::DefaultHasher};
-use std::hash::{Hash, Hasher};
 use std::any::{Any, TypeId};
+use std::collections::{hash_map::DefaultHasher, HashMap};
+use std::hash::{Hash, Hasher};
 use std::marker::PhantomData;
 use std::sync::{Arc, RwLock};
 
 use crate::compiler::arena::ArenaBox;
-use crate::diagnostic::{CompilerDiagnostic, diagnose_and_finish};
+use crate::diagnostic::{diagnose_and_finish, CompilerDiagnostic};
 
 pub trait Query: 'static {
     type From: Hash + Clone;
@@ -80,7 +80,10 @@ impl Database {
 
         // 3. save that parent query depends on this query
         if let Some(parent_query) = self.stack.last() {
-            self.find_query_metadata_mut(*parent_query).unwrap().dependencies.push(current_query);
+            self.find_query_metadata_mut(*parent_query)
+                .unwrap()
+                .dependencies
+                .push(current_query);
         } else {
             // This query is root
         }

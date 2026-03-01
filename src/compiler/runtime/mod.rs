@@ -2,9 +2,7 @@ pub mod query_sys;
 
 use std::hash::Hash;
 
-pub enum RuntimeErr {
-    
-}
+pub enum RuntimeErr {}
 
 pub trait Engine {
     fn fetch<Q: Query>(&self, from: Q::From) -> Result<Q::To, RuntimeErr>;
@@ -12,7 +10,6 @@ pub trait Engine {
 
 pub struct Rumtime<E: Engine> {
     engine: E,
-
 }
 
 pub trait Query: 'static {

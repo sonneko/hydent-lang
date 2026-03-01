@@ -269,9 +269,9 @@ class Generator {
                 returnType = variant.name;
             }
 
-            ret += `    pub fn expect_${variant.name}(&self) -> Option<&${returnType}> {\n`;
+            ret += `    pub fn expect_${variant.name}(&mut self) -> Option<&mut ${returnType}> {\n`;
             ret += `        match self {\n`;
-            ret += `            Self::${variant.name}(v) => Some(&*v),\n`;
+            ret += `            Self::${variant.name}(v) => Some(&mut *v),\n`;
             ret += `            _ => None,\n`;
             ret += `        }\n`;
             ret += `    }\n\n`;
@@ -346,8 +346,8 @@ class Generator {
                     returnType = `ArenaIter<${typeName.astTypeName}>`;
                     break;
             }
-            ret += `    pub fn ${typeName.astTypeName}(&self) -> &${returnType} {\n`;
-            ret += `        &self.${typeName.astTypeName}\n`;
+            ret += `    pub fn ${typeName.astTypeName}(&mut self) -> &mut ${returnType} {\n`;
+            ret += `        &mut self.${typeName.astTypeName}\n`;
             ret += `    }\n\n`;
         }
         ret += `}\n`;

@@ -1,14 +1,18 @@
-use crate::compiler::{
-    arena::Arena, context::frontend::CompilerFrontendContext,
-    source_holder::SourceHolder, symbol::SymbolFactory,
-};
+use crate::compiler::runtime::{Engine, Query};
 use crate::diagnostic::CompilerDiagnostic;
 use crate::parser::{errors::ParseErr, parse::Parser};
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
-use crate::compiler::runtime::{Engine, Query};
-
+use crate::{
+    compiler::{
+        arena::{Arena, ArenaBox},
+        context::frontend::CompilerFrontendContext,
+        source_holder::SourceHolder,
+        symbol::SymbolFactory,
+    },
+    utility::read_file_query::ReadFileQuery,
+};
 
 #[cfg(test)]
 mod tests;
