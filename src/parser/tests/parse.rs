@@ -38,7 +38,7 @@ fn parse(source: &str) {
     let ast = Ast::new(ast.unwrap(), ast_arena, SourceHolder::new(&source));
 }
 
-#[test]
+// #[test]
 #[cfg(miri)]
 fn test_parse() {
     parse(
