@@ -206,7 +206,7 @@ class Generator {
         let ret = "";
         ret += `pub trait ASTVisitor {\n`;
         ret += `    type ReturnType;`;
-        const elements = [...new Set(ir.map(({astTypeName}) => astTypeName))].sort((pre, curr) => pre.localeCompare(curr));
+        const elements = [...new Set(ir.map(({ astTypeName }) => astTypeName))].sort((pre, curr) => pre.localeCompare(curr));
         for (const element of elements) {
             ret += `    fn visit_${element}(&mut self, node: &${element}) -> Self::ReturnType;\n`;
         }
@@ -241,11 +241,14 @@ class Generator {
 
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const hasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
+        const syncHasLiteral = func.syncPointsTerminals.some(t => t.includes("Literal"));
         const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$") && !t.includes("_")).join(", ");
-        const firstHasIdentifier = func.firstTerminals.some(t => t.includes("Identifier"));
-        const firstPoints = func.firstTerminals.filter(t => !t.includes("$")).join(", ");
-        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${hasIdentifier}, &[${syncPoints}]);\n`;
-        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, &[${firstPoints}]);\n`;
+        const first0Sets = func.firstTerminals.map(v => v.split(",")[0]);
+        const firstHasIdentifier = first0Sets.some(t => t.includes("Identifier"));
+        const firstHasLiteral = first0Sets.some(t => t.includes("Literal"));
+        const firstPoints = first0Sets.filter(t => !t.includes("$")).join(", ");
+        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${hasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, ${firstHasLiteral}, false, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
@@ -290,37 +293,40 @@ class Generator {
         const isManual = func.elements.some(element => element.kind === "terminal" && element.tokenTypeName.includes("$"));
         if (isManual) {
             ret += `pub use crate::parser::manual_ast::${func.astTypeName};\n\n`;
-            return ret;
-        }
-        ret += `#[derive(Copy, Clone, Debug, std::hash::Hash, PartialEq, Eq)]\n`;
-        ret += `pub struct ${func.astTypeName} {\n`;
-        for (const element of func.elements) {
-            switch (element.kind) {
-                case "normal":
-                    ret += `    pub(super) ${element.astTypeName}: ${element.astTypeName},\n`;
-                    break;
-                case "boxed":
-                    ret += `    pub(super) ${element.astTypeName}: ArenaBox<${element.astTypeName}>,\n`;
-                    break;
-                case "option":
-                    ret += `    pub(super) ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
-                    break;
-                case "optionWithBox":
-                    ret += `    pub(super) ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
-                    break;
-                case "repeat":
-                    ret += `    pub(super) ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
-                    break;
+        } else {
+            ret += `#[derive(Copy, Clone, Debug, std::hash::Hash, PartialEq, Eq)]\n`;
+            ret += `pub struct ${func.astTypeName} {\n`;
+            for (const element of func.elements) {
+                switch (element.kind) {
+                    case "normal":
+                        ret += `    pub(super) ${element.astTypeName}: ${element.astTypeName},\n`;
+                        break;
+                    case "boxed":
+                        ret += `    pub(super) ${element.astTypeName}: ArenaBox<${element.astTypeName}>,\n`;
+                        break;
+                    case "option":
+                        ret += `    pub(super) ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
+                        break;
+                    case "optionWithBox":
+                        ret += `    pub(super) ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
+                        break;
+                    case "repeat":
+                        ret += `    pub(super) ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
+                        break;
+                }
             }
+            ret += `}\n\n`;
         }
-        ret += `}\n\n`;
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const syncHasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
+        const syncHasLiteral = func.syncPointsTerminals.some(t => t.includes("Literal"));
         const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$")).join(", ");
-        const firstHasIdentifier = func.firstTerminals.some(t => t.includes("Identifier"));
-        const firstPoints = func.firstTerminals.filter(t => !t.includes("$")).join(", ");
-        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, &[${syncPoints}]);\n`;
-        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, &[${firstPoints}]);\n`;
+        const first0Sets = func.firstTerminals.map(v => v.split(",")[0]);
+        const firstHasIdentifier = first0Sets.some(t => t.includes("Identifier"));
+        const firstHasLiteral = first0Sets.some(t => t.includes("Literal"));
+        const firstPoints = first0Sets.filter(t => !t.includes("$")).join(", ");
+        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, ${firstHasLiteral}, false, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
@@ -393,17 +399,16 @@ class Generator {
         ret += "        Ok(())\n";
         ret += "    }\n";
         ret += "}\n\n";
-        ret += "#[allow(clippy::single_char_add_str)]\n";
         ret += `impl<'a, 'f, 'b> ASTVisitor for ASTPrinter<'a, 'f, 'b> {\n`;
         ret += `    type ReturnType = Result<(), std::fmt::Error>;\n`;
         for (const func of ir) {
             ret += `    fn visit_${func.astTypeName}(&mut self, node: &${func.astTypeName}) -> Result<(), std::fmt::Error> {\n`;
             ret += `        self.write_indent()?;\n`;
-            
+
             if (func.kind === "branch") {
                 ret += `        self.write("${func.astTypeName}::")?;\n`;
                 ret += `        match node {\n`;
-                
+
                 const variants = this.getUniqueVariants(func);
                 for (const variant of variants) {
                     if (variant.isBoxed) {

@@ -74,13 +74,16 @@ impl BaseParser for Parser<'_> {
         self.ctx.ast_arena.start_iter_allocation::<T>();
         loop {
             let next_token = self.peek::<0>();
+            if next_token == Some(Token::EndOfFile) || next_token.is_none() {
+                break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+            }
             match (
                 T::is_first_sets(&next_token),
                 T::is_follow_sets(&next_token),
             ) {
                 (true, true) => {
                     self.ctx.ast_arena.finish_iter_allocation::<T>();
-                    // WARNING below
+                    // WARNING: you should cover with manual_parser.
                     panic!("Internal Error: Invalid grammar. {:?}", next_token)
                 }
                 (true, false) => {
@@ -109,10 +112,6 @@ impl BaseParser for Parser<'_> {
                     return Ok(iter);
                 }
                 (false, false) => {
-                    if next_token == Some(Token::EndOfFile) || next_token.is_none() {
-                        self.ctx.ast_arena.finish_iter_allocation::<T>();
-                        break Err(parser_fn(self).unwrap_err());
-                    }
                     // must occure error
                     let err = parser_fn(self).unwrap_err();
                     self.report_error(err);

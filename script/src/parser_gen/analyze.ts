@@ -109,7 +109,7 @@ export class Analyzer {
             const followSets = this.followSets.get(name)!;
             const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
             if (intersection.size !== 0) {
-                console.warn(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
+                console.warn(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
                 funcs
                     .filter(v => v.kind !== "hook")
                     .filter(v => v.astTypeName === name)

@@ -12,6 +12,7 @@ use crate::tokenizer::tokens::Token;
 impl GeneratedParser for Parser<'_> {
     fn parse_Identifier(&mut self) -> Result<generated_ast::Identifier, Self::Error> {
         if let Some(Token::Identifier(symbol)) = self.peek::<0>() {
+            self.consume_token();
             Ok(generated_ast::Identifier { symbol })
         } else {
             Err(Self::Error::build(

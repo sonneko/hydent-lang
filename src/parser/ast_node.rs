@@ -29,13 +29,12 @@ pub struct TokenBitMap {
     operators: u64,
     delimiter: u64,
     literals: bool,
-    comments: bool,
     identifier: bool,
     eof: bool,
 }
 
 impl TokenBitMap {
-    pub const fn build_map(identifier: bool, tokens: &[Token]) -> Self {
+    pub const fn build_map(identifier: bool, literals: bool, eof: bool, tokens: &[Token]) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
         let mut delimiters_bits = 0u64;
@@ -57,10 +56,9 @@ impl TokenBitMap {
             keywords: keywords_bits,
             operators: operators_bits,
             delimiter: delimiters_bits,
-            literals: false,
-            comments: false,
+            literals,
             identifier,
-            eof: false,
+            eof,
         }
     }
 
@@ -73,11 +71,11 @@ impl TokenBitMap {
                 Token::Literal(_) => self.literals,
                 Token::Identifier(_) => self.identifier,
                 Token::EndOfFile => self.eof,
-                Token::Comment(_) => self.comments,
+                Token::Comment(_) => false,
                 Token::Invalid => false,
             }
         } else {
-            false
+            self.eof
         }
     }
 }
