@@ -1,6 +1,6 @@
 //! Tokenizer with a function to intern strings
 
-use crate::compiler::span::Span;
+use crate::compiler::span::{PosOnSource, Span};
 use crate::compiler::symbol::SymbolFactory;
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::generated_tokenmap::{
@@ -12,6 +12,8 @@ type WithSpanVec<T> = Vec<(T, Span)>;
 
 pub struct Tokenizer<'src, 'ctx> {
     pub(super) current_pos: usize,
+    current_line: usize,
+    current_column: usize,
     input: &'src [u8],
     symbol_factory: &'ctx mut SymbolFactory<'src>,
 }
@@ -23,6 +25,8 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     ) -> Tokenizer<'src, 'ctx> {
         Self {
             current_pos: 0,
+            current_line: 1,
+            current_column: 1,
             input: input.as_bytes(),
             symbol_factory,
         }
@@ -33,11 +37,17 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         let mut errors = Vec::new();
 
         while let Some(b) = self.peek() {
-            let begin = self.current_pos;
+            let begin = self.now_pos();
 
             let next = match b {
-                b' ' | b'\n' | b'\t' | b'\r' => {
+                b' ' | b'\t' | b'\r' => {
                     self.advance(); // TODO: make it first by simd
+                    continue;
+                },
+                b'\n' => {
+                    self.advance();
+                    self.current_line += 1;
+                    self.current_column = 1;
                     continue;
                 }
                 b'a'..=b'z' | b'A'..=b'Z' | b'_' => self.read_identifier_or_keyword(),
@@ -56,17 +66,17 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             };
 
             match next {
-                Ok(token) => tokens.push((token, Span::new(begin, self.current_pos))),
+                Ok(token) => tokens.push((token, Span::new(begin, self.now_pos()))),
                 Err(err) => {
-                    errors.push((err, Span::new(begin, self.current_pos)));
-                    tokens.push((Token::Invalid, Span::new(begin, self.current_pos)));
+                    errors.push((err, Span::new(begin, self.now_pos())));
+                    tokens.push((Token::Invalid, Span::new(begin, self.now_pos())));
                 }
             }
         }
 
         tokens.push((
             Token::EndOfFile,
-            Span::new(self.current_pos, self.current_pos),
+            Span::new(self.now_pos(), self.now_pos()),
         ));
 
         (tokens, errors)
@@ -87,11 +97,16 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     #[inline(always)]
     pub(super) fn advance(&mut self) {
         self.current_pos += 1;
+        self.current_column += 1;
     }
 
     #[inline(always)]
     fn advance_n(&mut self, n: usize) {
         self.current_pos += n;
+    }
+
+    fn now_pos(&self) -> PosOnSource {
+        PosOnSource { line: self.current_line, column: self.current_column, absolute: self.current_pos }
     }
 
     #[inline]
@@ -110,7 +125,8 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     // --- logic to read each tokens ---
 
     fn read_identifier_or_keyword(&mut self) -> Result<Token, TokenizeErr> {
-        let start = self.current_pos;
+        let begin = self.current_pos;
+        let start = self.now_pos();
         while let Some(b) = self.peek() {
             if b.is_ascii_alphanumeric() || b == b'_' {
                 self.advance();
@@ -118,12 +134,12 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 break;
             }
         }
-        let slice = &self.input[start..self.current_pos];
+        let slice = &self.input[begin..self.current_pos];
 
         if slice.len() < 5 {
             match scan_short_keywords(slice) {
                 Token::Invalid => {
-                    let symbol = self.symbol_factory.from_range(start, self.current_pos);
+                    let symbol = self.symbol_factory.from_range(start, self.now_pos());
                     Ok(Token::Identifier(symbol))
                 }
                 token => Ok(token),
@@ -132,7 +148,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             match LONG_KEYWORDS_MAP.get(slice) {
                 Some(&keyword) => Ok(keyword),
                 None => {
-                    let symbol = self.symbol_factory.from_range(start, self.current_pos);
+                    let symbol = self.symbol_factory.from_range(start, self.now_pos());
                     Ok(Token::Identifier(symbol))
                 }
             }
@@ -203,11 +219,12 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     fn read_string_literal(&mut self) -> Result<Token, TokenizeErr> {
         self.advance(); // skip opening "
-        let start = self.current_pos;
+        let begin = self.current_pos;
+        let start = self.now_pos();
         while let Some(b) = self.peek() {
             match b {
                 b'"' => {
-                    let span = Span::new(start, self.current_pos);
+                    let span = Span::new(start, self.now_pos());
                     self.advance(); // skip closing "
                     return Ok(Token::Literal(Literal::StringLiteral(span)));
                 }
@@ -220,7 +237,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 }
             }
         }
-        Err(TokenizeErr::StringLiteralNotClosed(start))
+        Err(TokenizeErr::StringLiteralNotClosed(begin))
     }
 
     fn read_char_literal(&mut self) -> Result<Token, TokenizeErr> {
@@ -271,7 +288,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             self.advance();
         }
 
-        let start = self.current_pos;
+        let start = self.now_pos();
         // TODO: make it firster by simd
         while let Some(b) = self.peek() {
             if b == b'\n' {
@@ -283,7 +300,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         if is_doc {
             Ok(Token::Comment(Comment::DocComment(Span::new(
                 start,
-                self.current_pos,
+                self.now_pos(),
             ))))
         } else {
             Ok(Token::Comment(Comment::LineComment))

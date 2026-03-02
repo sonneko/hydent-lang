@@ -14,9 +14,22 @@ use crate::compiler::source_holder::SourceHolder;
 #[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
 pub struct Span {
     /// The starting byte index of the span.
-    begin: usize,
+    begin: PosOnSource,
     /// The ending byte index of the span.
-    end: usize,
+    end: PosOnSource,
+}
+
+#[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
+pub struct PosOnSource {
+    pub line: usize,
+    pub column: usize,
+    pub absolute: usize, 
+}
+
+impl std::fmt::Display for PosOnSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.column)
+    }
 }
 
 /// Implementation of `Span` for creating and manipulating source code regions.
@@ -26,7 +39,7 @@ pub struct Span {
 /// actual source code segment.
 impl Span {
     /// Creates a new `Span`.
-    pub fn new(begin: usize, end: usize) -> Self {
+    pub fn new(begin: PosOnSource, end: PosOnSource) -> Self {
         Self { begin, end }
     }
 
@@ -39,8 +52,14 @@ impl Span {
     pub fn with_ref<'src>(self, src: SourceHolder<'src>) -> SpanWithRef<'src> {
         SpanWithRef {
             span: self,
-            reference: &src.get_source_ref()[self.begin..self.end],
+            reference: &src.get_source_ref()[self.begin.absolute..self.end.absolute],
         }
+    }
+}
+
+impl std::fmt::Display for Span {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}..{}", self.begin, self.end)
     }
 }
 
