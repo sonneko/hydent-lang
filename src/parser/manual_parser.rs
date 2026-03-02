@@ -25,6 +25,7 @@ impl GeneratedParser for Parser<'_> {
     }
     fn parse_StringLiteral(&mut self) -> Result<generated_ast::StringLiteral, Self::Error> {
         if let Some(Token::Literal(Literal::StringLiteral(span))) = self.peek::<0>() {
+            self.consume_token();
             Ok(generated_ast::StringLiteral { span })
         } else {
             Err(Self::Error::build(
