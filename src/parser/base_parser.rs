@@ -94,6 +94,7 @@ impl BaseParser for Parser<'_> {
                         }
                         Err(err) => {
                             self.report_error(err);
+                            println!("{}", T::name());
                             if let Some(placeholder) = T::get_error_situation(err) {
                                 self.ctx.ast_arena.alloc_iter_item(&placeholder);
                             }
@@ -147,7 +148,7 @@ impl BaseParser for Parser<'_> {
 
     fn report_error(&self, err: Self::Error) {
         // TODO: add error to error_pool
-        println!("occured error: {:?}", err);
+        println!("occured error: {}\n", err);
     }
 
     fn backtrack<T: ASTNode>(
