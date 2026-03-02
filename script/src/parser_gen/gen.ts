@@ -392,6 +392,11 @@ class Generator {
         ret += "        self.writer.write_str(s);\n";
         ret += "        Ok(())\n";
         ret += "    }\n";
+        ret += "    fn write_b(&mut self, s: &[u8]) -> Result<(), std::fmt::Error> {\n";
+        ret += `        let s = std::str::from_utf8(s).unwrap_or("Invalid UTF-8");`;
+        ret += "        self.writer.write_str(s);\n";
+        ret += "        Ok(())\n";
+        ret += "    }\n";
         ret += "}\n\n";
 
         ret += "#[allow(clippy::unused_unit)]\n";
@@ -424,9 +429,9 @@ class Generator {
 
                     // WARNING: hardcode identifier and string literal behavior
                     if (func.astTypeName == "Identifier") {
-                        ret += `        self.write(self.symbols.get(&node.symbol).get_ref())?;\n`;
+                        ret += `        self.write_b(self.symbols.get(&node.symbol).get_ref())?;\n`;
                     } else if (func.astTypeName == "StringLiteral") {
-                        ret += `        self.write(node.span.with_ref(*self.source_holder).get_ref())?;\n`;
+                        ret += `        self.write_b(node.span.with_ref(*self.source_holder).get_ref())?;\n`;
                     } else {
                         ret += `        self.write(&format!(r#""{:?}""#, node))?;\n`;
                     }

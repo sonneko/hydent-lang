@@ -52,7 +52,7 @@ impl Span {
     pub fn with_ref<'src>(self, src: SourceHolder<'src>) -> SpanWithRef<'src> {
         SpanWithRef {
             span: self,
-            reference: &src.get_source_ref()[self.begin.absolute..self.end.absolute],
+            reference: &src.get_source_ref().as_bytes()[self.begin.absolute..self.end.absolute],
         }
     }
 }
@@ -69,11 +69,11 @@ pub struct SpanWithRef<'src> {
     /// The underlying span.
     span: Span,
     /// A reference to the source code of the span.
-    reference: &'src str,
+    reference: &'src [u8],
 }
 
 impl<'src> SpanWithRef<'src> {
-    pub fn get_ref(&self) -> &'src str {
+    pub fn get_ref(&self) -> &'src [u8] {
         self.reference
     }
 }
