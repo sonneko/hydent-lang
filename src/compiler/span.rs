@@ -23,7 +23,7 @@ pub struct Span {
 pub struct PosOnSource {
     pub line: usize,
     pub column: usize,
-    pub absolute: usize, 
+    pub absolute: usize,
 }
 
 impl std::fmt::Display for PosOnSource {

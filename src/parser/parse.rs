@@ -1,5 +1,6 @@
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
 use crate::compiler::context::frontend::CompilerFrontendContext;
+use crate::parser::base_parser::BaseParser;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::generated_ast::Module;
 use crate::parser::generated_parser::GeneratedParser;
@@ -16,7 +17,10 @@ impl<'ctx> Parser<'ctx> {
         Self { ctx, tokens }
     }
 
-    pub fn parse(mut self) -> Result<Module, ParseErr> {
-        self.parse_Module()
+    pub fn parse(mut self) -> Result<ArenaBox<Module>, ParseErr> {
+        match self.parse_Module() {
+            Ok(module) => Ok(self.ctx.ast_arena.alloc(module)),
+            Err(err) => Err(err),
+        }
     }
 }

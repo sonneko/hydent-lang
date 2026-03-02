@@ -42,8 +42,12 @@ pub struct Ast<'src> {
 }
 
 impl<'src> Ast<'src> {
-    fn new(ast: generated_ast::Module, arena: Arena, source_holder: SourceHolder<'src>, symbols: SymbolFactory<'src>) -> Self {
-        let ast = arena.alloc(ast);
+    fn new(
+        ast: ArenaBox<generated_ast::Module>,
+        arena: Arena,
+        source_holder: SourceHolder<'src>,
+        symbols: SymbolFactory<'src>,
+    ) -> Self {
         Self {
             ast,
             diagnostics: Vec::new(),

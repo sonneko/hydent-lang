@@ -10,7 +10,11 @@ pub struct ParseErr {
 
 impl std::fmt::Display for ParseErr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "expected {:?}, found {:?}", self.expected, self.found.current)
+        write!(
+            f,
+            "expected {:?}, found {} in {}",
+            self.expected, self.found.current, self.found.span
+        )
     }
 }
 

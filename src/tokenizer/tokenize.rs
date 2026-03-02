@@ -43,7 +43,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 b' ' | b'\t' | b'\r' => {
                     self.advance(); // TODO: make it first by simd
                     continue;
-                },
+                }
                 b'\n' => {
                     self.advance();
                     self.current_line += 1;
@@ -74,10 +74,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             }
         }
 
-        tokens.push((
-            Token::EndOfFile,
-            Span::new(self.now_pos(), self.now_pos()),
-        ));
+        tokens.push((Token::EndOfFile, Span::new(self.now_pos(), self.now_pos())));
 
         (tokens, errors)
     }
@@ -106,7 +103,11 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     }
 
     fn now_pos(&self) -> PosOnSource {
-        PosOnSource { line: self.current_line, column: self.current_column, absolute: self.current_pos }
+        PosOnSource {
+            line: self.current_line,
+            column: self.current_column,
+            absolute: self.current_pos,
+        }
     }
 
     #[inline]
