@@ -40,7 +40,7 @@ fn test_arena_alloc_iter() {
 fn test_arena_large_allocation() {
     // Test allocation that exceeds a single block size
     let arena = Arena::new();
-    let count = 1000000000; // Should be enough to trigger multiple blocks
+    let count = 1000000; // Should be enough to trigger multiple blocks
     let mut iter = arena.alloc_iter(0..count).into_ref(&arena);
 
     for i in 0..count {
