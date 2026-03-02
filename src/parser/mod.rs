@@ -42,13 +42,13 @@ pub struct Ast<'src> {
 }
 
 impl<'src> Ast<'src> {
-    fn new(ast: generated_ast::Module, arena: Arena, source_holder: SourceHolder<'src>) -> Self {
+    fn new(ast: generated_ast::Module, arena: Arena, source_holder: SourceHolder<'src>, symbols: SymbolFactory<'src>) -> Self {
         let ast = arena.alloc(ast);
         Self {
             ast,
             diagnostics: Vec::new(),
             ast_arena: arena,
-            symbols: SymbolFactory::new(SourceHolder::new("")),
+            symbols,
             source_holder,
         }
     }
