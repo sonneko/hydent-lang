@@ -155,7 +155,7 @@ impl std::fmt::Display for Token {
             Self::Comment(_) => write!(f, "comment"),
             Self::Delimiter(delimiter) => write!(f, "{}", delimiter),
             Self::EndOfFile => write!(f, "EOF"),
-            Self::Identifier(_) => write!(f, "identifier"),
+            Self::Identifier(symbol) => write!(f, "identifier ({})", symbol.raw()),
             Self::Keyword(keyword) => write!(f, "{} keyword", keyword),
             Self::Literal(literal) => write!(f, "{}", literal),
             Self::Operator(operator) => write!(f, "{} operator", operator),

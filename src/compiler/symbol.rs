@@ -9,7 +9,7 @@
 //! lightweight numeric IDs. This makes comparisons, hashing, and storage much
 //! more efficient.
 
-use crate::compiler::source_holder::SourceHolder;
+use crate::compiler::{source_holder::SourceHolder, span::PosOnSource};
 use std::collections::HashMap;
 
 use crate::compiler::span::{Span, SpanWithRef};
@@ -26,6 +26,12 @@ const RECIPROCAL_OF_USUAL_SYMBOL_NUM_PER_LENGTH: usize = 120;
 /// compared for equality.
 #[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]
 pub struct Symbol(u32);
+
+impl Symbol {
+    pub fn raw(&self) -> u32 {
+        self.0
+    }
+}
 
 /// A factory for creating and managing symbols.
 ///
@@ -112,7 +118,7 @@ impl<'src> SymbolFactory<'src> {
     ///
     /// The `Symbol` for the given string slice.
     #[inline]
-    pub fn from_range(&mut self, begin: usize, end: usize) -> Symbol {
+    pub fn from_range(&mut self, begin: PosOnSource, end: PosOnSource) -> Symbol {
         self.from_span(Span::new(begin, end))
     }
 
