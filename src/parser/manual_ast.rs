@@ -1,7 +1,10 @@
 use crate::{
     compiler::{span::Span, symbol::Symbol},
-    parser::ast_node::{ASTNode, TokenBitMap},
-    parser::errors::ParseErr,
+    parser::{
+        ast_node::{ASTNode, TokenBitMap},
+        errors::ParseErr,
+    },
+    utility::hashable_float::HashableFloat,
 };
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
@@ -15,16 +18,24 @@ pub struct StringLiteral {
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct CharLiteral {}
+pub struct CharLiteral {
+    pub value: char,
+}
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct IntLiteral {}
+pub struct IntLiteral {
+    pub value: i32,
+}
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct FloatLiteral {}
+pub struct FloatLiteral {
+    pub value: HashableFloat<f32>,
+}
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
-pub struct BoolLiteral {}
+pub struct BoolLiteral {
+    pub value: bool,
+}
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct DocComment {

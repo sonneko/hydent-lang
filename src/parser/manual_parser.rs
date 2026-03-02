@@ -38,6 +38,7 @@ impl GeneratedParser for Parser<'_> {
     }
     fn parse_DocComment(&mut self) -> Result<generated_ast::DocComment, Self::Error> {
         if let Some(Token::Comment(Comment::DocComment(span))) = self.peek::<0>() {
+            self.consume_token();
             Ok(generated_ast::DocComment { span })
         } else {
             Err(Self::Error::build(
@@ -50,18 +51,58 @@ impl GeneratedParser for Parser<'_> {
     }
 
     fn parse_CharLiteral(&mut self) -> Result<generated_ast::CharLiteral, Self::Error> {
-        unimplemented!()
+        if let Some(Token::Literal(Literal::CharLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::CharLiteral { value })
+        } else {
+            Err(Self::Error::build(
+                self.get_errors_arena(),
+                false,
+                &[],
+                self.enviroment(),
+            ))
+        }
     }
 
     fn parse_IntLiteral(&mut self) -> Result<generated_ast::IntLiteral, Self::Error> {
-        unimplemented!()
+        if let Some(Token::Literal(Literal::IntegerLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::IntLiteral { value })
+        } else {
+            Err(Self::Error::build(
+                self.get_errors_arena(),
+                false,
+                &[],
+                self.enviroment(),
+            ))
+        }
     }
 
     fn parse_FloatLiteral(&mut self) -> Result<generated_ast::FloatLiteral, Self::Error> {
-        unimplemented!()
+        if let Some(Token::Literal(Literal::FloatLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::FloatLiteral { value })
+        } else {
+            Err(Self::Error::build(
+                self.get_errors_arena(),
+                false,
+                &[],
+                self.enviroment(),
+            ))
+        }
     }
 
     fn parse_BoolLiteral(&mut self) -> Result<generated_ast::BoolLiteral, Self::Error> {
-        unimplemented!()
+        if let Some(Token::Literal(Literal::BoolLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::BoolLiteral { value })
+        } else {
+            Err(Self::Error::build(
+                self.get_errors_arena(),
+                false,
+                &[],
+                self.enviroment(),
+            ))
+        }
     }
 }
