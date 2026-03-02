@@ -255,6 +255,7 @@ class Generator {
         ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
         ret += `        visitor.visit_${func.astTypeName}(self)\n`;
         ret += `    }\n`
+        ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
         ret += `}\n\n`;
 
         ret += `impl ${func.astTypeName} {\n`;
@@ -332,7 +333,8 @@ class Generator {
         ret += `    }\n\n`;
         ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
         ret += `        visitor.visit_${func.astTypeName}(self)\n`;
-        ret += `    }\n`
+        ret += `    }\n`;
+        ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
         ret += `}\n\n`;
 
 

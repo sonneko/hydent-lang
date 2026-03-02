@@ -22,6 +22,8 @@ pub trait ASTNode:
     fn is_first_sets(token: &Option<Token>) -> bool {
         Self::FIRST_SETS.contains(token)
     }
+
+    fn name() -> &'static str;
 }
 
 pub struct TokenBitMap {
