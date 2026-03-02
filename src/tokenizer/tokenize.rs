@@ -68,7 +68,9 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             match next {
                 Ok(token) => tokens.push((token, Span::new(begin, self.now_pos()))),
                 Err(err) => {
-                    errors.push((err, Span::new(begin, self.now_pos())));
+                    if errors.len() < 100 {
+                        errors.push((err, Span::new(begin, self.now_pos())));
+                    }
                     tokens.push((Token::Invalid, Span::new(begin, self.now_pos())));
                 }
             }
@@ -100,6 +102,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     #[inline(always)]
     fn advance_n(&mut self, n: usize) {
         self.current_pos += n;
+        self.current_column += n;
     }
 
     fn now_pos(&self) -> PosOnSource {
@@ -345,6 +348,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 4
             };
             self.current_pos = std::cmp::min(self.current_pos + len, self.input.len());
+            self.current_column += len;
         }
     }
 }
