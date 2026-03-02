@@ -17,6 +17,7 @@ impl<'ctx> Parser<'ctx> {
         Self { ctx, tokens }
     }
 
+    #[allow(clippy::result_large_err)] // WARNING
     pub fn parse(mut self) -> Result<ArenaBox<Module>, ParseErr> {
         match self.parse_Module() {
             Ok(module) => Ok(self.ctx.ast_arena.alloc(module)),
