@@ -18,12 +18,13 @@ fn parse(source: &str) {
     let mut symbols = SymbolFactory::new(SourceHolder::new(&source));
     let tokenizer = Tokenizer::new(&source, &mut symbols);
     let (tokens, errors) = tokenizer.tokenize();
-    println!("tokenized.");
+    let stream = TokenStream::new(tokens);
+    println!("{}", stream);
     let mut ast_arena = Arena::new();
     let mut errors_arena = Arena::new();
     let ast = {
         let mut parser = Parser::new(
-            TokenStream::new(tokens),
+            stream,
             CompilerFrontendContext {
                 source: SourceHolder::new(&source),
                 symbol_factory: &mut symbols,
@@ -35,21 +36,20 @@ fn parse(source: &str) {
         ast
     };
     println!("parsed.");
-    let ast = Ast::new(ast.unwrap(), ast_arena, SourceHolder::new(&source));
+    let ast = Ast::new(ast.unwrap(), ast_arena, SourceHolder::new(&source), symbols);
+    println!("{}", ast);
 }
 
 #[test]
 fn test_parse() {
     parse(
         r#"
-import { Result, Ok, Err } from "std/result" ;
+import { Result, Ok, Err } from "std/result";
 import { Option, Some, None } from "std/option";
 
 class UserError {
     message: String;
 
-    #summary "get user name"
-    #panics "content is empty"
     try fn get_name(self): String {
         if self.name.is_empty() {
             panic("user is empty");
@@ -57,10 +57,6 @@ class UserError {
         return self.name;
     }
 
-    #summary "represents verified users"
-    #params name: "user name not empty"
-    #returns "new users or error"
-    #side_effects "print to std output"
     pub fn new(name: String): Result<Self, UserError> {
         if name.is_empty() {
             return Err(UserError { message: "name is empty" });
@@ -83,3 +79,4 @@ fn main() {
     "#,
     )
 }
+

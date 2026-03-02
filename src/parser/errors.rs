@@ -8,6 +8,12 @@ pub struct ParseErr {
     found: Enviroment,
 }
 
+impl std::fmt::Display for ParseErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "expected {:?}, found {:?}", self.expected, self.found.current)
+    }
+}
+
 pub trait IParseErr {
     fn build<const N: usize>(
         arena: &Arena,

@@ -55,3 +55,14 @@ impl std::iter::Iterator for TokenStream {
         next
     }
 }
+
+impl std::fmt::Display for TokenStream {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut i = 0;
+        while let Some(token) = self.peek(i) {
+            write!(f, "{} in {}\n", token.0, token.1)?;
+            i += 1;
+        }
+        Ok(())
+    }
+}
