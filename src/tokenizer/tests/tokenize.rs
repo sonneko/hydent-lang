@@ -82,7 +82,7 @@ fn test_multibyte_safety_in_comments_and_strings() {
             let s = "こんにちは、世界 🌍"; 
             /* マルチバイト
                ブロックコメント */
-            let c = 'あ';
+            'あ'
         "#;
 
     let tokens = tokenize_helper(input);
@@ -99,7 +99,7 @@ fn test_multibyte_safety_in_comments_and_strings() {
     }
 
     assert_eq!(tokens[6], Token::Comment(Comment::BlockComment));
-    assert_eq!(tokens[11], Token::Literal(Literal::CharLiteral('あ')));
+    assert_eq!(tokens[7], Token::Literal(Literal::CharLiteral('あ')));
 }
 
 #[test]

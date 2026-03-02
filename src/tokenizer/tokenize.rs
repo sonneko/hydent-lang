@@ -46,7 +46,13 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 b'\'' => self.read_char_literal(),
                 b'/' if self.peek_at(1) == Some(b'/') => self.read_line_comment(),
                 b'/' if self.peek_at(1) == Some(b'*') => self.read_block_comment(),
-                _ => self.read_operator_or_delimiter(),
+                _ => {
+                    let token = self.read_operator_or_delimiter();
+                    if token.is_err() {
+                        self.advance_utf8_char();
+                    }
+                    token
+                }
             };
 
             match next {
@@ -206,7 +212,8 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                     return Ok(Token::Literal(Literal::StringLiteral(span)));
                 }
                 b'\\' => {
-                    self.advance_n(2);
+                    self.advance(); // \
+                    self.advance_utf8_char();
                 }
                 _ => {
                     self.advance();
@@ -235,9 +242,16 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                     _ => return Err(TokenizeErr::InvalidCharLiteral(start)),
                 }
             }
-            Some(b) => {
-                self.advance();
-                b as char
+            Some(_) => {
+                let remaining = &self.input[self.current_pos..];
+                let s = std::str::from_utf8(remaining)
+                    .map_err(|_| TokenizeErr::InvalidCharLiteral(start))?;
+                let c = s
+                    .chars()
+                    .next()
+                    .ok_or(TokenizeErr::CharLiteralNotClosed(start))?;
+                self.advance_n(c.len_utf8());
+                c
             }
             None => return Err(TokenizeErr::CharLiteralNotClosed(start)),
         };
@@ -299,5 +313,20 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     fn read_operator_or_delimiter(&mut self) -> Result<Token, TokenizeErr> {
         scan_operator_or_delimiter(self)
+    }
+
+    fn advance_utf8_char(&mut self) {
+        if let Some(&b) = self.input.get(self.current_pos) {
+            let len = if b < 0x80 {
+                1
+            } else if b < 0xE0 {
+                2
+            } else if b < 0xF0 {
+                3
+            } else {
+                4
+            };
+            self.current_pos = std::cmp::min(self.current_pos + len, self.input.len());
+        }
     }
 }

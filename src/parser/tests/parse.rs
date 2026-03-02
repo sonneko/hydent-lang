@@ -38,12 +38,11 @@ fn parse(source: &str) {
     let ast = Ast::new(ast.unwrap(), ast_arena, SourceHolder::new(&source));
 }
 
-// #[test]
-#[cfg(miri)]
+#[test]
 fn test_parse() {
     parse(
         r#"
-import { Result, Ok, Err } from "std/result";
+import { Result, Ok, Err } from "std/result" ;
 import { Option, Some, None } from "std/option";
 
 class UserError {
