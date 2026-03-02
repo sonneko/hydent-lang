@@ -124,6 +124,7 @@ pub enum Operator {
 #[derive(Debug, PartialEq, Clone, Copy, Hash)]
 #[repr(u8)]
 pub enum Delimiter {
+    Sharp,        // #
     Semicolon,    // ;
     LeftBrace,    // {
     RightBrace,   // }
@@ -166,6 +167,7 @@ impl std::fmt::Display for Token {
 impl std::fmt::Display for Delimiter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::Sharp => write!(f, "#"),
             Self::Semicolon => write!(f, ";"),
             Self::LeftBrace => write!(f, "{{"),
             Self::RightBrace => write!(f, "}}"),

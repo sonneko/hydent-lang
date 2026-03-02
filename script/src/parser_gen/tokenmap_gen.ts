@@ -28,8 +28,7 @@ export function generateTokenTypeMap() {
     ret += `    }\n`;
     ret += `}\n\n`;
 
-    const operators = allTokens.filter(([literal, token]) =>
-        !literal.includes("#") &&
+    const operators = allTokens.filter(([_, token]) =>
         (token.includes("Operator") || token.includes("Delimiter"))
     );
     ret += `pub fn scan_operator_or_delimiter(tokenizer: &mut Tokenizer<'_, '_>) -> Result<Token, TokenizeErr> {\n`;

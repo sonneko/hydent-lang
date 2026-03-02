@@ -87,6 +87,7 @@
 "~", "Token::Operator(Operator::BitwiseNot)"
 ".", "Token::Operator(Operator::MemberAccess)"
 "_", "Token::Operator(Operator::Wildcard)"
+"#", "Token::Delimiter(Delimiter::Sharp)"
 ";", "Token::Delimiter(Delimiter::Semicolon)"
 "{", "Token::Delimiter(Delimiter::LeftBrace)"
 "}", "Token::Delimiter(Delimiter::RightBrace)"
