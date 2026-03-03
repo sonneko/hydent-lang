@@ -15,17 +15,19 @@ impl ErrorPool {
     {
         self.errors.push(Box::new(error));
     }
-
-    fn show(self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for error in self.errors {
-            // TODO
-        }
-        Ok(())
-    }
 }
 
 impl Default for ErrorPool {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl std::fmt::Display for ErrorPool {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for error in &self.errors {
+            writeln!(f, "{:?}", error)?;
+        }
+        Ok(())
     }
 }

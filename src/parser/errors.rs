@@ -19,20 +19,20 @@ impl std::fmt::Display for ParseErr {
 }
 
 pub trait IParseErr {
-    fn build<const N: usize>(
+    fn build(
         arena: &Arena,
         identifier: bool,
-        expected: &'static [Token; N],
+        expected: &'static [Token],
         found: Enviroment,
     ) -> Self;
     fn is_endoffile_error(&self) -> bool;
 }
 
 impl IParseErr for ParseErr {
-    fn build<const N: usize>(
+    fn build(
         arena: &Arena,
         identifier: bool,
-        expected: &'static [Token; N],
+        expected: &'static [Token],
         found: Enviroment,
     ) -> Self {
         Self { expected, found }

@@ -40,7 +40,7 @@ pub enum DiagnosticLevel {
 /// Implementors of this trait provide details about a specific diagnostic
 /// issue, including its error code, severity level, primary message and span,
 /// additional highlights, notes, and suggestions for resolution.
-pub trait CompilerDiagnostic: Send + Sync + 'static {
+pub trait CompilerDiagnostic: Send + Sync + 'static + std::fmt::Debug {
     /// Returns the unique error code for this diagnostic.
     ///
     /// This code is typically used for referencing documentation or for filtering diagnostics.

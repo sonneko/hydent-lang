@@ -82,9 +82,19 @@ impl BaseParser for Parser<'_, '_> {
                 T::is_follow_sets(&next_token),
             ) {
                 (true, true) => {
-                    self.ctx.ast_arena.finish_iter_allocation::<T>();
-                    // WARNING: you should cover with manual_parser.
-                    panic!("Internal Error: Invalid grammar. {:?}", next_token);
+                    // first follow conflict occured
+                    // can't judge whether it is end of list or new character
+                    // expect to this is end of list
+                    match self.backtrack(&mut parser_fn) {
+                        Ok(node) => {
+                            self.ctx.ast_arena.alloc_iter_item(&node);
+                            continue;
+                        }
+                        Err(err) => {
+                            // it's new character
+                            break Ok(self.ctx.ast_arena.finish_iter_allocation());
+                        }
+                    }
                 }
                 (true, false) => {
                     // list continue

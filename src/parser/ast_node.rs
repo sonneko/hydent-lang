@@ -6,7 +6,9 @@ pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
     const FOLLOW_SETS: TokenBitMap;
-    const FIRST_SETS: TokenBitMap;
+    const FIRST_1_SETS: TokenBitMap;
+    const FIRST_2_SETS: TokenBitMap;
+    
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
     fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
@@ -20,7 +22,7 @@ pub trait ASTNode:
     }
 
     fn is_first_sets(token: &Option<Token>) -> bool {
-        Self::FIRST_SETS.contains(token)
+        Self::FIRST_1_SETS.contains(token)
     }
 
     fn name() -> &'static str;

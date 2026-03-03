@@ -102,11 +102,17 @@ export class Analyzer {
             }
         }
         this.computeCycle(funcs);
+        this.checkLL2Confilict(funcs);
 
+        return funcs;
+    }
+
+    public checkLL2Confilict(funcs: IR) {
         const allRules = this.grammar.map(v => v.name);
         allRules.forEach(name => {
             const firstSets = this.firstSets.get(name)!;
             const followSets = this.followSets.get(name)!;
+            // TODO
             const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
             if (intersection.size !== 0) {
                 console.warn(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
@@ -115,14 +121,12 @@ export class Analyzer {
                     .filter(v => v.astTypeName === name)
                     .forEach(s => s.firstAndFollowConflict = true);
                 if (this.nullable.has(name)) {
-                    console.error(`❌ LL(1) Conflict in Nullable Rule "${name}":`);
+                    console.error(`❌ LL(2) Conflict in Nullable Rule "${name}":`);
                     console.error(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")}`);
                     throw new Error("Grammar conflict");
                 }
             }
         });
-
-        return funcs;
     }
 
     public computeNullable() {
