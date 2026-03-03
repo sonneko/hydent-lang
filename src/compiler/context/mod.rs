@@ -70,8 +70,4 @@ pub trait CompilerContext: Sized + Mergeble {
     /// Transitions the current compiler context to the next phase of the compilation process.
     /// This method consumes the current context and returns a new context suitable for the next stage.
     fn next_fase(self) -> Self::NextFase;
-
-    /// Returns a reference to the source holder, which contains the original source code
-    /// and possibly metadata about it.
-    fn get_source(&self) -> &SourceHolder<'_>;
 }

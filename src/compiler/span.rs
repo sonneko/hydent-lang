@@ -14,22 +14,9 @@ use crate::compiler::source_holder::SourceHolder;
 #[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
 pub struct Span {
     /// The starting byte index of the span.
-    begin: PosOnSource,
+    pub begin: u32,
     /// The ending byte index of the span.
-    end: PosOnSource,
-}
-
-#[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
-pub struct PosOnSource {
-    pub line: usize,
-    pub column: usize,
-    pub absolute: usize,
-}
-
-impl std::fmt::Display for PosOnSource {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}", self.line, self.column)
-    }
+    pub end: u32,
 }
 
 /// Implementation of `Span` for creating and manipulating source code regions.
@@ -39,8 +26,11 @@ impl std::fmt::Display for PosOnSource {
 /// actual source code segment.
 impl Span {
     /// Creates a new `Span`.
-    pub fn new(begin: PosOnSource, end: PosOnSource) -> Self {
-        Self { begin, end }
+    pub fn new(begin: usize, end: usize) -> Self {
+        Self {
+            begin: begin as u32,
+            end: end as u32,
+        }
     }
 
     /// Creates a `SpanWithRef` from this `Span`.
@@ -49,11 +39,10 @@ impl Span {
     /// source code it refers to. This is useful for situations where you
     /// need to access the source code of a span without having to pass
     /// around a `SourceHolder` separately.
-    pub fn with_ref<'src>(self, src: SourceHolder<'src>) -> SpanWithRef<'src> {
-        SpanWithRef {
-            span: self,
-            reference: &src.get_source_ref().as_bytes()[self.begin.absolute..self.end.absolute],
-        }
+    pub fn into(self, src: &str) -> &str {
+        let bytes = &src.as_bytes()[self.begin as usize..self.end as usize];
+        let reference = std::str::from_utf8(bytes).expect("Invalid UTF-8");
+        reference
     }
 }
 
@@ -62,40 +51,3 @@ impl std::fmt::Display for Span {
         write!(f, "{}..{}", self.begin, self.end)
     }
 }
-
-/// A `Span` with a reference to the source code it refers to.
-#[derive(Clone, Copy)]
-pub struct SpanWithRef<'src> {
-    /// The underlying span.
-    span: Span,
-    /// A reference to the source code of the span.
-    reference: &'src [u8],
-}
-
-impl<'src> SpanWithRef<'src> {
-    pub fn get_ref(&self) -> &'src [u8] {
-        self.reference
-    }
-}
-
-/// Implementation of `Hash` for `SpanWithRef` to allow hashing based on the referenced string.
-impl<'src> Hash for SpanWithRef<'src> {
-    /// Hashes the `SpanWithRef` instance using the hash of its `reference` field.
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.reference.hash(state);
-    }
-}
-
-/// Implementation of `PartialEq` for `SpanWithRef` to allow comparison based on the referenced string.
-impl<'src> PartialEq for SpanWithRef<'src> {
-    /// Compares two `SpanWithRef` instances for equality based on their referenced strings.
-    fn eq(&self, other: &Self) -> bool {
-        self.reference == other.reference
-    }
-}
-
-/// Implementation of `Eq` for `SpanWithRef`.
-///
-/// This trait can be implemented automatically for types that
-/// implement `PartialEq` and for which `eq` implies `hash` equality.
-impl<'src> Eq for SpanWithRef<'src> {}

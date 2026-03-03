@@ -9,7 +9,7 @@ use crate::tokenizer::tokens::Comment;
 use crate::tokenizer::tokens::Literal;
 use crate::tokenizer::tokens::Token;
 
-impl GeneratedParser for Parser<'_> {
+impl GeneratedParser for Parser<'_, '_> {
     fn parse_Identifier(&mut self) -> Result<generated_ast::Identifier, Self::Error> {
         if let Some(Token::Identifier(symbol)) = self.peek::<0>() {
             self.consume_token();

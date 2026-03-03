@@ -46,7 +46,7 @@ pub struct Enviroment {
     pub span: Span,
 }
 
-impl BaseParser for Parser<'_> {
+impl BaseParser for Parser<'_, '_> {
     type Error = ParseErr;
     fn alloc_box<T: ASTNode>(
         &mut self,
@@ -84,7 +84,7 @@ impl BaseParser for Parser<'_> {
                 (true, true) => {
                     self.ctx.ast_arena.finish_iter_allocation::<T>();
                     // WARNING: you should cover with manual_parser.
-                    panic!("Internal Error: Invalid grammar. {:?}", next_token)
+                    panic!("Internal Error: Invalid grammar. {:?}", next_token);
                 }
                 (true, false) => {
                     // list continue
@@ -116,7 +116,13 @@ impl BaseParser for Parser<'_> {
                     // must occure error
                     let err = parser_fn(self).unwrap_err();
                     self.report_error(err);
-                    self.consume_token();
+                    println!("{}", T::name());
+                    while let Some(t) = self.peek::<0>() {
+                        if T::is_sync_point(&Some(t)) {
+                            break;
+                        }
+                        self.consume_token();
+                    }
                 }
             }
         }

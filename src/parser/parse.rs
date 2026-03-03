@@ -7,13 +7,16 @@ use crate::parser::generated_parser::GeneratedParser;
 use crate::tokenizer::token_stream;
 use crate::tokenizer::{token_stream::TokenStream, tokens::Token};
 
-pub struct Parser<'ctx> {
-    pub ctx: CompilerFrontendContext<'ctx>,
+pub struct Parser<'ctx, 'src> {
+    pub ctx: CompilerFrontendContext<'ctx, 'src>,
     pub tokens: TokenStream,
 }
 
-impl<'ctx> Parser<'ctx> {
-    pub fn new(tokens: TokenStream, ctx: CompilerFrontendContext<'ctx>) -> Parser<'ctx> {
+impl<'ctx, 'src> Parser<'ctx, 'src> {
+    pub fn new(
+        tokens: TokenStream,
+        ctx: CompilerFrontendContext<'ctx, 'src>,
+    ) -> Parser<'ctx, 'src> {
         Self { ctx, tokens }
     }
 

@@ -10,9 +10,9 @@ use crate::compiler::symbol::SymbolFactory;
 /// This struct encapsulates all the necessary data and utilities
 /// required during the frontend phase of compilation, such as
 /// managing source code, symbols, and AST allocation.
-pub struct CompilerFrontendContext<'ctx> {
-    pub source: SourceHolder<'ctx>,
-    pub symbol_factory: &'ctx SymbolFactory<'ctx>,
+pub struct CompilerFrontendContext<'ctx, 'src> {
+    pub source: &'src str,
+    pub symbol_factory: &'ctx mut SymbolFactory<'src>,
     pub ast_arena: &'ctx Arena,
     pub errors_arena: &'ctx Arena,
 }
@@ -22,7 +22,7 @@ pub struct CompilerFrontendContext<'ctx> {
 /// This allows instances of `CompilerFrontendContext` to be merged,
 /// which is useful for combining contexts from different compilation units
 /// or parallel processing.
-impl Mergeble for CompilerFrontendContext<'_> {
+impl Mergeble for CompilerFrontendContext<'_, '_> {
     /// Merges this context with another `CompilerFrontendContext`.
     ///
     /// The specific merging logic is currently unimplemented.
@@ -37,7 +37,7 @@ impl Mergeble for CompilerFrontendContext<'_> {
 /// This provides the necessary interface for the frontend context to
 /// participate in the overall compilation pipeline, defining its next phase
 /// and how to access the source holder.
-impl CompilerContext for CompilerFrontendContext<'_> {
+impl<'src> CompilerContext for CompilerFrontendContext<'_, 'src> {
     type NextFase = CompilerMiddleendContext;
 
     /// Transitions the current frontend context to the next compilation phase, which is the middle-end.
@@ -47,20 +47,13 @@ impl CompilerContext for CompilerFrontendContext<'_> {
         // TODO
         unimplemented!()
     }
-
-    /// Returns a reference to the `SourceHolder` managed by this context.
-    ///
-    /// This provides access to the source code and related information.
-    fn get_source(&self) -> &SourceHolder<'_> {
-        &self.source
-    }
 }
 
 /// Implementation of `CompilerFrontendContext` for managing frontend-specific operations.
 ///
 /// This block provides methods for constructing the frontend context,
 /// and accessing its internal components like the arena allocator.
-impl<'ctx> CompilerFrontendContext<'ctx> {
+impl<'ctx, 'src> CompilerFrontendContext<'ctx, 'src> {
     /// Creates a new `CompilerFrontendContext` instance.
     ///
     /// Initializes the context with a new `SourceHolder`, `SymbolFactory`,
@@ -74,15 +67,14 @@ impl<'ctx> CompilerFrontendContext<'ctx> {
     ///
     /// A new `CompilerFrontendContext` instance.
     pub fn new(
-        source: &'ctx str,
+        source: &'src str,
         ast_arena: &'ctx Arena,
         errors_arena: &'ctx Arena,
-        symbol_factory: &'ctx SymbolFactory<'ctx>,
-    ) -> CompilerFrontendContext<'ctx> {
-        let source_holder = SourceHolder::new(source);
+        symbol_factory: &'ctx mut SymbolFactory<'src>,
+    ) -> CompilerFrontendContext<'ctx, 'src> {
         Self {
-            source: source_holder,
             symbol_factory,
+            source,
             ast_arena,
             errors_arena,
         }

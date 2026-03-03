@@ -15,18 +15,17 @@ use crate::{
 
 fn parse(source: &str) {
     let source = String::from(source);
-    let mut symbols = SymbolFactory::new(SourceHolder::new(&source));
+    let mut symbols = SymbolFactory::new(&source);
     let tokenizer = Tokenizer::new(&source, &mut symbols);
-    let (tokens, errors) = tokenizer.tokenize();
+    let (tokens, errors, line_starts) = tokenizer.tokenize();
     let stream = TokenStream::new(tokens);
-    println!("{}", stream);
     let mut ast_arena = Arena::new();
     let mut errors_arena = Arena::new();
     let ast = {
         let mut parser = Parser::new(
             stream,
             CompilerFrontendContext {
-                source: SourceHolder::new(&source),
+                source: &source,
                 symbol_factory: &mut symbols,
                 ast_arena: &mut ast_arena,
                 errors_arena: &mut errors_arena,
@@ -36,7 +35,12 @@ fn parse(source: &str) {
         ast
     };
     println!("parsed.");
-    let ast = Ast::new(ast.unwrap(), ast_arena, SourceHolder::new(&source), symbols);
+    let ast = Ast::new(
+        ast.unwrap(),
+        ast_arena,
+        SourceHolder::new(&source, line_starts),
+        symbols,
+    );
     println!("{}", ast);
 }
 
@@ -48,16 +52,16 @@ import { Result, Ok, Err } from "std/result";
 import { Option, Some, None } from "std/option";
 
 class UserError {
-    message: String;
+    final message: String;
 
-    try fn get_name(self): String {
+    pub fn get_name(self) -> String {
         if self.name.is_empty() {
             panic("user is empty");
         }
         return self.name;
     }
 
-    pub fn new(name: String): Result<Self, UserError> {
+    pub fn new(name: String) -> Result<Self, UserError> {
         if name.is_empty() {
             return Err(UserError { message: "name is empty" });
         }

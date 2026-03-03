@@ -4,10 +4,9 @@ use crate::tokenizer::tokenize::Tokenizer;
 use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
 
 fn tokenize_helper(input: &str) -> Vec<Token> {
-    let source_holder = SourceHolder::new(input);
-    let mut symbol_factory = SymbolFactory::new(source_holder);
+    let mut symbol_factory = SymbolFactory::new(input);
     let tokenizer = Tokenizer::new(input, &mut symbol_factory);
-    let (tokens, _) = tokenizer.tokenize();
+    let (tokens, _, _) = tokenizer.tokenize();
     tokens.into_iter().map(|(token, _)| token).collect()
 }
 
