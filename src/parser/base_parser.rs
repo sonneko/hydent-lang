@@ -88,16 +88,18 @@ impl BaseParser for Parser<'_, '_> {
                 T::is_follow_sets(&next_token),
             ) {
                 (true, true) => {
-                    // first follow conflict occured
-                    // can't judge whether it is end of list or new character
-                    // expect to this is end of list
+                    let p1 = self.peek::<1>();
+
+                    if !T::FIRST_2_SETS.contains(&p1) {
+                        break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+                    }
+
                     match self.backtrack(&mut parser_fn) {
                         Ok(node) => {
                             self.ctx.ast_arena.alloc_iter_item(&node);
                             continue;
                         }
-                        Err(err) => {
-                            // it's new character
+                        Err(_) => {
                             break Ok(self.ctx.ast_arena.finish_iter_allocation());
                         }
                     }
