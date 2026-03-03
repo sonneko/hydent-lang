@@ -24,6 +24,7 @@ class Generator {
         ret += `// ==========================================\n\n`;
         ret += `use crate::compiler::symbol::Symbol;\n`;
         ret += `use crate::parser::base_parser::BaseParser;\n`;
+        ret += `use crate::parser::ast_node::ASTNode;\n`;
         ret += `use crate::parser::errors::IParseErr;\n`;
         ret += `use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Comment, Token};\n\n`;
         ret += `#[allow(clippy::wildcard_imports)]\n`;
@@ -36,88 +37,75 @@ class Generator {
     }
 
     private generateBranchParseFunction(func: BranchParserFunction): string {
+        const variants = this.getUniqueVariants(func);
         let ret = "";
         ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {\n`;
 
-        // Handle empty branches (edge case)
-        if (func.branchesJudgebleInPeek0.length === 0 &&
-            func.branchesJudgebleInPeek1.length === 0 &&
-            (func.branchesFallbackInPeek1 || []).length === 0 &&
-            func.branchesNeedBacktrack.length === 0) {
+        if (variants.length === 0) {
             ret += `        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
             ret += `    }\n`;
             return ret;
         }
 
-        ret += `        match self.peek::<0>() {\n`;
+        ret += `        let p0 = self.peek::<0>();\n\n`;
 
-        // 1. Simple Peek<0> matches
-        for (const branch of func.branchesJudgebleInPeek0.sort()) {
-            if (branch.isBoxed) {
-                ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
-            } else {
-                ret += `            Some(${branch.firstTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
-            }
+        // 1. 各バリアントの FIRST 集合に含まれるかを判定 (高速なビットマップ演算)
+        for (const v of variants) {
+            ret += `        let is_${v.name}_1 = ${v.name}::is_first_sets(&p0);\n`;
         }
 
-        // 2. Complex matches (Peek<1> required or Backtrack required)
-        const complexFirstTerminals = [...new Set([
-            ...func.branchesJudgebleInPeek1.map(b => b.firstTerminal),
-            ...func.branchesNeedBacktrack.map(b => b.firstTerminal),
-            ...(func.branchesFallbackInPeek1 || []).map(b => b.firstTerminal)
-        ])];
+        // 2. マッチしたバリアントの数をカウント
+        ret += `        let count_1 = 0\n`;
+        for (const v of variants) {
+            ret += `            + (is_${v.name}_1 as u8)\n`;
+        }
+        ret += `        ;\n\n`;
 
-        for (const t0 of complexFirstTerminals.sort()) {
-            ret += `            Some(${t0.replace(/\$.*\$/, "_")}) => {\n`;
-            ret += `                match self.peek::<1>() {\n`;
-
-            const peek1 = func.branchesJudgebleInPeek1.filter(b => b.firstTerminal === t0);
-            for (const branch of peek1.sort()) {
-                if (branch.isBoxed) {
-                    ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.alloc_box(|this| this.parse_${branch.astTypeName}())?)),\n`;
-                } else {
-                    ret += `                    Some(${branch.secondTerminal.replace(/\$.*\$/, "_")}) => Ok(${func.astTypeName}::${branch.astTypeName}(self.parse_${branch.astTypeName}()?)),\n`;
-                }
-            }
-
-            const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
-            if (backtrack.length > 0) {
-                ret += `                    _ => {\n`;
-                for (const b of backtrack) {
-                    ret += `                        if let Ok(node) = self.backtrack(|this| this.parse_${b.astTypeName}()) {\n`;
-                    ret += `                            return Ok(${func.astTypeName}::${b.astTypeName}(node));\n`;
-                    ret += `                        };\n`;
-                }
-                ret += `                        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))`;
-                ret += `                    }\n`;
+        // 3. コンフリクトなし: バックトラックのオーバーヘッドなしで即座にパース
+        ret += `        if count_1 == 1 {\n`;
+        for (const v of variants) {
+            let parseCall = v.isBoxed ? `self.alloc_box(|this| this.parse_${v.name}())?` : `self.parse_${v.name}()?`;
+            ret += `            if is_${v.name}_1 { return Ok(${func.astTypeName}::${v.name}(${parseCall})); }\n`;
+        }
+        
+        // 4. コンフリクトあり: 候補となったバリアントのみバックトラックで試行
+        ret += `        } else if count_1 > 1 {\n`;
+        for (const v of variants) {
+            ret += `            if is_${v.name}_1 {\n`;
+            ret += `                if let Ok(node) = self.backtrack(|this| this.parse_${v.name}()) {\n`;
+            if (v.isBoxed) {
+                ret += `                    return Ok(${func.astTypeName}::${v.name}(self.alloc(node)));\n`;
             } else {
-                const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
-                if (fallback) {
-                    if (fallback.isBoxed) {
-                        ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.alloc_box(|this| this.parse_${fallback.astTypeName}())?),\n`;
-                    } else {
-                        ret += `                    _ => Ok(${func.astTypeName}::${fallback.astTypeName}(self.parse_${fallback.astTypeName}()?)),\n`;
-                    }
-                } else {
-                    ret += `                    _ => Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment())),\n`;
-                }
+                ret += `                    return Ok(${func.astTypeName}::${v.name}(node));\n`;
             }
-
             ret += `                }\n`;
-            ret += `            },\n`;
+            ret += `            }\n`;
+        }
+        ret += `        }\n\n`;
+
+        // 5. フォールバック:
+        // Nullable (空一致) なバリアントが存在し、FIRST集合に入らずFOLLOW集合でマッチしたケースなどを救済する
+        ret += `        // Fallback for nullable or unpredicted cases\n`;
+        for (const v of variants) {
+            ret += `        if let Ok(node) = self.backtrack(|this| this.parse_${v.name}()) {\n`;
+            if (v.isBoxed) {
+                ret += `            return Ok(${func.astTypeName}::${v.name}(self.alloc(node)));\n`;
+            } else {
+                ret += `            return Ok(${func.astTypeName}::${v.name}(node));\n`;
+            }
+            ret += `        }\n`;
         }
 
-        // 3. Error Case
-        ret += `            _ => Err(Self::Error::build(\n`;
-        ret += `                self.get_errors_arena(),\n`;
-        ret += `                ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
+        // 6. 全て失敗した場合はエラー
+        ret += `\n        Err(Self::Error::build(\n`;
+        ret += `            self.get_errors_arena(),\n`;
+        ret += `            ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
         const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
-        ret += `                &[${expected.join(", ")}],\n`;
-        ret += `                self.enviroment(),\n`;
-        ret += `            )),\n`;
-
-        ret += `        }\n`;
+        ret += `            &[${expected.join(", ")}],\n`;
+        ret += `            self.enviroment(),\n`;
+        ret += `        ))\n`;
         ret += `    }\n`;
+
         return ret;
     }
 

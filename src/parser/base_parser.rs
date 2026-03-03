@@ -26,6 +26,8 @@ pub trait BaseParser: Sized {
         parser_fn: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<ArenaBox<T>, Self::Error>;
 
+    fn alloc<T: ASTNode>(&mut self, node: T) -> ArenaBox<T>;
+
     fn get_errors_arena(&self) -> &Arena;
 
     fn report_error(&self, error: Self::Error);
@@ -53,6 +55,10 @@ impl BaseParser for Parser<'_, '_> {
         parser_fn: impl FnOnce(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<ArenaBox<T>, Self::Error> {
         Ok(self.ctx.ast_arena.alloc(parser_fn(self)?))
+    }
+
+    fn alloc<T: ASTNode>(&mut self, node: T) -> ArenaBox<T> {
+        self.ctx.ast_arena.alloc(node)
     }
 
     fn peek<const N: usize>(&self) -> Option<Token> {
