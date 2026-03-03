@@ -228,6 +228,9 @@ impl Arena {
             self.grow();
             start_pos = 0;
         }
+
+        self.index.set(start_pos);
+
         let start_id = (self.page_index.get() * Self::BLOCK_SIZE + start_pos) as u32;
 
         for i in 0..count {
