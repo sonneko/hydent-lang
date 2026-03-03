@@ -252,69 +252,85 @@ export class Analyzer {
         while (changed) {
             changed = false;
             for (const rule of this.grammar) {
-                if (rule.kind !== "Product") continue;
+                if (rule.kind === "Branch") {
+                    const ruleFollow = this.followSets.get(rule.name);
+                    if (ruleFollow) {
+                        for (const v of rule.variants) {
+                            const variantFollow = this.followSets.get(v.name);
+                            if (variantFollow) {
+                                const oldSize = variantFollow.size;
+                                for (const f of ruleFollow) {
+                                    variantFollow.add(f);
+                                }
+                                if (variantFollow.size !== oldSize) {
+                                    changed = true;
+                                }
+                            }
+                        }
+                    }
+                } else if (rule.kind === "Product") {
+                    const members = rule.members;
+                    for (let i = 0; i < members.length; i++) {
+                        const current = members[i];
+                        if (current.kind === "Terminal") continue;
 
-                const members = rule.members;
-                for (let i = 0; i < members.length; i++) {
-                    const current = members[i];
-                    if (current.kind === "Terminal") continue;
+                        const targetName = current.type.name;
+                        const targetFollow = this.followSets.get(targetName);
+                        if (!targetFollow) continue;
 
-                    const targetName = current.type.name;
-                    const targetFollow = this.followSets.get(targetName);
-                    if (!targetFollow) continue;
+                        const oldSize = targetFollow.size;
+                        let allSubsequentNullable = true;
+                        let lookaheadSeqs: TokenSeq[] = [[]];
 
-                    const oldSize = targetFollow.size;
-                    let allSubsequentNullable = true;
-                    let lookaheadSeqs: TokenSeq[] = [[]];
+                        for (let j = i + 1; j < members.length; j++) {
+                            const next = members[j];
+                            let nextFirsts: TokenSeq[] = [];
 
-                    for (let j = i + 1; j < members.length; j++) {
-                        const next = members[j];
-                        let nextFirsts: TokenSeq[] = [];
-
-                        if (next.kind === "Terminal") {
-                            nextFirsts = [[this.tokenMap.get(next.value)]];
-                            allSubsequentNullable = false;
-                        } else {
-                            const nName = next.type.name;
-                            const nMod = next.type.modifier;
-
-                            const fs = this.firstSets.get(nName);
-                            if (fs) fs.forEach(s => nextFirsts.push(parseSeqKey(s)));
-
-                            if (nMod !== "List" && nMod !== "Option" && !this.nullable.has(nName)) {
+                            if (next.kind === "Terminal") {
+                                nextFirsts = [[this.tokenMap.get(next.value)]];
                                 allSubsequentNullable = false;
                             } else {
-                                nextFirsts.push([]);
+                                const nName = next.type.name;
+                                const nMod = next.type.modifier;
+
+                                const fs = this.firstSets.get(nName);
+                                if (fs) fs.forEach(s => nextFirsts.push(parseSeqKey(s)));
+
+                                if (nMod !== "List" && nMod !== "Option" && !this.nullable.has(nName)) {
+                                    allSubsequentNullable = false;
+                                } else {
+                                    nextFirsts.push([]);
+                                }
+                            }
+
+                            const nextLookaheads: TokenSeq[] = [];
+                            for (const base of lookaheadSeqs) {
+                                for (const suffix of nextFirsts) {
+                                    nextLookaheads.push(concatSeq(base, suffix));
+                                }
+                            }
+                            lookaheadSeqs = nextLookaheads;
+                            if (!allSubsequentNullable) break;
+                        }
+
+                        for (const seq of lookaheadSeqs) {
+                            if (seq.length > 0) {
+                                targetFollow.add(seq[0] as string);
                             }
                         }
 
-                        const nextLookaheads: TokenSeq[] = [];
-                        for (const base of lookaheadSeqs) {
-                            for (const suffix of nextFirsts) {
-                                nextLookaheads.push(concatSeq(base, suffix));
+                        if (allSubsequentNullable) {
+                            const ruleFollow = this.followSets.get(rule.name);
+                            if (ruleFollow) {
+                                for (const f of ruleFollow) {
+                                    targetFollow.add(f);
+                                }
                             }
                         }
-                        lookaheadSeqs = nextLookaheads;
-                        if (!allSubsequentNullable) break;
-                    }
 
-                    for (const seq of lookaheadSeqs) {
-                        if (seq.length > 0) {
-                            targetFollow.add(seq[0] as string);
+                        if (targetFollow.size !== oldSize) {
+                            changed = true;
                         }
-                    }
-
-                    if (allSubsequentNullable) {
-                        const ruleFollow = this.followSets.get(rule.name);
-                        if (ruleFollow) {
-                            for (const f of ruleFollow) {
-                                targetFollow.add(f);
-                            }
-                        }
-                    }
-
-                    if (targetFollow.size !== oldSize) {
-                        changed = true;
                     }
                 }
             }
