@@ -8,7 +8,7 @@ pub trait ASTNode:
     const FOLLOW_SETS: TokenBitMap;
     const FIRST_1_SETS: TokenBitMap;
     const FIRST_2_SETS: TokenBitMap;
-    
+
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
     fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;

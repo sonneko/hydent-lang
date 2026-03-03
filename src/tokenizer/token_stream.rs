@@ -11,8 +11,8 @@ impl TokenStream {
         tokens.retain(|(token, _)| {
             !matches!(
                 token,
-                Token::Comment(crate::tokenizer::tokens::Comment::LineComment) |
-                Token::Comment(crate::tokenizer::tokens::Comment::BlockComment)
+                Token::Comment(crate::tokenizer::tokens::Comment::LineComment)
+                    | Token::Comment(crate::tokenizer::tokens::Comment::BlockComment)
             )
         });
         Self {

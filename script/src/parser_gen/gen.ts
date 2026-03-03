@@ -55,11 +55,8 @@ class Generator {
         }
 
         // 2. マッチしたバリアントの数をカウント
-        ret += `        let count_1 = 0\n`;
-        for (const v of variants) {
-            ret += `            + (is_${v.name}_1 as u8)\n`;
-        }
-        ret += `        ;\n\n`;
+        const expr = variants.map(v => `(is_${v.name}_1 as u8)`).join(" + ");
+        ret += `        let count_1 = ${expr};\n`;
 
         // 3. コンフリクトなし: バックトラックのオーバーヘッドなしで即座にパース
         ret += `        if count_1 == 1 {\n`;
