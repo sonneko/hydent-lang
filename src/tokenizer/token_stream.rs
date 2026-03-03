@@ -7,7 +7,14 @@ pub struct TokenStream {
 }
 
 impl TokenStream {
-    pub fn new(tokens: Vec<(Token, Span)>) -> Self {
+    pub fn new(mut tokens: Vec<(Token, Span)>) -> Self {
+        tokens.retain(|(token, _)| {
+            !matches!(
+                token,
+                Token::Comment(crate::tokenizer::tokens::Comment::LineComment) |
+                Token::Comment(crate::tokenizer::tokens::Comment::BlockComment)
+            )
+        });
         Self {
             tokens,
             cursor: 0,
