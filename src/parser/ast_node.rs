@@ -5,18 +5,18 @@ use crate::tokenizer::tokens::Token;
 pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
-    const SYNC_POINT_SETS: TokenBitMap;
+    const FOLLOW_SETS: TokenBitMap;
     const FIRST_SETS: TokenBitMap;
     fn get_error_situation(err: ParseErr) -> Option<Self>;
 
     fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
 
     fn is_follow_sets(token: &Option<Token>) -> bool {
-        Self::is_sync_point(token)
+        Self::FOLLOW_SETS.contains(token)
     }
 
     fn is_sync_point(token: &Option<Token>) -> bool {
-        Self::SYNC_POINT_SETS.contains(token)
+        Self::is_first_sets(token) || Self::is_follow_sets(token)
     }
 
     fn is_first_sets(token: &Option<Token>) -> bool {

@@ -247,7 +247,7 @@ class Generator {
         const firstHasIdentifier = first0Sets.some(t => t.includes("Identifier"));
         const firstHasLiteral = first0Sets.some(t => t.includes("Literal"));
         const firstPoints = first0Sets.filter(t => !t.includes("$")).join(", ");
-        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${hasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
+        ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${hasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
         ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, ${firstHasLiteral}, false, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
@@ -326,7 +326,7 @@ class Generator {
         const firstHasIdentifier = first0Sets.some(t => t.includes("Identifier"));
         const firstHasLiteral = first0Sets.some(t => t.includes("Literal"));
         const firstPoints = first0Sets.filter(t => !t.includes("$")).join(", ");
-        ret += `    const SYNC_POINT_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
+        ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
         ret += `    const FIRST_SETS: TokenBitMap = TokenBitMap::build_map(${firstHasIdentifier}, ${firstHasLiteral}, false, &[${firstPoints}]);\n`;
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
