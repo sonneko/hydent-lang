@@ -317,6 +317,19 @@ export class Analyzer {
                             if (!allSubsequentNullable) break;
                         }
 
+                        // リスト（*Item）の場合、自身が連続する可能性があるため、自身の FIRST 集合を FOLLOW 集合に含める必要がある
+                        if (current.type.modifier === "List") {
+                            const currentFirsts = this.firstSets.get(targetName);
+                            if (currentFirsts) {
+                                for (const f of currentFirsts) {
+                                    const seq = parseSeqKey(f);
+                                    if (seq.length > 0) {
+                                        targetFollow.add(seq[0] as string);
+                                    }
+                                }
+                            }
+                        }
+
                         for (const seq of lookaheadSeqs) {
                             if (seq.length > 0) {
                                 targetFollow.add(seq[0] as string);

@@ -560,14 +560,25 @@ branch BaseExpr {
     ArrayLiteral
     ParenExpr
     LiteralNode
-    Identifier
+    StructLiteralOrIdent
+}
+
+product StructLiteralOrIdent {
+    head: Identifier
+    tails: *AccesserTail
+    literal_body: ?StructLiteralBody with "boxed"
+}
+
+product StructLiteralBody {
+    "{"
+    fields: ?StructLiteralFields
+    "}"
 }
 
 branch PostfixOp {
     MethodOrFieldOp
     CallOp
     IndexOp
-    StructLiteralOp
     CastOp
 }
 
@@ -591,12 +602,6 @@ product IndexOp {
     "["
     expr: Expression
     "]"
-}
-
-product StructLiteralOp {
-    "{"
-    fields: ?StructLiteralFields
-    "}"
 }
 
 product StructLiteralFields {
