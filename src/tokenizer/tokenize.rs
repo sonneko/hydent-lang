@@ -1,6 +1,6 @@
 //! Tokenizer with a function to intern strings
 
-use crate::compiler::span::{PosOnSource, Span};
+use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
 use crate::tokenizer::errors::TokenizeErr;
 use crate::tokenizer::generated_tokenmap::{
@@ -12,8 +12,7 @@ type WithSpanVec<T> = Vec<(T, Span)>;
 
 pub struct Tokenizer<'src, 'ctx> {
     pub(super) current_pos: usize,
-    current_line: usize,
-    current_column: usize,
+    line_starts: Vec<u32>,
     input: &'src [u8],
     symbol_factory: &'ctx mut SymbolFactory<'src>,
 }
@@ -25,14 +24,13 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     ) -> Tokenizer<'src, 'ctx> {
         Self {
             current_pos: 0,
-            current_line: 1,
-            current_column: 1,
             input: input.as_bytes(),
             symbol_factory,
+            line_starts: Vec::new(),
         }
     }
 
-    pub fn tokenize(mut self) -> (WithSpanVec<Token>, WithSpanVec<TokenizeErr>) {
+    pub fn tokenize(mut self) -> (WithSpanVec<Token>, WithSpanVec<TokenizeErr>, Vec<u32>) {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
         let mut errors = Vec::new();
 
@@ -46,8 +44,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 }
                 b'\n' => {
                     self.advance();
-                    self.current_line += 1;
-                    self.current_column = 1;
+                    self.line_starts.push(self.current_pos as u32);
                     continue;
                 }
                 b'a'..=b'z' | b'A'..=b'Z' | b'_' => self.read_identifier_or_keyword(),
@@ -78,7 +75,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
         tokens.push((Token::EndOfFile, Span::new(self.now_pos(), self.now_pos())));
 
-        (tokens, errors)
+        (tokens, errors, self.line_starts)
     }
 
     // --- low level helpers ---
@@ -96,21 +93,15 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     #[inline(always)]
     pub(super) fn advance(&mut self) {
         self.current_pos += 1;
-        self.current_column += 1;
     }
 
     #[inline(always)]
     fn advance_n(&mut self, n: usize) {
         self.current_pos += n;
-        self.current_column += n;
     }
 
-    fn now_pos(&self) -> PosOnSource {
-        PosOnSource {
-            line: self.current_line,
-            column: self.current_column,
-            absolute: self.current_pos,
-        }
+    fn now_pos(&self) -> usize {
+        self.current_pos
     }
 
     #[inline]
@@ -348,7 +339,6 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 4
             };
             self.current_pos = std::cmp::min(self.current_pos + len, self.input.len());
-            self.current_column += len;
         }
     }
 }
