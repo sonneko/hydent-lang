@@ -31,7 +31,7 @@ jobs:
         working-directory: ./script
       
       - name: Test script
-        run: npm test
+        run: npm run self-test
         working-directory: ./script
 
       # - name: Install LLVM 21
@@ -71,8 +71,11 @@ jobs:
       - name: Clippy
         run: cargo +stable clippy -- -D warnings
 
-      - name: Test
+      - name: Unit Test
         run: cargo +stable test --verbose
+
+      - name: Integration Test
+        run: npm run compiler-test 
 
       - name: Run benchmark
         run: cargo +stable bench

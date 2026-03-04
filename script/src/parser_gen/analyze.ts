@@ -21,7 +21,7 @@ function seqKey(seq: TokenSeq): string {
 
 function parseSeqKey(key: string): TokenSeq {
     if (key === "") return [];
-    return key.split(",") as RustTokenTypeName[];
+    return key.split(",").map(tokenName);
 }
 
 function concatSeq(a: TokenSeq, b: TokenSeq): TokenSeq {
@@ -70,6 +70,7 @@ export class Analyzer {
     private grammar: Grammar;
     private tokenMap: TokenMap;
     private ruleMap: Map<string, Rule>;
+    private outputs: string[];
 
     public nullable: Set<string> = new Set();
     private firstSets: Map<string, Set<string>> = new Map();
@@ -79,13 +80,14 @@ export class Analyzer {
         this.grammar = [...grammar].sort((a, b) => a.name.localeCompare(b.name));
         this.tokenMap = new TokenMap(tokenMap);
         this.ruleMap = new Map();
+        this.outputs = [];
 
         for (const rule of grammar) {
             this.ruleMap.set(rule.name, rule);
         }
     }
 
-    public analyze(): IR {
+    public analyze(): [IR, string[]] {
         this.computeNullable();
         this.computeFirst();
         this.computeFollow();
@@ -104,7 +106,7 @@ export class Analyzer {
         this.computeCycle(funcs);
         this.checkLL2Confilict(funcs);
 
-        return funcs;
+        return [funcs, this.outputs];
     }
 
     public checkLL2Confilict(funcs: IR) {
@@ -115,14 +117,14 @@ export class Analyzer {
             // TODO
             const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
             if (intersection.size !== 0) {
-                console.warn(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
+                this.outputs.push(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
                 funcs
                     .filter(v => v.kind !== "hook")
                     .filter(v => v.astTypeName === name)
                     .forEach(s => s.firstAndFollowConflict = true);
                 if (this.nullable.has(name)) {
-                    console.error(`❌ LL(2) Conflict in Nullable Rule "${name}":`);
-                    console.error(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")}`);
+                    this.outputs.push(`❌ LL(2) Conflict in Nullable Rule "${name}":`);
+                    this.outputs.push(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")}`);
                     throw new Error("Grammar conflict");
                 }
             }
@@ -324,7 +326,7 @@ export class Analyzer {
                                 for (const f of currentFirsts) {
                                     const seq = parseSeqKey(f);
                                     if (seq.length > 0) {
-                                        targetFollow.add(seq[0] as string);
+                                        targetFollow.add(seq[0]);
                                     }
                                 }
                             }
@@ -332,7 +334,7 @@ export class Analyzer {
 
                         for (const seq of lookaheadSeqs) {
                             if (seq.length > 0) {
-                                targetFollow.add(seq[0] as string);
+                                targetFollow.add(seq[0]);
                             }
                         }
 
@@ -467,12 +469,12 @@ export class Analyzer {
             for (const seq of seqs) {
                 if (seq.length === 0) continue;
 
-                const t0 = seq[0] as string;
+                const t0 = seq[0];
                 if (!mapPeek0[t0]) mapPeek0[t0] = [];
                 if (!mapPeek0[t0].includes(v.name)) mapPeek0[t0].push(v.name);
 
                 if (seq.length > 1) {
-                    const t1 = seq[1] as string;
+                    const t1 = seq[1];
                     if (!mapPeek1[t0]) mapPeek1[t0] = {};
                     if (!mapPeek1[t0][t1]) mapPeek1[t0][t1] = [];
                     if (!mapPeek1[t0][t1].includes(v.name)) mapPeek1[t0][t1].push(v.name);
@@ -632,5 +634,7 @@ export class Analyzer {
 
 export function analyze(grammar: Grammar, tokenMap?: Record<string, string>): IR {
     const analyzer = new Analyzer(grammar, tokenMap);
-    return analyzer.analyze();
+    const [ir, outputs] = analyzer.analyze();
+    console.log(outputs.join("\n"));
+    return ir;
 }

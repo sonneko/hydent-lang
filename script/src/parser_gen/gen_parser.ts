@@ -50,23 +50,19 @@ export class ParserGenerator {
 
         ret += `        let p0 = self.peek::<0>();\n\n`;
 
-        // 1. 各バリアントの FIRST 集合に含まれるかを判定 (高速なビットマップ演算)
         for (const v of variants) {
             ret += `        let is_${v.name}_1 = ${v.name}::is_first_sets(&p0);\n`;
         }
 
-        // 2. マッチしたバリアントの数をカウント
         const expr = variants.map(v => `(is_${v.name}_1 as u8)`).join(" + ");
         ret += `        let count_1 = ${expr};\n`;
 
-        // 3. コンフリクトなし: バックトラックのオーバーヘッドなしで即座にパース
         ret += `        if count_1 == 1 {\n`;
         for (const v of variants) {
             let parseCall = v.isBoxed ? `self.alloc_box(|this| this.parse_${v.name}())?` : `self.parse_${v.name}()?`;
             ret += `            if is_${v.name}_1 { return Ok(${func.astTypeName}::${v.name}(${parseCall})); }\n`;
         }
 
-        // 4. コンフリクトあり: 候補となったバリアントのみバックトラックで試行
         ret += `        } else if count_1 > 1 {\n`;
         for (const v of variants) {
             ret += `            if is_${v.name}_1 {\n`;
@@ -81,9 +77,6 @@ export class ParserGenerator {
         }
         ret += `        }\n\n`;
 
-        // 5. フォールバック:
-        // Nullable (空一致) なバリアントが存在し、FIRST集合に入らずFOLLOW集合でマッチしたケースなどを救済する
-        ret += `        // Fallback for nullable or unpredicted cases\n`;
         for (const v of variants) {
             ret += `        if let Ok(node) = self.backtrack(|this| this.parse_${v.name}()) {\n`;
             if (v.isBoxed) {
@@ -94,7 +87,6 @@ export class ParserGenerator {
             ret += `        }\n`;
         }
 
-        // 6. 全て失敗した場合はエラー
         ret += `\n        Err(Self::Error::build(\n`;
         ret += `            self.get_errors_arena(),\n`;
         ret += `            ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
