@@ -6,7 +6,7 @@ import { analyze } from "./parser_gen/analyze";
 import { generate } from "./parser_gen/gen";
 import { generateASTSizeCheckerRustTest, parseASTSizeCheckerResult } from "./parser_gen/check_ast_size";
 import { astName } from "./parser_gen/ir";
-import { generateTokenTypeMap } from "./parser_gen/tokenmap_gen";
+import { generateTokenTypeMap } from "./parser_gen/gen_tokenmap";
 import { generateMermaidHtml } from "./parser_gen/gen_mermaid";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
