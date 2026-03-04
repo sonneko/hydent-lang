@@ -38,62 +38,99 @@ export class ParserGenerator {
     }
 
     private generateBranchParseFunction(func: BranchParserFunction): string {
-        const variants = getUniqueVariants(func);
         let ret = "";
         ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {\n`;
 
-        if (variants.length === 0) {
+        if (func.branchesJudgebleInPeek0.length === 0 &&
+            func.branchesJudgebleInPeek1.length === 0 &&
+            (func.branchesFallbackInPeek1 || []).length === 0 &&
+            func.branchesNeedBacktrack.length === 0) {
             ret += `        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
             ret += `    }\n`;
             return ret;
         }
 
-        ret += `        let p0 = self.peek::<0>();\n\n`;
+        ret += `        match self.peek::<0>() {\n`;
 
-        for (const v of variants) {
-            ret += `        let is_${v.name}_1 = ${v.name}::is_first_sets(&p0);\n`;
-        }
-
-        const expr = variants.map(v => `(is_${v.name}_1 as u8)`).join(" + ");
-        ret += `        let count_1 = ${expr};\n`;
-
-        ret += `        if count_1 == 1 {\n`;
-        for (const v of variants) {
-            let parseCall = v.isBoxed ? `self.alloc_box(|this| this.parse_${v.name}())?` : `self.parse_${v.name}()?`;
-            ret += `            if is_${v.name}_1 { return Ok(${func.astTypeName}::${v.name}(${parseCall})); }\n`;
-        }
-
-        ret += `        } else if count_1 > 1 {\n`;
-        for (const v of variants) {
-            ret += `            if is_${v.name}_1 {\n`;
-            ret += `                if let Ok(node) = self.backtrack(|this| this.parse_${v.name}()) {\n`;
-            if (v.isBoxed) {
-                ret += `                    return Ok(${func.astTypeName}::${v.name}(self.alloc(node)));\n`;
-            } else {
-                ret += `                    return Ok(${func.astTypeName}::${v.name}(node));\n`;
+        const peek0Groups = new Map<string, { isBoxed: boolean, terminals: Set<string> }>();
+        for (const branch of func.branchesJudgebleInPeek0) {
+            if (!peek0Groups.has(branch.astTypeName)) {
+                peek0Groups.set(branch.astTypeName, { isBoxed: branch.isBoxed, terminals: new Set() });
             }
-            ret += `                }\n`;
-            ret += `            }\n`;
+            peek0Groups.get(branch.astTypeName)!.terminals.add(branch.firstTerminal.replace(/\$.*\$/, "_"));
         }
-        ret += `        }\n\n`;
 
-        for (const v of variants) {
-            ret += `        if let Ok(node) = self.backtrack(|this| this.parse_${v.name}()) {\n`;
-            if (v.isBoxed) {
-                ret += `            return Ok(${func.astTypeName}::${v.name}(self.alloc(node)));\n`;
-            } else {
-                ret += `            return Ok(${func.astTypeName}::${v.name}(node));\n`;
+        for (const [astType, group] of peek0Groups.entries()) {
+            const pattern = Array.from(group.terminals).join(" | ");
+            const parseCall = group.isBoxed 
+                ? `self.alloc_box(|this| this.parse_${astType}())?` 
+                : `self.parse_${astType}()?`;
+            ret += `            Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
+        }
+
+        const complexFirstTerminals = [...new Set([
+            ...func.branchesJudgebleInPeek1.map(b => b.firstTerminal),
+            ...func.branchesNeedBacktrack.map(b => b.firstTerminal),
+            ...(func.branchesFallbackInPeek1 || []).map(b => b.firstTerminal)
+        ])];
+
+        for (const t0 of complexFirstTerminals.sort()) {
+            const cleanT0 = t0.replace(/\$.*\$/, "_");
+            ret += `            Some(${cleanT0}) => match self.peek::<1>() {\n`;
+
+            const peek1 = func.branchesJudgebleInPeek1.filter(b => b.firstTerminal === t0);
+
+            const peek1Groups = new Map<string, { isBoxed: boolean, terminals: Set<string> }>();
+            for (const branch of peek1) {
+                if (!peek1Groups.has(branch.astTypeName)) {
+                    peek1Groups.set(branch.astTypeName, { isBoxed: branch.isBoxed, terminals: new Set() });
+                }
+                peek1Groups.get(branch.astTypeName)!.terminals.add(branch.secondTerminal.replace(/\$.*\$/, "_"));
             }
-            ret += `        }\n`;
+
+            for (const [astType, group] of peek1Groups.entries()) {
+                const pattern = Array.from(group.terminals).join(" | ");
+                const parseCall = group.isBoxed 
+                    ? `self.alloc_box(|this| this.parse_${astType}())?` 
+                    : `self.parse_${astType}()?`;
+                ret += `                Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
+            }
+
+            const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
+            if (backtrack.length > 0) {
+                ret += `                _ => {\n`;
+                for (const b of backtrack) {
+                    const wrapCall = b.isBoxed ? `self.alloc(node)` : `node`;
+                    ret += `                    if let Ok(node) = self.backtrack(|this| this.parse_${b.astTypeName}()) {\n`;
+                    ret += `                        return Ok(${func.astTypeName}::${b.astTypeName}(${wrapCall}));\n`;
+                    ret += `                    }\n`;
+                }
+                ret += `                    Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
+                ret += `                }\n`;
+            } else {
+                const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
+                if (fallback) {
+                    const parseCall = fallback.isBoxed 
+                        ? `self.alloc_box(|this| this.parse_${fallback.astTypeName}())?` 
+                        : `self.parse_${fallback.astTypeName}()?`;
+                    ret += `                _ => Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall})),\n`;
+                } else {
+                    ret += `                _ => Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment())),\n`;
+                }
+            }
+            ret += `            },\n`;
         }
 
-        ret += `\n        Err(Self::Error::build(\n`;
-        ret += `            self.get_errors_arena(),\n`;
-        ret += `            ${func.expectedTerminals.some(t => t.includes("$")) ? "true" : "false"},\n`;
         const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
-        ret += `            &[${expected.join(", ")}],\n`;
-        ret += `            self.enviroment(),\n`;
-        ret += `        ))\n`;
+        const hasCustomMatch = func.expectedTerminals.some(t => t.includes("$"));
+        
+        ret += `            _ => Err(Self::Error::build(\n`;
+        ret += `                self.get_errors_arena(),\n`;
+        ret += `                ${hasCustomMatch},\n`;
+        ret += `                &[${expected.join(", ")}],\n`;
+        ret += `                self.enviroment(),\n`;
+        ret += `            )),\n`;
+        ret += `        }\n`;
         ret += `    }\n`;
 
         return ret;
