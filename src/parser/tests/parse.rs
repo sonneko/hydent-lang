@@ -54,14 +54,14 @@ import { Option, Some, None } from "std/option";
 class UserError {
     final message: String;
 
-    pub fn get_name(self) -> String {
+    pub fn get_name(self): String {
         if self.name.is_empty() {
             panic("user is empty");
         }
         return self.name;
     }
 
-    pub fn new(name: String) -> Result<Self, UserError> {
+    pub fn new(name: String): Result<Self, UserError> {
         if name.is_empty() {
             return Err(UserError { message: "name is empty" });
         }

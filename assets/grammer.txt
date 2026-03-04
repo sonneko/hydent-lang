@@ -180,7 +180,7 @@ product AsyncKeyword { "async" }
 product PanicsKeyword { "panics" }
 
 product ReturnType {
-    "->"
+    ":"
     type_lit: TypeLiteral
 }
 
