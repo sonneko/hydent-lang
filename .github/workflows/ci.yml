@@ -13,97 +13,147 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  ci:
+  setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Nodejs
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-
-      - name: Install script dependencies
-        run: npm ci
+      
+      - name: Install & Test Script
+        run: |
+          npm ci
+          npm run self-test
         working-directory: ./script
 
-      - name: Test script
-        run: npm run self-test
-        working-directory: ./script
-
-      # - name: Install LLVM 21
-      #   run: |
-      #     wget https://apt.llvm.org/llvm.sh
-      #     chmod +x llvm.sh
-      #     sudo ./llvm.sh 21
-      #     sudo apt-get install -y libpolly-21-dev
-      #     rm ./llvm.sh
-
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          components: rustfmt
-
-      - name: Install nightly toolchain
-        uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: miri
-
-      - name: Run script
+      - name: Run Preparation Script
         run: npm start -- ci
         working-directory: ./script
 
-      - name: Build
-        run: cargo +stable build --verbose
+      - name: Upload Workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: workspace-artifact
+          path: ./
+          retention-days: 1
 
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-artifact
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt, clippy
       - name: Check formatting
-        run: cargo +stable fmt --all -- --check
+        run: cargo  stable fmt --all -- --check
+      - name: Clippy
+        run: cargo  stable clippy -- -D warnings
 
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-artifact
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Install nightly for Miri
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: miri
+      - name: Unit Test
+        run: cargo  stable test --verbose
       - name: Run Miri
         run: |
-          cargo +nightly miri setup
-          cargo +nightly miri test --lib
+          cargo  nightly miri setup
+          cargo  nightly miri test --lib
         env:
           MIRIFLAGS: "-Zmiri-ignore-leaks"
 
-      - name: Clippy
-        run: cargo +stable clippy -- -D warnings
-
-      - name: Unit Test
-        run: cargo +stable test --verbose
-
-      - name: Setup out directory
-        run: mkdir -p ./out
-
+  benchmark:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-artifact
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      
+      - name: Run benchmark
+        run: cargo  stable bench
+      
       - name: Integration Test
-        run: npm run compiler-test
+        run: |
+          npm ci
+          npm run compiler-test
         working-directory: ./script
 
-      - name: Run benchmark
-        run: cargo +stable bench
+      - name: Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-results
+          path: ./target/criterion
+          retention-days: 1
 
-      - name: Prepare Benchmark Reports
-        run: |
-          mkdir -p ./out/benches
-          if [ -d "./target/criterion" ]; then
-            cp -r ./target/criterion/* ./out/benches
-          fi
-
+  build-site:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-artifact
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
       - name: Build website
         run: |
           npm ci
           npm run build
         working-directory: ./website
+      - name: Upload Website Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-dist
+          path: ./website/dist
+          retention-days: 1
 
-      - name: Prepare Website htmls
-        run: |
-          if [ -d "./website/dist" ]; then
-            cp -r ./website/dist/* ./out
-          fi
+  deploy:
+    needs: [lint, test, benchmark, build-site]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (for branch logic)
+        uses: actions/checkout@v4
 
-      - name: Deploy to gh-pages branch
+      - name: Setup out directory
+        run: mkdir -p ./out
+
+      - name: Download Bench Results
+        uses: actions/download-artifact@v4
+        with:
+          name: bench-results
+          path: ./out/benches
+
+      - name: Download Website Dist
+        uses: actions/download-artifact@v4
+        with:
+          name: website-dist
+          path: ./out
+
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
