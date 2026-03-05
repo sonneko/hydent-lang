@@ -27,7 +27,7 @@ export class ASTTypeGenerator {
         ret += `#![allow(clippy::large_enum_variant)]   // TODO: delete this line\n`;
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
-        ret += `use crate::parser::ast_node::ASTNode;\n`;
+        ret += `use crate::parser::ast_node::{ASTNode, Node};\n`;
         ret += `use crate::parser::ast_node::TokenBitMap;\n`;
         ret += `use crate::parser::errors::ParseErr;\n`;
         ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator};\n\n`;
@@ -90,10 +90,8 @@ export class ASTTypeGenerator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
-        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
-        ret += `    }\n`
         ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
+        ret += `    type Target = Self;\n`;
         ret += `}\n\n`;
 
         ret += `impl ${func.astTypeName} {\n`;
@@ -122,8 +120,13 @@ export class ASTTypeGenerator {
             ret += `        }\n`;
             ret += `    }\n\n`;
         }
-        ret += `}\n`;
+        ret += `}\n\n`;
 
+        ret += `impl Node for ${func.astTypeName} {\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
+        ret += `    }\n`
+        ret += `}\n\n`;
         return ret;
     }
 
@@ -174,10 +177,8 @@ export class ASTTypeGenerator {
         ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
-        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
-        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
-        ret += `    }\n`;
         ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
+        ret += `    type Target = Self;\n`;
         ret += `}\n\n`;
 
 
@@ -208,7 +209,13 @@ export class ASTTypeGenerator {
             ret += `        &self.${typeName.astTypeName}\n`;
             ret += `    }\n\n`;
         }
-        ret += `}\n`;
+        ret += `}\n\n`;
+
+        ret += `impl Node for ${func.astTypeName} {\n`;
+        ret += `    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType {\n`;
+        ret += `        visitor.visit_${func.astTypeName}(self)\n`;
+        ret += `    }\n`
+        ret += `}\n\n`
 
         return ret;
     }

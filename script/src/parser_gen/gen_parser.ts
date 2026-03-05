@@ -153,13 +153,13 @@ export class ParserGenerator {
                     ret += `        let v_${element.astTypeName} = self.alloc_box(|this| this.parse_${element.astTypeName}())?;\n`;
                     break;
                 case "option":
-                    ret += `        let v_${element.astTypeName} = self.parse_${element.astTypeName}().ok();\n`;
+                    ret += `        let v_${element.astTypeName} = self.optional(|this| this.parse_${element.astTypeName}());\n`;
                     break;
                 case "repeat":
                     ret += `        let v_${element.astTypeName} = self.repeat(Self::parse_${element.astTypeName})?;\n`;
                     break;
                 case "optionWithBox":
-                    ret += `        let v_${element.astTypeName} = self.alloc_box(Self::parse_${element.astTypeName}).ok();\n`;
+                    ret += `        let v_${element.astTypeName} = self.optional_box(|this| this.parse_${element.astTypeName}());\n`;
                     break;
                 case "terminal":
                     if (!element.tokenTypeName.includes("$")) {

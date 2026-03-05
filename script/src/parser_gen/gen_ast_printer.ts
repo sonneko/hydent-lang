@@ -11,7 +11,7 @@ export class ASTPrinterGenerator {
         ret += `// ==========================================\n\n`;
         ret += "use crate::compiler::{arena::Arena, symbol::SymbolFactory, source_holder::SourceHolder};\n";
         ret += "use crate::parser::generated_ast::*;\n";
-        ret += "use crate::parser::ast_node::ASTNode;\n";
+        ret += "use crate::parser::ast_node::{ASTNode, Node};\n";
         ret += "\n";
         ret += "pub struct ASTPrinter<'a, 'f, 'b, 'src> {\n";
         ret += "    pub arena: &'a Arena,\n";

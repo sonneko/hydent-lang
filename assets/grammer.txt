@@ -172,8 +172,15 @@ product FunctionDeclaration {
     ")"
     return_type: ?ReturnType
     panics: ?PanicsKeyword
-    body: ?BlockExpression
+    body: FunctionBody
 }
+
+branch FunctionBody {
+    BlockExpression
+    EmptyBody
+}
+product EmptyBody { ";" }
+
 
 product ExternKeyword { "extern" }
 product AsyncKeyword { "async" }

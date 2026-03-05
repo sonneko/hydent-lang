@@ -40,6 +40,16 @@ pub trait BaseParser: Sized {
     fn enviroment(&self) -> Enviroment;
 
     fn now_span(&self) -> Span;
+
+    fn optional<T: ASTNode>(
+        &mut self,
+        parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Option<T>;
+
+    fn optional_box<T: ASTNode<Target = T>>(
+        &mut self,
+        parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Option<ArenaBox<T>>;
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -84,7 +94,7 @@ impl BaseParser for Parser<'_, '_> {
                 break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
             }
             match (
-                T::is_first_sets(&next_token),
+                T::is_first1_sets(&next_token),
                 T::is_follow_sets(&next_token),
             ) {
                 (true, true) => {
@@ -112,7 +122,6 @@ impl BaseParser for Parser<'_, '_> {
                         }
                         Err(err) => {
                             self.report_error(err);
-                            println!("{}", T::name());
                             if let Some(placeholder) = T::get_error_situation(err) {
                                 self.ctx.ast_arena.alloc_iter_item(&placeholder);
                             }
@@ -134,7 +143,6 @@ impl BaseParser for Parser<'_, '_> {
                     // must occure error
                     let err = parser_fn(self).unwrap_err();
                     self.report_error(err);
-                    println!("{}", T::name());
                     while let Some(t) = self.peek::<0>() {
                         if T::is_sync_point(&Some(t)) {
                             break;
@@ -190,6 +198,29 @@ impl BaseParser for Parser<'_, '_> {
             }
         }
         node
+    }
+
+    fn optional<T: ASTNode>(
+        &mut self,
+        mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Option<T> {
+        if T::is_first1_sets(&self.peek::<0>()) {
+            self.backtrack(parser_fn).ok()
+        } else {
+            None
+        }
+    }
+
+    fn optional_box<T: ASTNode<Target = T>>(
+        &mut self,
+        mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Option<ArenaBox<T>> {
+        if T::is_first1_sets(&self.peek::<0>()) {
+            self.backtrack(|this| this.alloc_box(|this| parser_fn(this)))
+                .ok()
+        } else {
+            None
+        }
     }
 
     fn enviroment(&self) -> Enviroment {

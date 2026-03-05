@@ -1,3 +1,4 @@
+use crate::compiler::arena::ArenaBox;
 use crate::parser::errors::ParseErr;
 use crate::parser::generated_ast::ASTVisitor;
 use crate::tokenizer::tokens::Token;
@@ -5,27 +6,34 @@ use crate::tokenizer::tokens::Token;
 pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
+    type Target: Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized;
     const FOLLOW_SETS: TokenBitMap;
     const FIRST_1_SETS: TokenBitMap;
     const FIRST_2_SETS: TokenBitMap;
 
-    fn get_error_situation(err: ParseErr) -> Option<Self>;
-
-    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
+    fn get_error_situation(err: ParseErr) -> Option<Self::Target>;
 
     fn is_follow_sets(token: &Option<Token>) -> bool {
         Self::FOLLOW_SETS.contains(token)
     }
 
     fn is_sync_point(token: &Option<Token>) -> bool {
-        Self::is_first_sets(token) || Self::is_follow_sets(token)
+        Self::is_first1_sets(token) || Self::is_follow_sets(token)
     }
 
-    fn is_first_sets(token: &Option<Token>) -> bool {
+    fn is_first1_sets(token: &Option<Token>) -> bool {
         Self::FIRST_1_SETS.contains(token)
     }
 
+    fn is_first2_sets(token: &Option<Token>) -> bool {
+        Self::FIRST_2_SETS.contains(token)
+    }
+
     fn name() -> &'static str;
+}
+
+pub trait Node {
+    fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
 }
 
 pub struct TokenBitMap {
@@ -82,4 +90,21 @@ impl TokenBitMap {
             self.eof
         }
     }
+}
+
+impl<N> ASTNode for ArenaBox<N>
+where
+    N: ASTNode<Target = N>,
+{
+    const FIRST_1_SETS: TokenBitMap = N::FIRST_1_SETS;
+    const FIRST_2_SETS: TokenBitMap = N::FIRST_2_SETS;
+    const FOLLOW_SETS: TokenBitMap = N::FOLLOW_SETS;
+    fn name() -> &'static str {
+        N::name()
+    }
+
+    fn get_error_situation(err: ParseErr) -> Option<Self::Target> {
+        N::get_error_situation(err)
+    }
+    type Target = N;
 }
