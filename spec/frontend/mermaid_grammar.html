@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Grammar Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <style>
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            background-color: #f8f9fa; font-family: sans-serif;
+        }
+        h1 { 
+            position: absolute; top: 10px; left: 20px; z-index: 1000; 
+            background: rgba(255, 255, 255, 0.8); padding: 5px 15px; 
+            border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            pointer-events: none; /* 下の図を操作しやすくする */
+        }
+        /* Mermaidが生成する前のテキストを隠す */
+        .mermaid { visibility: hidden; width: 100vw; height: 100vh; background: white; }
+    </style>
+</head>
+<body>
+    <h1>Grammar Structure Visualizer</h1>
+    <div>
+        <pre class="mermaid">
+            classDiagram
+    class Module {
+        +TopLevelStatement[] declarations
+    }
+    Module --> TopLevelStatement
+    class _TopLevelStatement
+    TopLevelStatement <|-- ItemWithModifiers
+    TopLevelStatement <|-- ImportDeclaration
+    TopLevelStatement <|-- Annotation
+    class ItemWithModifiers {
+        +DocComment[] docs
+        +PubKeyword? is_public
+        +ItemDeclaration decl
+    }
+    ItemWithModifiers --> DocComment
+    ItemWithModifiers --> PubKeyword
+    ItemWithModifiers --> ItemDeclaration
+    class DocComment {
+    }
+    class PubKeyword {
+    }
+    class _ItemDeclaration
+    ItemDeclaration <|-- StaticVariableDeclaration
+    ItemDeclaration <|-- ClassDeclaration
+    ItemDeclaration <|-- EnumDeclaration
+    ItemDeclaration <|-- StructDeclaration
+    ItemDeclaration <|-- FunctionDeclaration
+    ItemDeclaration <|-- ProtocolDeclaration
+    ItemDeclaration <|-- ModuleDeclaration
+    ItemDeclaration <|-- TypeAliasDeclaration
+    class ImportDeclaration {
+        +ImportTargets targets
+        +StringLiteral source
+    }
+    ImportDeclaration --> ImportTargets
+    ImportDeclaration --> StringLiteral
+    class _ImportTargets
+    ImportTargets <|-- ImportSpecific
+    ImportTargets <|-- ImportAllAs
+    class ImportSpecific {
+        +IdentifierList? targets
+    }
+    ImportSpecific --> IdentifierList
+    class ImportAllAs {
+        +Identifier alias
+    }
+    ImportAllAs --> Identifier
+    class StaticVariableDeclaration {
+        +Identifier name
+        +Expression value
+    }
+    StaticVariableDeclaration --> Identifier
+    StaticVariableDeclaration --> Expression
+    class ClassDeclaration {
+        +Identifier name
+        +Generics? generics
+        +ImplementsProtocol? protocol
+        +ClassMember[] members
+    }
+    ClassDeclaration --> Identifier
+    ClassDeclaration --> Generics
+    ClassDeclaration --> ImplementsProtocol
+    ClassDeclaration --> ClassMember
+    class _ClassMember
+    ClassMember <|-- ClassFunction
+    ClassMember <|-- FieldDeclaration
+    ClassMember <|-- ClassTypeAlias
+    class ClassFunction {
+        +DocComment[] docs
+        +PubKeyword? is_public
+        +FunctionDeclaration decl
+    }
+    ClassFunction --> DocComment
+    ClassFunction --> PubKeyword
+    ClassFunction --> FunctionDeclaration
+    class FieldDeclaration {
+        +DocComment[] docs
+        +PubKeyword? is_public
+        +FieldModifier modifier
+        +Identifier name
+        +TypeLiteral type_lit
+    }
+    FieldDeclaration --> DocComment
+    FieldDeclaration --> PubKeyword
+    FieldDeclaration --> FieldModifier
+    FieldDeclaration --> Identifier
+    FieldDeclaration --> TypeLiteral
+    class _FieldModifier
+    FieldModifier <|-- FinalKw
+    FieldModifier <|-- MutKw
+    class FinalKw {
+    }
+    class MutKw {
+    }
+    class ClassTypeAlias {
+        +DocComment[] docs
+        +PubKeyword? is_public
+        +TypeAliasDeclaration decl
+    }
+    ClassTypeAlias --> DocComment
+    ClassTypeAlias --> PubKeyword
+    ClassTypeAlias --> TypeAliasDeclaration
+    class EnumDeclaration {
+        +Identifier name
+        +Generics? generics
+        +ImplementsProtocol? protocol
+        +EnumMember[] members
+    }
+    EnumDeclaration --> Identifier
+    EnumDeclaration --> Generics
+    EnumDeclaration --> ImplementsProtocol
+    EnumDeclaration --> EnumMember
+    class _EnumMember
+    EnumMember <|-- EnumFunction
+    EnumMember <|-- EnumVariant
+    class EnumFunction {
+        +DocComment[] docs
+        +PubKeyword? is_public
+        +FunctionDeclaration decl
+    }
+    EnumFunction --> DocComment
+    EnumFunction --> PubKeyword
+    EnumFunction --> FunctionDeclaration
+    class EnumVariant {
+        +DocComment[] docs
+        +Identifier name
+        +TupleType? types
+    }
+    EnumVariant --> DocComment
+    EnumVariant --> Identifier
+    EnumVariant --> TupleType
+    class StructDeclaration {
+        +Identifier name
+        +StructBody body
+    }
+    StructDeclaration --> Identifier
+    StructDeclaration --> StructBody
+    class _StructBody
+    StructBody <|-- StructBlockBody
+    StructBody <|-- StructTupleBody
+    StructBody <|-- StructEmptyBody
+    class StructBlockBody {
+        +FieldDeclaration[] fields
+    }
+    StructBlockBody --> FieldDeclaration
+    class StructTupleBody {
+        +TupleType types
+    }
+    StructTupleBody --> TupleType
+    class StructEmptyBody {
+    }
+    class FunctionDeclaration {
+        +ExternKeyword? is_extern
+        +AsyncKeyword? is_async
+        +Identifier name
+        +Generics? generics
+        +ParamsWithTypes? params
+        +ReturnType? return_type
+        +PanicsKeyword? panics
+        +FunctionBody body
+    }
+    FunctionDeclaration --> ExternKeyword
+    FunctionDeclaration --> AsyncKeyword
+    FunctionDeclaration --> Identifier
+    FunctionDeclaration --> Generics
+    FunctionDeclaration --> ParamsWithTypes
+    FunctionDeclaration --> ReturnType
+    FunctionDeclaration --> PanicsKeyword
+    FunctionDeclaration --> FunctionBody
+    class _FunctionBody
+    FunctionBody <|-- BlockExpression
+    FunctionBody <|-- EmptyBody
+    class EmptyBody {
+    }
+    class ExternKeyword {
+    }
+    class AsyncKeyword {
+    }
+    class PanicsKeyword {
+    }
+    class ReturnType {
+        +TypeLiteral type_lit
+    }
+    ReturnType --> TypeLiteral
+    class ParamsWithTypes {
+        +ParamWithType head
+        +ParamWithTypeTail[] tails
+    }
+    ParamsWithTypes --> ParamWithType
+    ParamsWithTypes --> ParamWithTypeTail
+    class ParamWithTypeTail {
+        +ParamWithType param
+    }
+    ParamWithTypeTail --> ParamWithType
+    class ParamWithType {
+        +MutKw? mut_kw
+        +ParamId id_or_this
+        +TypeAnnotation? type_annotation
+        +ParamInit? init
+    }
+    ParamWithType --> MutKw
+    ParamWithType --> ParamId
+    ParamWithType --> TypeAnnotation
+    ParamWithType --> ParamInit
+    class _ParamId
+    ParamId <|-- Identifier
+    ParamId <|-- ThisKw
+    class ThisKw {
+    }
+    class ParamInit {
+        +Expression expr
+    }
+    ParamInit --> Expression
+    class ProtocolDeclaration {
+        +Identifier name
+        +ImplementsProtocol? protocol
+        +ProtocolMember[] members
+    }
+    ProtocolDeclaration --> Identifier
+    ProtocolDeclaration --> ImplementsProtocol
+    ProtocolDeclaration --> ProtocolMember
+    class _ProtocolMember
+    ProtocolMember <|-- ClassFunction
+    ProtocolMember <|-- ClassTypeAlias
+    class ModuleDeclaration {
+        +Identifier name
+        +TopLevelStatement[] declarations
+    }
+    ModuleDeclaration --> Identifier
+    ModuleDeclaration --> TopLevelStatement
+    class Annotation {
+        +Identifier name
+        +LiteralNode[] args
+    }
+    Annotation --> Identifier
+    Annotation --> LiteralNode
+    class TypeAliasDeclaration {
+        +Identifier name
+        +Generics? generics
+        +TypeLiteral type_lit
+    }
+    TypeAliasDeclaration --> Identifier
+    TypeAliasDeclaration --> Generics
+    TypeAliasDeclaration --> TypeLiteral
+    class Generics {
+        +GenericParamList params
+    }
+    Generics --> GenericParamList
+    class GenericParamList {
+        +GenericParamDef head
+        +GenericParamTail[] tails
+    }
+    GenericParamList --> GenericParamDef
+    GenericParamList --> GenericParamTail
+    class GenericParamTail {
+        +GenericParamDef param
+    }
+    GenericParamTail --> GenericParamDef
+    class GenericParamDef {
+        +Identifier name
+        +GenericBound? bound
+    }
+    GenericParamDef --> Identifier
+    GenericParamDef --> GenericBound
+    class GenericBound {
+        +TypeLiteral type_lit
+        +GenericBoundTail[] tails
+    }
+    GenericBound --> TypeLiteral
+    GenericBound --> GenericBoundTail
+    class GenericBoundTail {
+        +TypeLiteral type_lit
+    }
+    GenericBoundTail --> TypeLiteral
+    class ImplementsProtocol {
+        +AccesserList protocols
+    }
+    ImplementsProtocol --> AccesserList
+    class AccesserList {
+        +Accesser head
+        +AccesserListTail[] tails
+    }
+    AccesserList --> Accesser
+    AccesserList --> AccesserListTail
+    class AccesserListTail {
+        +Accesser accesser
+    }
+    AccesserListTail --> Accesser
+    class IdentifierList {
+        +Identifier head
+        +IdentifierListTail[] tails
+    }
+    IdentifierList --> Identifier
+    IdentifierList --> IdentifierListTail
+    class IdentifierListTail {
+        +Identifier id
+    }
+    IdentifierListTail --> Identifier
+    class _Statement
+    Statement <|-- VariableDeclaration
+    Statement <|-- ReturnStatement
+    Statement <|-- BreakStatement
+    Statement <|-- ContinueStatement
+    Statement <|-- ExprOrAssignmentStatement
+    class VariableDeclaration {
+        +VarKeyword keyword
+        +Pattern pattern
+        +TypeAnnotation? type_annotation
+        +VarInit? init
+    }
+    VariableDeclaration --> VarKeyword
+    VariableDeclaration --> Pattern
+    VariableDeclaration --> TypeAnnotation
+    VariableDeclaration --> VarInit
+    class _VarKeyword
+    VarKeyword <|-- LetKw
+    VarKeyword <|-- ConstKw
+    class LetKw {
+    }
+    class ConstKw {
+    }
+    class VarInit {
+        +Expression expr
+    }
+    VarInit --> Expression
+    class ReturnStatement {
+        +Expression? expr
+    }
+    ReturnStatement --> Expression
+    class BreakStatement {
+        +Expression? expr
+    }
+    BreakStatement --> Expression
+    class ContinueStatement {
+    }
+    class ExprOrAssignmentStatement {
+        +IgnoreKeyword? ignore
+        +Expression expr
+        +StatementTail? tail
+    }
+    ExprOrAssignmentStatement --> IgnoreKeyword
+    ExprOrAssignmentStatement --> Expression
+    ExprOrAssignmentStatement --> StatementTail
+    class IgnoreKeyword {
+    }
+    class _StatementTail
+    StatementTail <|-- AssignmentTail
+    StatementTail <|-- ExprSemiTail
+    class AssignmentTail {
+        +AssignmentOp op
+        +Expression expr
+    }
+    AssignmentTail --> AssignmentOp
+    AssignmentTail --> Expression
+    class ExprSemiTail {
+    }
+    class _AssignmentOp
+    AssignmentOp <|-- AssignOp
+    AssignmentOp <|-- AddAssignOp
+    AssignmentOp <|-- SubAssignOp
+    AssignmentOp <|-- MulAssignOp
+    AssignmentOp <|-- DivAssignOp
+    class AssignOp {
+    }
+    class AddAssignOp {
+    }
+    class SubAssignOp {
+    }
+    class MulAssignOp {
+    }
+    class DivAssignOp {
+    }
+    class Expression {
+        +LogicalAndExpr head
+        +LogicalOrTail[] tails
+    }
+    Expression --> LogicalAndExpr
+    Expression --> LogicalOrTail
+    class LogicalOrTail {
+        +LogicalAndExpr expr
+    }
+    LogicalOrTail --> LogicalAndExpr
+    class LogicalAndExpr {
+        +BitwiseOrExpr head
+        +LogicalAndTail[] tails
+    }
+    LogicalAndExpr --> BitwiseOrExpr
+    LogicalAndExpr --> LogicalAndTail
+    class LogicalAndTail {
+        +BitwiseOrExpr expr
+    }
+    LogicalAndTail --> BitwiseOrExpr
+    class BitwiseOrExpr {
+        +BitwiseXorExpr head
+        +BitwiseOrTail[] tails
+    }
+    BitwiseOrExpr --> BitwiseXorExpr
+    BitwiseOrExpr --> BitwiseOrTail
+    class BitwiseOrTail {
+        +BitwiseXorExpr expr
+    }
+    BitwiseOrTail --> BitwiseXorExpr
+    class BitwiseXorExpr {
+        +BitwiseAndExpr head
+        +BitwiseXorTail[] tails
+    }
+    BitwiseXorExpr --> BitwiseAndExpr
+    BitwiseXorExpr --> BitwiseXorTail
+    class BitwiseXorTail {
+        +BitwiseAndExpr expr
+    }
+    BitwiseXorTail --> BitwiseAndExpr
+    class BitwiseAndExpr {
+        +EqualityExpr head
+        +BitwiseAndTail[] tails
+    }
+    BitwiseAndExpr --> EqualityExpr
+    BitwiseAndExpr --> BitwiseAndTail
+    class BitwiseAndTail {
+        +EqualityExpr expr
+    }
+    BitwiseAndTail --> EqualityExpr
+    class EqualityExpr {
+        +RelationalExpr head
+        +EqualityTail[] tails
+    }
+    EqualityExpr --> RelationalExpr
+    EqualityExpr --> EqualityTail
+    class EqualityTail {
+        +EqualityOp op
+        +RelationalExpr expr
+    }
+    EqualityTail --> EqualityOp
+    EqualityTail --> RelationalExpr
+    class _EqualityOp
+    EqualityOp <|-- EqOp
+    EqualityOp <|-- NeqOp
+    class EqOp {
+    }
+    class NeqOp {
+    }
+    class RelationalExpr {
+        +ShiftExpr head
+        +RelationalTail[] tails
+    }
+    RelationalExpr --> ShiftExpr
+    RelationalExpr --> RelationalTail
+    class RelationalTail {
+        +RelationalOp op
+        +ShiftExpr expr
+    }
+    RelationalTail --> RelationalOp
+    RelationalTail --> ShiftExpr
+    class _RelationalOp
+    RelationalOp <|-- LtOp
+    RelationalOp <|-- LteOp
+    RelationalOp <|-- GtOp
+    RelationalOp <|-- GteOp
+    class LtOp {
+    }
+    class LteOp {
+    }
+    class GtOp {
+    }
+    class GteOp {
+    }
+    class ShiftExpr {
+        +AdditiveExpr head
+        +ShiftTail[] tails
+    }
+    ShiftExpr --> AdditiveExpr
+    ShiftExpr --> ShiftTail
+    class ShiftTail {
+        +ShiftOp op
+        +AdditiveExpr expr
+    }
+    ShiftTail --> ShiftOp
+    ShiftTail --> AdditiveExpr
+    class _ShiftOp
+    ShiftOp <|-- ShlOp
+    ShiftOp <|-- ShrOp
+    class ShlOp {
+    }
+    class ShrOp {
+    }
+    class AdditiveExpr {
+        +MultiplicativeExpr head
+        +AdditiveTail[] tails
+    }
+    AdditiveExpr --> MultiplicativeExpr
+    AdditiveExpr --> AdditiveTail
+    class AdditiveTail {
+        +AdditiveOp op
+        +MultiplicativeExpr expr
+    }
+    AdditiveTail --> AdditiveOp
+    AdditiveTail --> MultiplicativeExpr
+    class _AdditiveOp
+    AdditiveOp <|-- AddOp
+    AdditiveOp <|-- SubOp
+    class AddOp {
+    }
+    class SubOp {
+    }
+    class MultiplicativeExpr {
+        +PowerExpr head
+        +MultiplicativeTail[] tails
+    }
+    MultiplicativeExpr --> PowerExpr
+    MultiplicativeExpr --> MultiplicativeTail
+    class MultiplicativeTail {
+        +MultiplicativeOp op
+        +PowerExpr expr
+    }
+    MultiplicativeTail --> MultiplicativeOp
+    MultiplicativeTail --> PowerExpr
+    class _MultiplicativeOp
+    MultiplicativeOp <|-- MulOp
+    MultiplicativeOp <|-- DivOp
+    MultiplicativeOp <|-- RemOp
+    class MulOp {
+    }
+    class DivOp {
+    }
+    class RemOp {
+    }
+    class PowerExpr {
+        +PrefixExpr head
+        +PowerTail[] tails
+    }
+    PowerExpr --> PrefixExpr
+    PowerExpr --> PowerTail
+    class PowerTail {
+        +PrefixExpr expr
+    }
+    PowerTail --> PrefixExpr
+    class _PrefixExpr
+    PrefixExpr <|-- PrefixOpExpr
+    PrefixExpr <|-- PrimaryExpr
+    class PrefixOpExpr {
+        +PrefixOp op
+        +PrefixExpr expr
+    }
+    PrefixOpExpr --> PrefixOp
+    PrefixOpExpr --> PrefixExpr
+    class _PrefixOp
+    PrefixOp <|-- NotOp
+    PrefixOp <|-- BitNotOp
+    PrefixOp <|-- NegOp
+    class NotOp {
+    }
+    class BitNotOp {
+    }
+    class NegOp {
+    }
+    class PrimaryExpr {
+        +TryKeyword? try_kw
+        +AwaitKeyword? await_kw
+        +BaseExpr base
+        +PostfixOp[] postfixes
+    }
+    PrimaryExpr --> TryKeyword
+    PrimaryExpr --> AwaitKeyword
+    PrimaryExpr --> BaseExpr
+    PrimaryExpr --> PostfixOp
+    class TryKeyword {
+    }
+    class AwaitKeyword {
+    }
+    class _BaseExpr
+    BaseExpr <|-- IfCommonExpr
+    BaseExpr <|-- MatchExpression
+    BaseExpr <|-- LoopExpression
+    BaseExpr <|-- WhileCommonExpr
+    BaseExpr <|-- ForCommonExpr
+    BaseExpr <|-- PipeExpression
+    BaseExpr <|-- BlockExpression
+    BaseExpr <|-- ArrayLiteral
+    BaseExpr <|-- ParenExpr
+    BaseExpr <|-- LiteralNode
+    BaseExpr <|-- StructLiteralOrIdent
+    class StructLiteralOrIdent {
+        +Identifier head
+        +AccesserTail[] tails
+        +StructLiteralBody? literal_body
+    }
+    StructLiteralOrIdent --> Identifier
+    StructLiteralOrIdent --> AccesserTail
+    StructLiteralOrIdent --> StructLiteralBody
+    class StructLiteralBody {
+        +StructLiteralFields? fields
+    }
+    StructLiteralBody --> StructLiteralFields
+    class _PostfixOp
+    PostfixOp <|-- MethodOrFieldOp
+    PostfixOp <|-- CallOp
+    PostfixOp <|-- IndexOp
+    PostfixOp <|-- CastOp
+    class MethodOrFieldOp {
+        +Identifier name
+        +CallArgs? args
+    }
+    MethodOrFieldOp --> Identifier
+    MethodOrFieldOp --> CallArgs
+    class CallOp {
+        +CallArgs args
+    }
+    CallOp --> CallArgs
+    class CallArgs {
+        +ExpressionList? params
+    }
+    CallArgs --> ExpressionList
+    class IndexOp {
+        +Expression expr
+    }
+    IndexOp --> Expression
+    class StructLiteralFields {
+        +StructFieldInit head
+        +StructFieldTail[] tails
+    }
+    StructLiteralFields --> StructFieldInit
+    StructLiteralFields --> StructFieldTail
+    class StructFieldTail {
+        +StructFieldInit field
+    }
+    StructFieldTail --> StructFieldInit
+    class StructFieldInit {
+        +Identifier name
+        +StructFieldInitValue? value
+    }
+    StructFieldInit --> Identifier
+    StructFieldInit --> StructFieldInitValue
+    class StructFieldInitValue {
+        +Expression expr
+    }
+    StructFieldInitValue --> Expression
+    class CastOp {
+        +TypeLiteral type_lit
+    }
+    CastOp --> TypeLiteral
+    class IfCommonExpr {
+        +IfCondition cond
+        +BlockExpression body
+        +ElseClause? else_clause
+    }
+    IfCommonExpr --> IfCondition
+    IfCommonExpr --> BlockExpression
+    IfCommonExpr --> ElseClause
+    class _IfCondition
+    IfCondition <|-- IfLetCond
+    IfCondition <|-- NormalCond
+    class IfLetCond {
+        +Pattern pattern
+        +Expression expr
+    }
+    IfLetCond --> Pattern
+    IfLetCond --> Expression
+    class NormalCond {
+        +Expression expr
+    }
+    NormalCond --> Expression
+    class ElseClause {
+        +ElseBody body
+    }
+    ElseClause --> ElseBody
+    class _ElseBody
+    ElseBody <|-- IfCommonExpr
+    ElseBody <|-- BlockExpression
+    class MatchExpression {
+        +Expression expr
+        +MatchArm[] arms
+    }
+    MatchExpression --> Expression
+    MatchExpression --> MatchArm
+    class MatchArm {
+        +Pattern pattern
+        +IfGuard? guard
+        +Expression expr
+        +CommaToken? comma
+    }
+    MatchArm --> Pattern
+    MatchArm --> IfGuard
+    MatchArm --> Expression
+    MatchArm --> CommaToken
+    class CommaToken {
+    }
+    class LoopExpression {
+        +Expression? label
+        +BlockExpression body
+    }
+    LoopExpression --> Expression
+    LoopExpression --> BlockExpression
+    class WhileCommonExpr {
+        +IfCondition cond
+        +BlockExpression body
+    }
+    WhileCommonExpr --> IfCondition
+    WhileCommonExpr --> BlockExpression
+    class ForCommonExpr {
+        +Expression expr_or_pattern
+        +ForBody body
+    }
+    ForCommonExpr --> Expression
+    ForCommonExpr --> ForBody
+    class _ForBody
+    ForBody <|-- ForInBlock
+    ForBody <|-- ForPipelineBlock
+    class ForInBlock {
+        +Expression iterable
+        +BlockExpression body
+    }
+    ForInBlock --> Expression
+    ForInBlock --> BlockExpression
+    class ForPipelineBlock {
+        +PipelineArm[] arms
+    }
+    ForPipelineBlock --> PipelineArm
+    class PipeExpression {
+        +Expression expr
+        +PipelineArm[] arms
+    }
+    PipeExpression --> Expression
+    PipeExpression --> PipelineArm
+    class PipelineArm {
+        +Pattern pattern
+        +IfGuard? guard
+        +Expression expr
+    }
+    PipelineArm --> Pattern
+    PipelineArm --> IfGuard
+    PipelineArm --> Expression
+    class IfGuard {
+        +Expression expr
+    }
+    IfGuard --> Expression
+    class BlockExpression {
+        +Statement[] statements
+    }
+    BlockExpression --> Statement
+    class ArrayLiteral {
+        +ExpressionList? items
+    }
+    ArrayLiteral --> ExpressionList
+    class ParenExpr {
+        +ParenItemList? items
+        +ClosureArrow? arrow
+    }
+    ParenExpr --> ParenItemList
+    ParenExpr --> ClosureArrow
+    class ParenItemList {
+        +ParenItem head
+        +ParenItemTail[] tails
+    }
+    ParenItemList --> ParenItem
+    ParenItemList --> ParenItemTail
+    class ParenItemTail {
+        +ParenItem item
+    }
+    ParenItemTail --> ParenItem
+    class ParenItem {
+        +MutKw? mut_kw
+        +Expression expr
+        +TypeAnnotation? type_annotation
+    }
+    ParenItem --> MutKw
+    ParenItem --> Expression
+    ParenItem --> TypeAnnotation
+    class ClosureArrow {
+        +Expression expr
+    }
+    ClosureArrow --> Expression
+    class TypeAnnotation {
+        +TypeLiteral type_lit
+    }
+    TypeAnnotation --> TypeLiteral
+    class ExpressionList {
+        +Expression head
+        +ExpressionTail[] tails
+    }
+    ExpressionList --> Expression
+    ExpressionList --> ExpressionTail
+    class ExpressionTail {
+        +Expression expr
+    }
+    ExpressionTail --> Expression
+    class Pattern {
+        +PatternBase base
+        +RangePatternTail? range_tail
+    }
+    Pattern --> PatternBase
+    Pattern --> RangePatternTail
+    class _PatternBase
+    PatternBase <|-- WildcardPattern
+    PatternBase <|-- LiteralPattern
+    PatternBase <|-- ParenPattern
+    PatternBase <|-- IdentOrAccesserPattern
+    class WildcardPattern {
+    }
+    class LiteralPattern {
+        +LiteralNode lit
+    }
+    LiteralPattern --> LiteralNode
+    class ParenPattern {
+        +PatternList? patterns
+    }
+    ParenPattern --> PatternList
+    class IdentOrAccesserPattern {
+        +Identifier head
+        +AccesserTail[] tails
+        +BindingOrStruct? binding_or_struct
+    }
+    IdentOrAccesserPattern --> Identifier
+    IdentOrAccesserPattern --> AccesserTail
+    IdentOrAccesserPattern --> BindingOrStruct
+    class _BindingOrStruct
+    BindingOrStruct <|-- BindingTail
+    BindingOrStruct <|-- StructPatternTail
+    BindingOrStruct <|-- TupleStructPatternTail
+    class BindingTail {
+        +Pattern pat
+    }
+    BindingTail --> Pattern
+    class StructPatternTail {
+        +StructPatternFields? fields
+    }
+    StructPatternTail --> StructPatternFields
+    class TupleStructPatternTail {
+        +PatternList? patterns
+    }
+    TupleStructPatternTail --> PatternList
+    class RangePatternTail {
+        +RangeOp op
+        +PatternBase end
+    }
+    RangePatternTail --> RangeOp
+    RangePatternTail --> PatternBase
+    class _RangeOp
+    RangeOp <|-- RangeExc
+    RangeOp <|-- RangeInc
+    class RangeExc {
+    }
+    class RangeInc {
+    }
+    class PatternList {
+        +Pattern head
+        +PatternTail[] tails
+    }
+    PatternList --> Pattern
+    PatternList --> PatternTail
+    class PatternTail {
+        +Pattern pat
+    }
+    PatternTail --> Pattern
+    class StructPatternFields {
+        +StructPatternField head
+        +StructPatternFieldTail[] tails
+    }
+    StructPatternFields --> StructPatternField
+    StructPatternFields --> StructPatternFieldTail
+    class StructPatternFieldTail {
+        +StructPatternField field
+    }
+    StructPatternFieldTail --> StructPatternField
+    class StructPatternField {
+        +Identifier name
+        +StructPatternFieldValue? value
+    }
+    StructPatternField --> Identifier
+    StructPatternField --> StructPatternFieldValue
+    class StructPatternFieldValue {
+        +Pattern pat
+    }
+    StructPatternFieldValue --> Pattern
+    class _TypeLiteral
+    TypeLiteral <|-- ImplType
+    TypeLiteral <|-- TypeofType
+    TypeLiteral <|-- TupleType
+    TypeLiteral <|-- PrimitiveType
+    TypeLiteral <|-- NamedType
+    class ImplType {
+        +TypeLiteral type_lit
+    }
+    ImplType --> TypeLiteral
+    class TypeofType {
+        +Expression expr
+    }
+    TypeofType --> Expression
+    class TupleType {
+        +TypeList? types
+    }
+    TupleType --> TypeList
+    class _PrimitiveType
+    PrimitiveType <|-- BoolType
+    PrimitiveType <|-- IntType
+    PrimitiveType <|-- DoubleIntType
+    PrimitiveType <|-- FloatType
+    PrimitiveType <|-- DoubleFloatType
+    PrimitiveType <|-- CharType
+    PrimitiveType <|-- UsizeType
+    PrimitiveType <|-- AnyType
+    PrimitiveType <|-- NeverType
+    PrimitiveType <|-- VoidType
+    class BoolType {
+    }
+    class IntType {
+    }
+    class DoubleIntType {
+    }
+    class FloatType {
+    }
+    class DoubleFloatType {
+    }
+    class CharType {
+    }
+    class UsizeType {
+    }
+    class AnyType {
+    }
+    class NeverType {
+    }
+    class VoidType {
+    }
+    class NamedType {
+        +Identifier head
+        +AccesserTail[] tails
+        +GenericArgs? generics
+    }
+    NamedType --> Identifier
+    NamedType --> AccesserTail
+    NamedType --> GenericArgs
+    class GenericArgs {
+        +TypeList types
+    }
+    GenericArgs --> TypeList
+    class TypeList {
+        +TypeLiteral head
+        +TypeTail[] tails
+    }
+    TypeList --> TypeLiteral
+    TypeList --> TypeTail
+    class TypeTail {
+        +TypeLiteral type_lit
+    }
+    TypeTail --> TypeLiteral
+    class Accesser {
+        +Identifier head
+        +AccesserTail[] tails
+    }
+    Accesser --> Identifier
+    Accesser --> AccesserTail
+    class AccesserTail {
+        +Identifier id
+    }
+    AccesserTail --> Identifier
+    class Identifier {
+    }
+    class StringLiteral {
+    }
+    class CharLiteral {
+    }
+    class IntLiteral {
+    }
+    class FloatLiteral {
+    }
+    class BoolLiteral {
+    }
+    class _LiteralNode
+    LiteralNode <|-- StringLiteral
+    LiteralNode <|-- CharLiteral
+    LiteralNode <|-- IntLiteral
+    LiteralNode <|-- FloatLiteral
+    LiteralNode <|-- BoolLiteral
+        </pre>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'neutral',
+            maxTextSize: 1000000,
+            // ここが重要：SVGが勝手に縮小されないようにする
+            class: { useMaxWidth: false } 
+        });
+
+        async function draw() {
+            // 1. レンダリング
+            await mermaid.run({
+                nodes: document.querySelectorAll('.mermaid'),
+            });
+
+            // 2. 生成されたSVGを取得
+            const svgElement = document.querySelector('.mermaid svg');
+            if (!svgElement) return;
+
+            // 3. SVGのスタイルをコンテナにフィットさせる
+            svgElement.style.visibility = 'visible';
+            svgElement.style.width = '100%';
+            svgElement.style.height = '100%';
+            svgElement.style.maxWidth = 'none'; // 上限を解除
+
+            // 4. svg-pan-zoomを適用
+            svgPanZoom(svgElement, {
+                zoomEnabled: true,
+                controlIconsEnabled: true,
+                fit: true,
+                center: true,
+                minZoom: 0.01, // 巨大な図に対応するため小さめに設定
+                maxZoom: 20
+            });
+        }
+
+        draw();
+    </script>
+</body>
+</html>

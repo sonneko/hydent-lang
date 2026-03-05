@@ -1,0 +1,858 @@
+[
+  {
+    "ast": "Module",
+    "size": 8
+  },
+  {
+    "ast": "TopLevelStatement",
+    "size": 24
+  },
+  {
+    "ast": "ItemWithModifiers",
+    "size": 16
+  },
+  {
+    "ast": "DocComment",
+    "size": 8
+  },
+  {
+    "ast": "PubKeyword",
+    "size": 0
+  },
+  {
+    "ast": "ItemDeclaration",
+    "size": 64
+  },
+  {
+    "ast": "ImportDeclaration",
+    "size": 24
+  },
+  {
+    "ast": "ImportTargets",
+    "size": 16
+  },
+  {
+    "ast": "ImportSpecific",
+    "size": 16
+  },
+  {
+    "ast": "ImportAllAs",
+    "size": 4
+  },
+  {
+    "ast": "StaticVariableDeclaration",
+    "size": 16
+  },
+  {
+    "ast": "ClassDeclaration",
+    "size": 44
+  },
+  {
+    "ast": "ClassMember",
+    "size": 52
+  },
+  {
+    "ast": "ClassFunction",
+    "size": 16
+  },
+  {
+    "ast": "FieldDeclaration",
+    "size": 44
+  },
+  {
+    "ast": "FieldModifier",
+    "size": 1
+  },
+  {
+    "ast": "FinalKw",
+    "size": 0
+  },
+  {
+    "ast": "MutKw",
+    "size": 0
+  },
+  {
+    "ast": "ClassTypeAlias",
+    "size": 52
+  },
+  {
+    "ast": "EnumDeclaration",
+    "size": 44
+  },
+  {
+    "ast": "EnumMember",
+    "size": 28
+  },
+  {
+    "ast": "EnumFunction",
+    "size": 16
+  },
+  {
+    "ast": "EnumVariant",
+    "size": 28
+  },
+  {
+    "ast": "StructDeclaration",
+    "size": 20
+  },
+  {
+    "ast": "StructBody",
+    "size": 16
+  },
+  {
+    "ast": "StructBlockBody",
+    "size": 8
+  },
+  {
+    "ast": "StructTupleBody",
+    "size": 16
+  },
+  {
+    "ast": "StructEmptyBody",
+    "size": 0
+  },
+  {
+    "ast": "FunctionDeclaration",
+    "size": 64
+  },
+  {
+    "ast": "FunctionBody",
+    "size": 12
+  },
+  {
+    "ast": "EmptyBody",
+    "size": 0
+  },
+  {
+    "ast": "ExternKeyword",
+    "size": 0
+  },
+  {
+    "ast": "AsyncKeyword",
+    "size": 0
+  },
+  {
+    "ast": "PanicsKeyword",
+    "size": 0
+  },
+  {
+    "ast": "ReturnType",
+    "size": 28
+  },
+  {
+    "ast": "ParamsWithTypes",
+    "size": 12
+  },
+  {
+    "ast": "ParamWithTypeTail",
+    "size": 56
+  },
+  {
+    "ast": "ParamWithType",
+    "size": 56
+  },
+  {
+    "ast": "ParamId",
+    "size": 8
+  },
+  {
+    "ast": "ThisKw",
+    "size": 0
+  },
+  {
+    "ast": "ParamInit",
+    "size": 12
+  },
+  {
+    "ast": "ProtocolDeclaration",
+    "size": 36
+  },
+  {
+    "ast": "ProtocolMember",
+    "size": 52
+  },
+  {
+    "ast": "ModuleDeclaration",
+    "size": 12
+  },
+  {
+    "ast": "Annotation",
+    "size": 12
+  },
+  {
+    "ast": "TypeAliasDeclaration",
+    "size": 40
+  },
+  {
+    "ast": "Generics",
+    "size": 4
+  },
+  {
+    "ast": "GenericParamList",
+    "size": 48
+  },
+  {
+    "ast": "GenericParamTail",
+    "size": 40
+  },
+  {
+    "ast": "GenericParamDef",
+    "size": 40
+  },
+  {
+    "ast": "GenericBound",
+    "size": 36
+  },
+  {
+    "ast": "GenericBoundTail",
+    "size": 28
+  },
+  {
+    "ast": "ImplementsProtocol",
+    "size": 20
+  },
+  {
+    "ast": "AccesserList",
+    "size": 20
+  },
+  {
+    "ast": "AccesserListTail",
+    "size": 12
+  },
+  {
+    "ast": "IdentifierList",
+    "size": 12
+  },
+  {
+    "ast": "IdentifierListTail",
+    "size": 4
+  },
+  {
+    "ast": "Statement",
+    "size": 52
+  },
+  {
+    "ast": "VariableDeclaration",
+    "size": 52
+  },
+  {
+    "ast": "VarKeyword",
+    "size": 1
+  },
+  {
+    "ast": "LetKw",
+    "size": 0
+  },
+  {
+    "ast": "ConstKw",
+    "size": 0
+  },
+  {
+    "ast": "VarInit",
+    "size": 12
+  },
+  {
+    "ast": "ReturnStatement",
+    "size": 16
+  },
+  {
+    "ast": "BreakStatement",
+    "size": 16
+  },
+  {
+    "ast": "ContinueStatement",
+    "size": 0
+  },
+  {
+    "ast": "ExprOrAssignmentStatement",
+    "size": 32
+  },
+  {
+    "ast": "IgnoreKeyword",
+    "size": 0
+  },
+  {
+    "ast": "StatementTail",
+    "size": 16
+  },
+  {
+    "ast": "AssignmentTail",
+    "size": 16
+  },
+  {
+    "ast": "ExprSemiTail",
+    "size": 0
+  },
+  {
+    "ast": "AssignmentOp",
+    "size": 1
+  },
+  {
+    "ast": "AssignOp",
+    "size": 0
+  },
+  {
+    "ast": "AddAssignOp",
+    "size": 0
+  },
+  {
+    "ast": "SubAssignOp",
+    "size": 0
+  },
+  {
+    "ast": "MulAssignOp",
+    "size": 0
+  },
+  {
+    "ast": "DivAssignOp",
+    "size": 0
+  },
+  {
+    "ast": "Expression",
+    "size": 12
+  },
+  {
+    "ast": "LogicalOrTail",
+    "size": 4
+  },
+  {
+    "ast": "LogicalAndExpr",
+    "size": 12
+  },
+  {
+    "ast": "LogicalAndTail",
+    "size": 4
+  },
+  {
+    "ast": "BitwiseOrExpr",
+    "size": 12
+  },
+  {
+    "ast": "BitwiseOrTail",
+    "size": 44
+  },
+  {
+    "ast": "BitwiseXorExpr",
+    "size": 44
+  },
+  {
+    "ast": "BitwiseXorTail",
+    "size": 36
+  },
+  {
+    "ast": "BitwiseAndExpr",
+    "size": 36
+  },
+  {
+    "ast": "BitwiseAndTail",
+    "size": 28
+  },
+  {
+    "ast": "EqualityExpr",
+    "size": 28
+  },
+  {
+    "ast": "EqualityTail",
+    "size": 24
+  },
+  {
+    "ast": "EqualityOp",
+    "size": 1
+  },
+  {
+    "ast": "EqOp",
+    "size": 0
+  },
+  {
+    "ast": "NeqOp",
+    "size": 0
+  },
+  {
+    "ast": "RelationalExpr",
+    "size": 20
+  },
+  {
+    "ast": "RelationalTail",
+    "size": 16
+  },
+  {
+    "ast": "RelationalOp",
+    "size": 1
+  },
+  {
+    "ast": "LtOp",
+    "size": 0
+  },
+  {
+    "ast": "LteOp",
+    "size": 0
+  },
+  {
+    "ast": "GtOp",
+    "size": 0
+  },
+  {
+    "ast": "GteOp",
+    "size": 0
+  },
+  {
+    "ast": "ShiftExpr",
+    "size": 12
+  },
+  {
+    "ast": "ShiftTail",
+    "size": 44
+  },
+  {
+    "ast": "ShiftOp",
+    "size": 1
+  },
+  {
+    "ast": "ShlOp",
+    "size": 0
+  },
+  {
+    "ast": "ShrOp",
+    "size": 0
+  },
+  {
+    "ast": "AdditiveExpr",
+    "size": 40
+  },
+  {
+    "ast": "AdditiveTail",
+    "size": 36
+  },
+  {
+    "ast": "AdditiveOp",
+    "size": 1
+  },
+  {
+    "ast": "AddOp",
+    "size": 0
+  },
+  {
+    "ast": "SubOp",
+    "size": 0
+  },
+  {
+    "ast": "MultiplicativeExpr",
+    "size": 32
+  },
+  {
+    "ast": "MultiplicativeTail",
+    "size": 28
+  },
+  {
+    "ast": "MultiplicativeOp",
+    "size": 1
+  },
+  {
+    "ast": "MulOp",
+    "size": 0
+  },
+  {
+    "ast": "DivOp",
+    "size": 0
+  },
+  {
+    "ast": "RemOp",
+    "size": 0
+  },
+  {
+    "ast": "PowerExpr",
+    "size": 24
+  },
+  {
+    "ast": "PowerTail",
+    "size": 16
+  },
+  {
+    "ast": "PrefixExpr",
+    "size": 16
+  },
+  {
+    "ast": "PrefixOpExpr",
+    "size": 8
+  },
+  {
+    "ast": "PrefixOp",
+    "size": 1
+  },
+  {
+    "ast": "NotOp",
+    "size": 0
+  },
+  {
+    "ast": "BitNotOp",
+    "size": 0
+  },
+  {
+    "ast": "NegOp",
+    "size": 0
+  },
+  {
+    "ast": "PrimaryExpr",
+    "size": 16
+  },
+  {
+    "ast": "TryKeyword",
+    "size": 0
+  },
+  {
+    "ast": "AwaitKeyword",
+    "size": 0
+  },
+  {
+    "ast": "BaseExpr",
+    "size": 40
+  },
+  {
+    "ast": "StructLiteralOrIdent",
+    "size": 20
+  },
+  {
+    "ast": "StructLiteralBody",
+    "size": 28
+  },
+  {
+    "ast": "PostfixOp",
+    "size": 32
+  },
+  {
+    "ast": "MethodOrFieldOp",
+    "size": 28
+  },
+  {
+    "ast": "CallOp",
+    "size": 24
+  },
+  {
+    "ast": "CallArgs",
+    "size": 24
+  },
+  {
+    "ast": "IndexOp",
+    "size": 12
+  },
+  {
+    "ast": "StructLiteralFields",
+    "size": 28
+  },
+  {
+    "ast": "StructFieldTail",
+    "size": 20
+  },
+  {
+    "ast": "StructFieldInit",
+    "size": 20
+  },
+  {
+    "ast": "StructFieldInitValue",
+    "size": 12
+  },
+  {
+    "ast": "CastOp",
+    "size": 28
+  },
+  {
+    "ast": "IfCommonExpr",
+    "size": 40
+  },
+  {
+    "ast": "IfCondition",
+    "size": 20
+  },
+  {
+    "ast": "IfLetCond",
+    "size": 16
+  },
+  {
+    "ast": "NormalCond",
+    "size": 12
+  },
+  {
+    "ast": "ElseClause",
+    "size": 12
+  },
+  {
+    "ast": "ElseBody",
+    "size": 12
+  },
+  {
+    "ast": "MatchExpression",
+    "size": 20
+  },
+  {
+    "ast": "MatchArm",
+    "size": 36
+  },
+  {
+    "ast": "CommaToken",
+    "size": 0
+  },
+  {
+    "ast": "LoopExpression",
+    "size": 24
+  },
+  {
+    "ast": "WhileCommonExpr",
+    "size": 28
+  },
+  {
+    "ast": "ForCommonExpr",
+    "size": 36
+  },
+  {
+    "ast": "ForBody",
+    "size": 24
+  },
+  {
+    "ast": "ForInBlock",
+    "size": 20
+  },
+  {
+    "ast": "ForPipelineBlock",
+    "size": 8
+  },
+  {
+    "ast": "PipeExpression",
+    "size": 20
+  },
+  {
+    "ast": "PipelineArm",
+    "size": 32
+  },
+  {
+    "ast": "IfGuard",
+    "size": 12
+  },
+  {
+    "ast": "BlockExpression",
+    "size": 8
+  },
+  {
+    "ast": "ArrayLiteral",
+    "size": 24
+  },
+  {
+    "ast": "ParenExpr",
+    "size": 32
+  },
+  {
+    "ast": "ParenItemList",
+    "size": 12
+  },
+  {
+    "ast": "ParenItemTail",
+    "size": 44
+  },
+  {
+    "ast": "ParenItem",
+    "size": 44
+  },
+  {
+    "ast": "ClosureArrow",
+    "size": 12
+  },
+  {
+    "ast": "TypeAnnotation",
+    "size": 28
+  },
+  {
+    "ast": "ExpressionList",
+    "size": 20
+  },
+  {
+    "ast": "ExpressionTail",
+    "size": 12
+  },
+  {
+    "ast": "Pattern",
+    "size": 40
+  },
+  {
+    "ast": "PatternBase",
+    "size": 32
+  },
+  {
+    "ast": "WildcardPattern",
+    "size": 0
+  },
+  {
+    "ast": "LiteralPattern",
+    "size": 12
+  },
+  {
+    "ast": "ParenPattern",
+    "size": 16
+  },
+  {
+    "ast": "IdentOrAccesserPattern",
+    "size": 32
+  },
+  {
+    "ast": "BindingOrStruct",
+    "size": 20
+  },
+  {
+    "ast": "BindingTail",
+    "size": 4
+  },
+  {
+    "ast": "StructPatternTail",
+    "size": 20
+  },
+  {
+    "ast": "TupleStructPatternTail",
+    "size": 16
+  },
+  {
+    "ast": "RangePatternTail",
+    "size": 36
+  },
+  {
+    "ast": "RangeOp",
+    "size": 1
+  },
+  {
+    "ast": "RangeExc",
+    "size": 0
+  },
+  {
+    "ast": "RangeInc",
+    "size": 0
+  },
+  {
+    "ast": "PatternList",
+    "size": 12
+  },
+  {
+    "ast": "PatternTail",
+    "size": 40
+  },
+  {
+    "ast": "StructPatternFields",
+    "size": 20
+  },
+  {
+    "ast": "StructPatternFieldTail",
+    "size": 12
+  },
+  {
+    "ast": "StructPatternField",
+    "size": 12
+  },
+  {
+    "ast": "StructPatternFieldValue",
+    "size": 4
+  },
+  {
+    "ast": "TypeLiteral",
+    "size": 28
+  },
+  {
+    "ast": "ImplType",
+    "size": 4
+  },
+  {
+    "ast": "TypeofType",
+    "size": 12
+  },
+  {
+    "ast": "TupleType",
+    "size": 16
+  },
+  {
+    "ast": "PrimitiveType",
+    "size": 1
+  },
+  {
+    "ast": "BoolType",
+    "size": 0
+  },
+  {
+    "ast": "IntType",
+    "size": 0
+  },
+  {
+    "ast": "DoubleIntType",
+    "size": 0
+  },
+  {
+    "ast": "FloatType",
+    "size": 0
+  },
+  {
+    "ast": "DoubleFloatType",
+    "size": 0
+  },
+  {
+    "ast": "CharType",
+    "size": 0
+  },
+  {
+    "ast": "UsizeType",
+    "size": 0
+  },
+  {
+    "ast": "AnyType",
+    "size": 0
+  },
+  {
+    "ast": "NeverType",
+    "size": 0
+  },
+  {
+    "ast": "VoidType",
+    "size": 0
+  },
+  {
+    "ast": "NamedType",
+    "size": 28
+  },
+  {
+    "ast": "GenericArgs",
+    "size": 12
+  },
+  {
+    "ast": "TypeList",
+    "size": 12
+  },
+  {
+    "ast": "TypeTail",
+    "size": 28
+  },
+  {
+    "ast": "Accesser",
+    "size": 12
+  },
+  {
+    "ast": "AccesserTail",
+    "size": 4
+  },
+  {
+    "ast": "Identifier",
+    "size": 4
+  },
+  {
+    "ast": "StringLiteral",
+    "size": 8
+  },
+  {
+    "ast": "CharLiteral",
+    "size": 4
+  },
+  {
+    "ast": "IntLiteral",
+    "size": 4
+  },
+  {
+    "ast": "FloatLiteral",
+    "size": 4
+  },
+  {
+    "ast": "BoolLiteral",
+    "size": 1
+  }
+]
