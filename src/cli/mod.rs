@@ -16,30 +16,28 @@ pub fn call_cli() {
     };
 
     match parsed.command {
-        Commands::Build { path, emit, out } => {
-            match emit {
-                EmitItems::Ast => {
-                    log("Getting file contents...");
-                    let source = std::fs::read_to_string(&path).unwrap();
-                    log("Parsing...");
-                    let ast = format!("{}", parse_for_integration_test(&source));
-                    log("Writing into file...");
-                    std::fs::write(&out, ast).unwrap();
-                }
-                EmitItems::Hir => {
-                    unimplemented!()
-                }
-                EmitItems::Mir => {
-                    unimplemented!()
-                }
-                EmitItems::Llvmir => {
-                    unimplemented!()
-                }
-                EmitItems::Bin => {
-                    unimplemented!()
-                }
+        Commands::Build { path, emit, out } => match emit {
+            EmitItems::Ast => {
+                log("Getting file contents...");
+                let source = std::fs::read_to_string(&path).unwrap();
+                log("Parsing...");
+                let ast = format!("{}", parse_for_integration_test(&source));
+                log("Writing into file...");
+                std::fs::write(&out, ast).unwrap();
             }
-        }
+            EmitItems::Hir => {
+                unimplemented!()
+            }
+            EmitItems::Mir => {
+                unimplemented!()
+            }
+            EmitItems::Llvmir => {
+                unimplemented!()
+            }
+            EmitItems::Bin => {
+                unimplemented!()
+            }
+        },
     }
 }
 

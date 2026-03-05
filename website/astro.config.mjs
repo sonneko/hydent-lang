@@ -7,6 +7,9 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Hydent PL',
+			customCss: [
+				'./src/styles/index.css',
+			],
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/sonneko/hydent-lang' }],
 			sidebar: [
 				{

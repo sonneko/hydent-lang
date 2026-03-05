@@ -2,7 +2,8 @@
 repomix-output.xml
 .idx
 spec/
-.vscode
 TODO.txt
-.env
 /out/
+
+.idx
+.vscode

@@ -5,36 +5,37 @@ template: splash
 hero:
   tagline: A new kind of programming language you can create any apps with.
   image:
-    file: ../../assets/houston.webp
+    file: /assets/hydent_logo.svg
   actions:
     - text: Learn Hydent
-      link: /docs/learn/000/
+      link: /not-yet
       icon: right-arrow
     - text: Install Hydent
-      link: /docs/get-started/
+      link: /not-yet
       icon: right-arrow
       variant: secondary
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## It's **Proof-of-Concept Stage**.
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+Hydent language is being developed by sonneko high school students programmar with a view to commercial programming language.
+
+<CardGrid>
+	<Card title="View on github" icon="github">
+		See the status or source code of the compiler development.
+
+		https://github.com/sonneko/hydent-lang
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Contributing" icon="star">
+		This project is not ready for external contributions yet.
+
+		Please contact sonneko for contributions by opening an issue on [this repo](https://github.com/sonneko/sonneko).
 	</Card>
 </CardGrid>
+
+
+### Links for developer
+
+- [Benchmark results](./benches/report)

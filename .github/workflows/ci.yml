@@ -91,6 +91,16 @@ jobs:
             cp -r ./target/criterion/* ./out/benches
           fi
 
+      - name: Build website
+        run: npm run build
+        working-directory: ./website
+
+      - name: Prepare Website htmls
+        run: |
+          if [ -d "./website/dist" ]; then
+            cp -r ./website/dist/* ./out
+          fi
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
