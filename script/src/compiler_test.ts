@@ -31,6 +31,7 @@ sourceFiles.filter(file => file.isFile()).forEach((file) => {
         execSync(`rm ../out/snapshots/${parentPath}/old-${name}-ast.json`);
         console.log(`✅ ASTs in ./tests/fixture/${parentPath}/${name}.hyt match.`);
     } catch (_) {
+        execSync(`rm ../out/snapshots/${parentPath}/old-${name}-ast.json`);
         console.log(`👀 New fixture detected: ./tests/fixture/${parentPath}/${name}.hyt`);
     }
 });
