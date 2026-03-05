@@ -57,9 +57,9 @@ export class ASTPrinterGenerator {
 
                     // WARNING: hardcode identifier and string literal behavior
                     if (func.astTypeName == "Identifier") {
-                        ret += `        self.write(self.symbols.get(&node.symbol))?;\n`;
+                        ret += `        self.write(&format!("\\"{}\\"", self.symbols.get(&node.symbol)))?;\n`;
                     } else if (func.astTypeName == "StringLiteral") {
-                        ret += `        self.write(node.span.into(self.source_holder.get()))?;\n`;
+                        ret += `        self.write(&format!("\\"{}\\"", node.span.into(self.source_holder.get())))?;\n`;
                     } else {
                         ret += `        self.write(&format!(r#""{:?}""#, node))?;\n`;
                     }
