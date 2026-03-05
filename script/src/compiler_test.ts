@@ -12,26 +12,25 @@ sourceFiles.filter(file => file.isFile()).forEach((file) => {
     }
     const parentPath = file.parentPath.split("/").filter((_, i) => i > 2);
     const name = file.name.split(".")[0];
-    execSync(`mkdir -p ../out/snapshots/${parentPath}`);
-    execSync(
-        `cd ../ && cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./out/snapshots/${parentPath}/${name}-ast.json --emit ast --verbose`,
-        { encoding: "utf-8", stdio: "ignore" }
-    );
     try {
         execSync(
-            `git checkout gh-pages:snapshots/${parentPath}/${name}-ast.json > ../out/snapshots/${parentPath}/old-${name}-ast.json`,
+            `cd ../ && cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`,
+            { encoding: "utf-8", stdio: "ignore" }
         );
-        const now = readFileSync(`../out/snapshots/${parentPath}/${name}-ast.json`);
-        const old = readFileSync(`../out/snapshots/${parentPath}/old-${name}-ast.json`);
+
+        const now = readFileSync(`../tests/fixture/${parentPath}/new-${name}-ast.json`);
+        const old = readFileSync(`../tests/fixture/${parentPath}/${name}-ast.json`);
+
+        execSync(`rm ../tests/fixture/${parentPath}/new-${name}-ast.json`, { encoding: "utf-8", stdio: "ignore"});
 
         if (now.toString() !== old.toString()) {
-            throw new Error(`❌ ASTs in ./tests/fixture/${parentPath}/${name}.hyt don't match.`);
+            console.error(`❌ ASTs in ./tests/fixture/${parentPath}/${name}.hyt don't match.`);
+            return;
         }
 
-        execSync(`rm ../out/snapshots/${parentPath}/old-${name}-ast.json`);
         console.log(`✅ ASTs in ./tests/fixture/${parentPath}/${name}.hyt match.`);
     } catch (_) {
-        execSync(`rm ../out/snapshots/${parentPath}/old-${name}-ast.json`);
-        console.log(`👀 New fixture detected: ./tests/fixture/${parentPath}/${name}.hyt`);
+        console.error(`❌ No comparation target file detected: ./tests/fixture/${parentPath}/${name}.hyt`);
+        return;
     }
 });

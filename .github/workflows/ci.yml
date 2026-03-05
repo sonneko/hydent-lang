@@ -16,24 +16,41 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      
-      - name: Install & Test Script
-        run: |
-          npm ci
-          npm run self-test
+
+      - name: Install script dependencies
+        run: npm ci
         working-directory: ./script
 
-      - name: Run Preparation Script
+      - name: Test script
+        run: npm run self-test
+        working-directory: ./script
+
+      # - name: Install LLVM 21
+      #   run: |
+      #     wget https://apt.llvm.org/llvm.sh
+      #     chmod  x llvm.sh
+      #     sudo ./llvm.sh 21
+      #     sudo apt-get install -y libpolly-21-dev
+      #     rm ./llvm.sh
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+
+      - name: Run script
         run: npm start -- ci
         working-directory: ./script
 
-      - name: Upload Workspace
+      - name: Save
         uses: actions/upload-artifact@v4
         with:
           name: workspace-artifact
@@ -41,89 +58,117 @@ jobs:
           retention-days: 1
 
   lint:
-    needs: setup
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
           name: workspace-artifact
+
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt, clippy
-      - name: Check formatting
-        run: cargo  stable fmt --all -- --check
-      - name: Clippy
-        run: cargo  stable clippy -- -D warnings
 
-  test:
-    needs: setup
+      - name: Check formatting
+        run: cargo +stable fmt --all -- --check
+
+      - name: Clippy
+        run: cargo +stable clippy -- -D warnings
+
+  unit-test:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
           name: workspace-artifact
+
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Install nightly for Miri
+
+      - name: Install nightly toolchain
         uses: dtolnay/rust-toolchain@nightly
         with:
           components: miri
-      - name: Unit Test
-        run: cargo  stable test --verbose
-      - name: Run Miri
-        run: |
-          cargo  nightly miri setup
-          cargo  nightly miri test --lib
-        env:
-          MIRIFLAGS: "-Zmiri-ignore-leaks"
 
-  benchmark:
-    needs: setup
+      - name: Unit Test
+        run: cargo +stable test --verbose
+
+      - name: Miri test
+        run: |
+          cargo +nightly miri setup
+          cargo +nightly miri test --lib
+
+  integration-test:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
           name: workspace-artifact
-      - uses: actions/setup-node@v4
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      
-      - name: Run benchmark
-        run: cargo  stable bench
-      
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
       - name: Integration Test
-        run: |
-          npm ci
-          npm run compiler-test
+        run: npm run compiler-test
         working-directory: ./script
 
-      - name: Upload Benchmark Results
+  benchmark:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Download Workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: workspace-artifact
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Setup out directory
+        run: mkdir -p ./out
+
+      - name: Run benchmark
+        run: cargo +stable bench
+
+      - name: Upload bench result
         uses: actions/upload-artifact@v4
         with:
-          name: bench-results
+          name: bench-result
           path: ./target/criterion
           retention-days: 1
 
-  build-site:
-    needs: setup
+  build-website:
     runs-on: ubuntu-latest
+    needs: setup
     steps:
       - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
           name: workspace-artifact
-      - uses: actions/setup-node@v4
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
         with:
           node-version: "24"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
       - name: Build website
         run: |
           npm ci
           npm run build
         working-directory: ./website
-      - name: Upload Website Artifact
+
+      - name: Upload website artifact
         uses: actions/upload-artifact@v4
         with:
           name: website-dist
@@ -131,29 +176,28 @@ jobs:
           retention-days: 1
 
   deploy:
-    needs: [lint, test, benchmark, build-site]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    needs: [setup, build-website, benchmark, integration-test, unit-test, lint]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout (for branch logic)
-        uses: actions/checkout@v4
-
-      - name: Setup out directory
-        run: mkdir -p ./out
-
-      - name: Download Bench Results
+      - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
-          name: bench-results
-          path: ./out/benches
+          name: workspace-artifact
 
-      - name: Download Website Dist
+      - name: Download bench result        
+        uses: actions/download-artifact@v4
+        with:
+          name: bench-result
+          path: out/bench
+
+      - name: Download website Dist
         uses: actions/download-artifact@v4
         with:
           name: website-dist
-          path: ./out
+          path: out/
 
-      - name: Deploy to gh-pages
+      - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

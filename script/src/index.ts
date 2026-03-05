@@ -10,18 +10,18 @@ import { generateTokenTypeMap } from "./parser_gen/gen_tokenmap";
 import { generateMermaidHtml } from "./parser_gen/gen_mermaid";
 
 const BNF_FILE_PATH = "../assets/grammer.txt";
-const AST_FILE_PATH = "../spec/frontend/ast.json";
-const IR_FILE_PATH = "../spec/frontend/ir.json";
+const AST_FILE_PATH = "../out/spec/frontend/ast.json";
+const IR_FILE_PATH = "../out/spec/frontend/ir.json";
 const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";
 const AST_TYPE_FILE_PATH = "../src/parser/generated_ast.rs";
 const AST_PRINTER_FILE_PATH = "../src/parser/generated_ast_printer.rs";
 const AST_SIZE_CHECKER_FILE_PATH = "../src/parser/tests/ast_size_checker.rs";
-const AST_SIZE_REPORT_FILE_PATH = "../spec/frontend/ast_size.json";
+const AST_SIZE_REPORT_FILE_PATH = "../out/spec/frontend/ast_size.json";
 const TOKEN_MAP_FILE_PATH = "../src/tokenizer/generated_tokenmap.rs";
-const MERMAID_GRAMMAR_FILE_PATH = "../spec/frontend/mermaid_grammar.html";
+const MERMAID_GRAMMAR_FILE_PATH = "../out/spec/frontend/mermaid_grammar.html";
 
 function main() {
-    fs.mkdirSync("../spec/frontend", { recursive: true });
+    fs.mkdirSync("../out/spec/frontend", { recursive: true });
 
     const mode = process.argv[2] === "ci" ? "ci" : "dev";
 
@@ -34,7 +34,7 @@ function main() {
     const source = fs.readFileSync(BNF_FILE_PATH, "utf8");
     const ast = parse(source);
     fs.writeFileSync(AST_FILE_PATH, JSON.stringify(ast, null, 2), "utf8");
-    console.log("✅ AST written to spec/frontend/ast.json");
+    console.log("✅ AST written to out/spec/frontend/ast.json");
 
     console.log("🤖 Analyzing AST...");
     const analysis = analyze(ast);
@@ -47,7 +47,7 @@ function main() {
         }
         return value;
     }, 2), "utf8");
-    console.log("✅ IR written to spec/frontend/ir.json");
+    console.log("✅ IR written to out/spec/frontend/ir.json");
 
     console.log("🤖 Generating Parser...");
     const parser = generate(analysis);
@@ -59,7 +59,7 @@ function main() {
     console.log("🤖 Generating Mermaid format grammar diagram...")
     const mermaid = generateMermaidHtml(ast);
     fs.writeFileSync(MERMAID_GRAMMAR_FILE_PATH, mermaid, "utf8");
-    console.log("✅ Mermaid format grammar diagram written to spec/frontend/mermaid_grammar.html");
+    console.log("✅ Mermaid format grammar diagram written to out/spec/frontend/mermaid_grammar.html");
 
     if (mode === "ci") {
         console.log("🤖 Checking AST type size...");

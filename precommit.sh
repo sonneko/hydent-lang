@@ -9,4 +9,3 @@ cargo clippy -- -D warnings
 cargo miri setup || true
 cargo miri test --lib || true
 cargo test
-
