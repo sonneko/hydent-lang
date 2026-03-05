@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "self-test": "tsx ./src/self_test.ts"
+    "self-test": "tsx ./src/self_test.ts",
+    "compiler-test": "tsx ./src/compiler_test.ts"
   },
   "dependencies": {
     "@types/node": "^25.2.0",

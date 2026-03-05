@@ -8,45 +8,14 @@ use crate::{
         errors::ParseErr,
         generated_ast_printer::ASTPrinter,
         parse::Parser,
-        Ast,
+        parse_for_integration_test, Ast,
     },
     tokenizer::{token_stream::TokenStream, tokenize::Tokenizer},
 };
 
-fn parse(source: &str) {
-    let source = String::from(source);
-    let mut symbols = SymbolFactory::new(&source);
-    let tokenizer = Tokenizer::new(&source, &mut symbols);
-    let (tokens, errors, line_starts) = tokenizer.tokenize();
-    let stream = TokenStream::new(tokens);
-    let mut ast_arena = Arena::new();
-    let mut errors_arena = Arena::new();
-    let ast = {
-        let mut parser = Parser::new(
-            stream,
-            CompilerFrontendContext {
-                source: &source,
-                symbol_factory: &mut symbols,
-                ast_arena: &mut ast_arena,
-                errors_arena: &mut errors_arena,
-            },
-        );
-        let ast = parser.parse();
-        ast
-    };
-    println!("parsed.");
-    let ast = Ast::new(
-        ast.unwrap(),
-        ast_arena,
-        SourceHolder::new(&source, line_starts),
-        symbols,
-    );
-    println!("{}", ast);
-}
-
 #[test]
 fn test_parse() {
-    parse(
+    let ast = parse_for_integration_test(
         r#"
 import { Result, Ok, Err } from "std/result";
 import { Option, Some, None } from "std/option";
@@ -81,5 +50,6 @@ fn main() {
         },
     }   
     "#,
-    )
+    );
+    println!("{}", ast);
 }

@@ -102,3 +102,30 @@ impl Query for ParseFileQuery {
         todo!()
     }
 }
+
+pub fn parse_for_integration_test<'a>(source: &'a str) -> Ast<'a> {
+    let mut symbols = SymbolFactory::new(source);
+    let tokenizer = Tokenizer::new(source, &mut symbols);
+    let (tokens, errors, line_starts) = tokenizer.tokenize();
+    let stream = TokenStream::new(tokens);
+    let mut ast_arena = Arena::new();
+    let mut errors_arena = Arena::new();
+    let ast = {
+        let mut parser = Parser::new(
+            stream,
+            CompilerFrontendContext {
+                source,
+                symbol_factory: &mut symbols,
+                ast_arena: &mut ast_arena,
+                errors_arena: &mut errors_arena,
+            },
+        );
+        parser.parse()
+    };
+    Ast::new(
+        ast.unwrap(),
+        ast_arena,
+        SourceHolder::new(source, line_starts),
+        symbols,
+    )
+}
