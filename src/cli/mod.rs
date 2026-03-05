@@ -17,14 +17,13 @@ pub fn call_cli() {
 
     match parsed.command {
         Commands::Build { path, emit, out } => {
-            println!("Building...");
             match emit {
                 EmitItems::Ast => {
-                    log("Getting file contents");
+                    log("Getting file contents...");
                     let source = std::fs::read_to_string(&path).unwrap();
-                    log("parsing...");
+                    log("Parsing...");
                     let ast = format!("{}", parse_for_integration_test(&source));
-                    log("writing...");
+                    log("Writing into file...");
                     std::fs::write(&out, ast).unwrap();
                 }
                 EmitItems::Hir => {

@@ -1,0 +1,5 @@
+import { println } from "std/io";
+
+fn main() {
+    println("Hello World");
+}

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: write
@@ -22,14 +22,14 @@ jobs:
       - name: Install Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: './script/package-lock.json'
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: "./script/package-lock.json"
 
       - name: Install script dependencies
         run: npm ci
         working-directory: ./script
-      
+
       - name: Test script
         run: npm run self-test
         working-directory: ./script
@@ -66,7 +66,7 @@ jobs:
           cargo +nightly miri setup
           cargo +nightly miri test --lib
         env:
-          MIRIFLAGS: "-Zmiri-ignore-leaks" 
+          MIRIFLAGS: "-Zmiri-ignore-leaks"
 
       - name: Clippy
         run: cargo +stable clippy -- -D warnings
@@ -74,14 +74,15 @@ jobs:
       - name: Unit Test
         run: cargo +stable test --verbose
 
+      - name: Setup out directory
+        run: mkdir -p ./out
+
       - name: Integration Test
-        run: npm run compiler-test 
+        run: npm run compiler-test
+        working-directory: ./script
 
       - name: Run benchmark
         run: cargo +stable bench
-
-      - name: Setup out directory
-        run: mkdir -p ./out
 
       - name: Prepare Benchmark Reports
         run: |
@@ -90,12 +91,12 @@ jobs:
             cp -r ./target/criterion/* ./out/benches
           fi
 
-      - name: Deploy to bench-results branch
+      - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./out
           publish_branch: gh-pages
-          commit_message: "[bot] update bench results ${{ github.sha }}"
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: "[bot] update results ${{ github.sha }}"
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
