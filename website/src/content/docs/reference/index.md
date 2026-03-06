@@ -1,3 +1,8 @@
+---
+title: 'Lang Reference'
+---
+
+
 ### Hydent言語リファレンス (Hydent Language Reference)
 
 #### 1. 概要 (Introduction)

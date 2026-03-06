@@ -124,4 +124,9 @@ fn main() {
 
 ## コントリビュート
 
-あらゆる種類の貢献を歓迎します！[DEVELOPERS.md](DEVELOPERS.md)・[CONTRIBUTES.md](CONTRIBUTES.md)をご覧ください。
+ありがとうございます！
+申し訳ないですが、現在コントリビュートを受け入れる準備ができておりません。
+
+https://github.com/sonneko/sonneko
+
+にてissueを作成して私sonnekoにお知らせください。

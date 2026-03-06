@@ -125,7 +125,9 @@ try fn main() {
 
 ## Contributing
 
-Contributions of all kinds are welcome\! Please see [DEVELOPERS.md](DEVELOPERS.md) and [CONTRIBUTES.md](CONTRIBUTES.md).
+Thank you so much!
+Sorry, we are not currently ready to accept contributions.
 
+https://github.com/sonneko/sonneko
 
----
+Please create a issue on repo above and inform me

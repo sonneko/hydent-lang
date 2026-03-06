@@ -1,3 +1,8 @@
+---
+title: Hydent Docs for developers
+---
+
+
 ## compiler fases
 
 * SURFACE
@@ -37,7 +42,9 @@
 1. Install script dependencies bia npm
 
 ```bash
-cd script && npm install
+cd script
+npm install
+npm start
 ```
 
 2. Build compiler bia cargo
