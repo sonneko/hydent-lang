@@ -666,27 +666,27 @@
       "Token::Operator(Operator::Subtract)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::Add)",
@@ -1116,34 +1116,34 @@
     "functionName": "AssignmentOp",
     "astTypeName": "AssignmentOp",
     "expectedTerminals": [
-      "Token::Operator(Operator::Assignment)",
       "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::DivideAssign)",
       "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)"
+      "Token::Operator(Operator::SubtractAssign)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::AddAssign)",
@@ -1155,18 +1155,18 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "AssignOp",
-        "firstTerminal": "Token::Operator(Operator::Assignment)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "AddAssignOp",
         "firstTerminal": "Token::Operator(Operator::AddAssign)",
         "isBoxed": false
       },
       {
-        "astTypeName": "SubAssignOp",
-        "firstTerminal": "Token::Operator(Operator::SubtractAssign)",
+        "astTypeName": "AssignOp",
+        "firstTerminal": "Token::Operator(Operator::Assignment)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "DivAssignOp",
+        "firstTerminal": "Token::Operator(Operator::DivideAssign)",
         "isBoxed": false
       },
       {
@@ -1175,8 +1175,8 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "DivAssignOp",
-        "firstTerminal": "Token::Operator(Operator::DivideAssign)",
+        "astTypeName": "SubAssignOp",
+        "firstTerminal": "Token::Operator(Operator::SubtractAssign)",
         "isBoxed": false
       }
     ],
@@ -1435,89 +1435,89 @@
     "functionName": "BaseExpr",
     "astTypeName": "BaseExpr",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)",
       "Token::Delimiter(Delimiter::LeftBrace)",
       "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
-      "Token::Literal(Literal::StringLiteral($Span$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)"
+      "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
-      "Token::Operator(Operator::LogicalAnd)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightBracket)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
+      "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftBracket),Token::Delimiter(Delimiter::RightBracket)",
@@ -1734,36 +1734,6 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "IfCommonExpr",
-        "firstTerminal": "Token::Keyword(Keyword::If)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "MatchExpression",
-        "firstTerminal": "Token::Keyword(Keyword::Match)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "LoopExpression",
-        "firstTerminal": "Token::Keyword(Keyword::Loop)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "WhileCommonExpr",
-        "firstTerminal": "Token::Keyword(Keyword::While)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ForCommonExpr",
-        "firstTerminal": "Token::Keyword(Keyword::For)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PipeExpression",
-        "firstTerminal": "Token::Keyword(Keyword::Pipe)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "BlockExpression",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
@@ -1779,18 +1749,43 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "LiteralNode",
-        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "astTypeName": "StructLiteralOrIdent",
+        "firstTerminal": "Token::Identifier($Span$)",
         "isBoxed": false
       },
       {
-        "astTypeName": "LiteralNode",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "astTypeName": "ForCommonExpr",
+        "firstTerminal": "Token::Keyword(Keyword::For)",
         "isBoxed": false
       },
       {
-        "astTypeName": "LiteralNode",
-        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "astTypeName": "IfCommonExpr",
+        "firstTerminal": "Token::Keyword(Keyword::If)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LoopExpression",
+        "firstTerminal": "Token::Keyword(Keyword::Loop)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "MatchExpression",
+        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PipeExpression",
+        "firstTerminal": "Token::Keyword(Keyword::Pipe)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ThisKw",
+        "firstTerminal": "Token::Keyword(Keyword::This)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "WhileCommonExpr",
+        "firstTerminal": "Token::Keyword(Keyword::While)",
         "isBoxed": false
       },
       {
@@ -1800,17 +1795,22 @@
       },
       {
         "astTypeName": "LiteralNode",
+        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralNode",
+        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralNode",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralNode",
         "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "StructLiteralOrIdent",
-        "firstTerminal": "Token::Identifier($Span$)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ThisKw",
-        "firstTerminal": "Token::Keyword(Keyword::This)",
         "isBoxed": false
       }
     ],
@@ -1823,21 +1823,21 @@
     "functionName": "BindingOrStruct",
     "astTypeName": "BindingOrStruct",
     "expectedTerminals": [
-      "Token::Operator(Operator::At)",
       "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Delimiter(Delimiter::LeftParen)"
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Operator(Operator::At)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Operator(Operator::FatArrow)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::Colon)",
       "Token::Delimiter(Delimiter::Semicolon)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::FatArrow)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftBrace),Token::Identifier($Span$)",
@@ -1863,11 +1863,6 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "BindingTail",
-        "firstTerminal": "Token::Operator(Operator::At)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "StructPatternTail",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
@@ -1875,6 +1870,11 @@
       {
         "astTypeName": "TupleStructPatternTail",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "BindingTail",
+        "firstTerminal": "Token::Operator(Operator::At)",
         "isBoxed": false
       }
     ],
@@ -4824,24 +4824,24 @@
     "astTypeName": "ClassMember",
     "expectedTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Async)",
-      "Token::Keyword(Keyword::Fn)",
+      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Final)",
+      "Token::Keyword(Keyword::Fn)",
       "Token::Keyword(Keyword::Mut)",
+      "Token::Keyword(Keyword::Pub)",
       "Token::Keyword(Keyword::Type)"
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Keyword(Keyword::Async)",
-      "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Type)",
+      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Final)",
+      "Token::Keyword(Keyword::Fn)",
       "Token::Keyword(Keyword::Mut)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Type)"
     ],
     "firstTerminals": [
       "Token::Comment(Comment::DocComment($Span$)),Token::Keyword(Keyword::Pub)",
@@ -4869,22 +4869,22 @@
     "branchesJudgebleInPeek0": [
       {
         "astTypeName": "ClassFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Extern)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ClassFunction",
         "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
         "astTypeName": "ClassFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Fn)",
+        "firstTerminal": "Token::Keyword(Keyword::Extern)",
         "isBoxed": false
       },
       {
         "astTypeName": "FieldDeclaration",
         "firstTerminal": "Token::Keyword(Keyword::Final)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ClassFunction",
+        "firstTerminal": "Token::Keyword(Keyword::Fn)",
         "isBoxed": false
       },
       {
@@ -5514,75 +5514,75 @@
     "functionName": "ElseBody",
     "astTypeName": "ElseBody",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::If)",
-      "Token::Delimiter(Delimiter::LeftBrace)"
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Keyword(Keyword::If)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
-      "Token::Operator(Operator::LogicalAnd)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightBracket)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
+      "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftBrace),Token::Delimiter(Delimiter::RightBrace)",
@@ -5639,14 +5639,14 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "IfCommonExpr",
-        "firstTerminal": "Token::Keyword(Keyword::If)",
-        "isBoxed": true
-      },
-      {
         "astTypeName": "BlockExpression",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
+      },
+      {
+        "astTypeName": "IfCommonExpr",
+        "firstTerminal": "Token::Keyword(Keyword::If)",
+        "isBoxed": true
       }
     ],
     "branchesJudgebleInPeek1": [],
@@ -5879,20 +5879,20 @@
     "astTypeName": "EnumMember",
     "expectedTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
+      "Token::Identifier($Span$)",
       "Token::Keyword(Keyword::Async)",
+      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Identifier($Span$)"
+      "Token::Keyword(Keyword::Pub)"
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
-      "Token::Keyword(Keyword::Fn)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Identifier($Span$)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Async)",
+      "Token::Keyword(Keyword::Extern)",
+      "Token::Keyword(Keyword::Fn)",
+      "Token::Keyword(Keyword::Pub)"
     ],
     "firstTerminals": [
       "Token::Comment(Comment::DocComment($Span$)),Token::Keyword(Keyword::Pub)",
@@ -5913,13 +5913,8 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "EnumFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Pub)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "EnumFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Extern)",
+        "astTypeName": "EnumVariant",
+        "firstTerminal": "Token::Identifier($Span$)",
         "isBoxed": false
       },
       {
@@ -5929,12 +5924,17 @@
       },
       {
         "astTypeName": "EnumFunction",
+        "firstTerminal": "Token::Keyword(Keyword::Extern)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "EnumFunction",
         "firstTerminal": "Token::Keyword(Keyword::Fn)",
         "isBoxed": false
       },
       {
-        "astTypeName": "EnumVariant",
-        "firstTerminal": "Token::Identifier($Span$)",
+        "astTypeName": "EnumFunction",
+        "firstTerminal": "Token::Keyword(Keyword::Pub)",
         "isBoxed": false
       }
     ],
@@ -6575,27 +6575,27 @@
       "Token::Operator(Operator::Inequality)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::Equality)",
@@ -8801,75 +8801,75 @@
     "functionName": "ForBody",
     "astTypeName": "ForBody",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::In)",
-      "Token::Delimiter(Delimiter::LeftBrace)"
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Keyword(Keyword::In)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
-      "Token::Operator(Operator::LogicalAnd)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightBracket)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
+      "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftBrace),Token::Delimiter(Delimiter::RightBrace)",
@@ -8899,13 +8899,13 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "ForInBlock",
-        "firstTerminal": "Token::Keyword(Keyword::In)",
+        "astTypeName": "ForPipelineBlock",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ForPipelineBlock",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
+        "astTypeName": "ForInBlock",
+        "firstTerminal": "Token::Keyword(Keyword::In)",
         "isBoxed": false
       }
     ],
@@ -9234,22 +9234,22 @@
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
-      "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Type)",
-      "Token::Keyword(Keyword::Final)",
-      "Token::Keyword(Keyword::Mut)",
       "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
-      "Token::Keyword(Keyword::Protocol)",
-      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Extern)",
+      "Token::Keyword(Keyword::Final)",
+      "Token::Keyword(Keyword::Fn)",
       "Token::Keyword(Keyword::Import)",
+      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Mut)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
+      "Token::Keyword(Keyword::Type)",
       "Token::Operator(Operator::At)"
     ],
     "firstTerminals": [
@@ -10024,28 +10024,28 @@
     "functionName": "IfCondition",
     "astTypeName": "IfCondition",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "syncPointsTerminals": [
       "Token::Delimiter(Delimiter::LeftBrace)"
@@ -10544,13 +10544,8 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "IfLetCond",
-        "firstTerminal": "Token::Keyword(Keyword::Let)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::Await)",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
       },
       {
@@ -10560,57 +10555,7 @@
       },
       {
         "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Operator(Operator::Not)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Operator(Operator::Subtract)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::Try)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::Loop)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
         "isBoxed": false
       },
       {
@@ -10620,27 +10565,7 @@
       },
       {
         "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::This)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::While)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::If)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NormalCond",
-        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "firstTerminal": "Token::Keyword(Keyword::Await)",
         "isBoxed": false
       },
       {
@@ -10650,7 +10575,82 @@
       },
       {
         "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::If)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "IfLetCond",
+        "firstTerminal": "Token::Keyword(Keyword::Let)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::Loop)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
         "firstTerminal": "Token::Keyword(Keyword::Pipe)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::This)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::Try)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Keyword(Keyword::While)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Operator(Operator::Not)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NormalCond",
+        "firstTerminal": "Token::Operator(Operator::Subtract)",
         "isBoxed": false
       }
     ],
@@ -11310,33 +11310,33 @@
     "functionName": "ItemDeclaration",
     "astTypeName": "ItemDeclaration",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Protocol)",
       "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Type)"
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Static)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Protocol)",
-      "Token::Keyword(Keyword::Module)",
-      "Token::Keyword(Keyword::Type)",
       "Token::Keyword(Keyword::Import)",
-      "Token::Operator(Operator::At)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
+      "Token::Keyword(Keyword::Type)",
+      "Token::Operator(Operator::At)"
     ],
     "firstTerminals": [
       "Token::Keyword(Keyword::Static),Token::Identifier($Span$)",
@@ -11354,8 +11354,8 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "StaticVariableDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Static)",
+        "astTypeName": "FunctionDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
@@ -11369,18 +11369,8 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "StructDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Struct)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "FunctionDeclaration",
         "firstTerminal": "Token::Keyword(Keyword::Extern)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "FunctionDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
@@ -11389,13 +11379,23 @@
         "isBoxed": false
       },
       {
+        "astTypeName": "ModuleDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Module)",
+        "isBoxed": false
+      },
+      {
         "astTypeName": "ProtocolDeclaration",
         "firstTerminal": "Token::Keyword(Keyword::Protocol)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ModuleDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Module)",
+        "astTypeName": "StaticVariableDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Static)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "StructDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Struct)",
         "isBoxed": false
       },
       {
@@ -11509,78 +11509,78 @@
     "functionName": "LiteralNode",
     "astTypeName": "LiteralNode",
     "expectedTerminals": [
-      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
       "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))"
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))"
     ],
     "syncPointsTerminals": [
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Delimiter(Delimiter::Semicolon)",
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
+      "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
       "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::Assignment)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Delimiter(Delimiter::RightBracket)",
+      "Token::Delimiter(Delimiter::RightParen)",
+      "Token::Delimiter(Delimiter::Semicolon)",
+      "Token::Identifier($Span$)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
+      "Token::Keyword(Keyword::For)",
       "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
       "Token::Operator(Operator::GreaterThan)",
       "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Delimiter(Delimiter::Comma)",
-      "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
       "Token::Operator(Operator::LogicalAnd)",
-      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::RightBracket)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
       "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
       "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::Match)",
-      "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Literal(Literal::CharLiteral($char$))",
@@ -11592,8 +11592,8 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "StringLiteral",
-        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
+        "astTypeName": "BoolLiteral",
+        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
         "isBoxed": false
       },
       {
@@ -11602,18 +11602,18 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "IntLiteral",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "FloatLiteral",
         "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
         "isBoxed": false
       },
       {
-        "astTypeName": "BoolLiteral",
-        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
+        "astTypeName": "IntLiteral",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "StringLiteral",
+        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
         "isBoxed": false
       }
     ],
@@ -13511,32 +13511,32 @@
     "functionName": "MultiplicativeOp",
     "astTypeName": "MultiplicativeOp",
     "expectedTerminals": [
-      "Token::Operator(Operator::Multiply)",
       "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::Multiply)",
       "Token::Operator(Operator::Remainder)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::Multiply)",
@@ -13546,13 +13546,13 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "MulOp",
-        "firstTerminal": "Token::Operator(Operator::Multiply)",
+        "astTypeName": "DivOp",
+        "firstTerminal": "Token::Operator(Operator::Divide)",
         "isBoxed": false
       },
       {
-        "astTypeName": "DivOp",
-        "firstTerminal": "Token::Operator(Operator::Divide)",
+        "astTypeName": "MulOp",
+        "firstTerminal": "Token::Operator(Operator::Multiply)",
         "isBoxed": false
       },
       {
@@ -14565,10 +14565,10 @@
       "Token::Keyword(Keyword::This)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Assignment)",
       "Token::Delimiter(Delimiter::Comma)",
-      "Token::Delimiter(Delimiter::RightParen)"
+      "Token::Delimiter(Delimiter::RightParen)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::Colon)"
     ],
     "firstTerminals": [
       "Token::Identifier($Span$)",
@@ -16072,26 +16072,26 @@
     "functionName": "PatternBase",
     "astTypeName": "PatternBase",
     "expectedTerminals": [
-      "Token::Operator(Operator::Wildcard)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
-      "Token::Literal(Literal::StringLiteral($Span$))",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Identifier($Span$)"
+      "Token::Identifier($Span$)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Wildcard)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Operator(Operator::FatArrow)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::Colon)",
       "Token::Delimiter(Delimiter::Semicolon)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::FatArrow)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)"
     ],
     "firstTerminals": [
       "Token::Literal(Literal::CharLiteral($char$))",
@@ -16118,23 +16118,13 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "WildcardPattern",
-        "firstTerminal": "Token::Operator(Operator::Wildcard)",
+        "astTypeName": "ParenPattern",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
         "isBoxed": false
       },
       {
-        "astTypeName": "LiteralPattern",
-        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "LiteralPattern",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "LiteralPattern",
-        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "astTypeName": "IdentOrAccesserPattern",
+        "firstTerminal": "Token::Identifier($Span$)",
         "isBoxed": false
       },
       {
@@ -16144,17 +16134,27 @@
       },
       {
         "astTypeName": "LiteralPattern",
+        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralPattern",
+        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralPattern",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LiteralPattern",
         "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
         "isBoxed": false
       },
       {
-        "astTypeName": "ParenPattern",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "IdentOrAccesserPattern",
-        "firstTerminal": "Token::Identifier($Span$)",
+        "astTypeName": "WildcardPattern",
+        "firstTerminal": "Token::Operator(Operator::Wildcard)",
         "isBoxed": false
       }
     ],
@@ -16423,77 +16423,77 @@
     "functionName": "PostfixOp",
     "astTypeName": "PostfixOp",
     "expectedTerminals": [
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
       "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Keyword(Keyword::As)"
-    ],
-    "syncPointsTerminals": [
-      "Token::Operator(Operator::MemberAccess)",
       "Token::Delimiter(Delimiter::LeftParen)",
       "Token::Keyword(Keyword::As)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
-      "Token::Operator(Operator::LogicalAnd)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::Semicolon)",
+      "Token::Operator(Operator::MemberAccess)"
+    ],
+    "syncPointsTerminals": [
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightBracket)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
+      "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::MemberAccess),Token::Identifier($Span$)",
@@ -16558,8 +16558,8 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "MethodOrFieldOp",
-        "firstTerminal": "Token::Operator(Operator::MemberAccess)",
+        "astTypeName": "IndexOp",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftBracket)",
         "isBoxed": false
       },
       {
@@ -16568,13 +16568,13 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "IndexOp",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftBracket)",
+        "astTypeName": "CastOp",
+        "firstTerminal": "Token::Keyword(Keyword::As)",
         "isBoxed": false
       },
       {
-        "astTypeName": "CastOp",
-        "firstTerminal": "Token::Keyword(Keyword::As)",
+        "astTypeName": "MethodOrFieldOp",
+        "firstTerminal": "Token::Operator(Operator::MemberAccess)",
         "isBoxed": false
       }
     ],
@@ -17119,94 +17119,94 @@
     "functionName": "PrefixExpr",
     "astTypeName": "PrefixExpr",
     "expectedTerminals": [
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "syncPointsTerminals": [
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
-      "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::And)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
-      "Token::Operator(Operator::LogicalAnd)",
-      "Token::Operator(Operator::RangeExclusive)",
-      "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Delimiter(Delimiter::Comma)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Delimiter(Delimiter::RightBracket)",
       "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::AddAssign)",
-      "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Add)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
       "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)",
+      "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
       "Token::Operator(Operator::MemberAccess)",
-      "Token::Keyword(Keyword::As)"
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
+      "Token::Operator(Operator::RangeExclusive)",
+      "Token::Operator(Operator::RangeInclusive)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
+      "Token::Operator(Operator::SubtractAssign)",
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Keyword(Keyword::Await),Token::Delimiter(Delimiter::LeftBracket)",
@@ -17547,23 +17547,8 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "PrefixOpExpr",
-        "firstTerminal": "Token::Operator(Operator::Not)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrefixOpExpr",
-        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrefixOpExpr",
-        "firstTerminal": "Token::Operator(Operator::Subtract)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::Await)",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
       },
       {
@@ -17573,42 +17558,7 @@
       },
       {
         "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::Try)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::Loop)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
         "isBoxed": false
       },
       {
@@ -17618,27 +17568,7 @@
       },
       {
         "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::This)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::While)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::If)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimaryExpr",
-        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "firstTerminal": "Token::Keyword(Keyword::Await)",
         "isBoxed": false
       },
       {
@@ -17648,7 +17578,77 @@
       },
       {
         "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::If)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::Loop)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
         "firstTerminal": "Token::Keyword(Keyword::Pipe)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::This)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::Try)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Keyword(Keyword::While)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimaryExpr",
+        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrefixOpExpr",
+        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrefixOpExpr",
+        "firstTerminal": "Token::Operator(Operator::Not)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrefixOpExpr",
+        "firstTerminal": "Token::Operator(Operator::Subtract)",
         "isBoxed": false
       }
     ],
@@ -17661,32 +17661,32 @@
     "functionName": "PrefixOp",
     "astTypeName": "PrefixOp",
     "expectedTerminals": [
-      "Token::Operator(Operator::Not)",
       "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
       "Token::Operator(Operator::Subtract)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::Not)",
@@ -17696,13 +17696,13 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "NotOp",
-        "firstTerminal": "Token::Operator(Operator::Not)",
+        "astTypeName": "BitNotOp",
+        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
         "isBoxed": false
       },
       {
-        "astTypeName": "BitNotOp",
-        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
+        "astTypeName": "NotOp",
+        "firstTerminal": "Token::Operator(Operator::Not)",
         "isBoxed": false
       },
       {
@@ -18232,83 +18232,83 @@
     "functionName": "PrimitiveType",
     "astTypeName": "PrimitiveType",
     "expectedTerminals": [
+      "Token::Keyword(Keyword::Any)",
       "Token::Keyword(Keyword::Bool)",
-      "Token::Keyword(Keyword::Int)",
+      "Token::Keyword(Keyword::Char)",
+      "Token::Keyword(Keyword::DoubleFloat)",
       "Token::Keyword(Keyword::DoubleInt)",
       "Token::Keyword(Keyword::Float)",
-      "Token::Keyword(Keyword::DoubleFloat)",
-      "Token::Keyword(Keyword::Char)",
-      "Token::Keyword(Keyword::Usize)",
-      "Token::Keyword(Keyword::Any)",
+      "Token::Keyword(Keyword::Int)",
       "Token::Keyword(Keyword::Never)",
+      "Token::Keyword(Keyword::Usize)",
       "Token::Keyword(Keyword::Void)"
     ],
     "syncPointsTerminals": [
-      "Token::Delimiter(Delimiter::Semicolon)",
-      "Token::Operator(Operator::And)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Operator(Operator::Assignment)",
       "Token::Delimiter(Delimiter::Comma)",
-      "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
       "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Delimiter(Delimiter::RightBracket)",
+      "Token::Delimiter(Delimiter::RightParen)",
+      "Token::Delimiter(Delimiter::Semicolon)",
+      "Token::Identifier($Span$)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
+      "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
       "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
+      "Token::Operator(Operator::FatArrow)",
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
       "Token::Operator(Operator::LessThan)",
       "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
       "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
       "Token::Operator(Operator::RangeExclusive)",
       "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::RightBracket)",
-      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
       "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
-      "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
-      "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)",
-      "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Keyword(Keyword::Bool)",
@@ -18325,13 +18325,23 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
+        "astTypeName": "AnyType",
+        "firstTerminal": "Token::Keyword(Keyword::Any)",
+        "isBoxed": false
+      },
+      {
         "astTypeName": "BoolType",
         "firstTerminal": "Token::Keyword(Keyword::Bool)",
         "isBoxed": false
       },
       {
-        "astTypeName": "IntType",
-        "firstTerminal": "Token::Keyword(Keyword::Int)",
+        "astTypeName": "CharType",
+        "firstTerminal": "Token::Keyword(Keyword::Char)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "DoubleFloatType",
+        "firstTerminal": "Token::Keyword(Keyword::DoubleFloat)",
         "isBoxed": false
       },
       {
@@ -18345,28 +18355,18 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "DoubleFloatType",
-        "firstTerminal": "Token::Keyword(Keyword::DoubleFloat)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "CharType",
-        "firstTerminal": "Token::Keyword(Keyword::Char)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "UsizeType",
-        "firstTerminal": "Token::Keyword(Keyword::Usize)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "AnyType",
-        "firstTerminal": "Token::Keyword(Keyword::Any)",
+        "astTypeName": "IntType",
+        "firstTerminal": "Token::Keyword(Keyword::Int)",
         "isBoxed": false
       },
       {
         "astTypeName": "NeverType",
         "firstTerminal": "Token::Keyword(Keyword::Never)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "UsizeType",
+        "firstTerminal": "Token::Keyword(Keyword::Usize)",
         "isBoxed": false
       },
       {
@@ -18437,20 +18437,20 @@
     "astTypeName": "ProtocolMember",
     "expectedTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Async)",
+      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Fn)",
+      "Token::Keyword(Keyword::Pub)",
       "Token::Keyword(Keyword::Type)"
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Type)",
-      "Token::Keyword(Keyword::Extern)",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Keyword(Keyword::Async)",
+      "Token::Keyword(Keyword::Extern)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Type)"
     ],
     "firstTerminals": [
       "Token::Comment(Comment::DocComment($Span$)),Token::Keyword(Keyword::Pub)",
@@ -18472,12 +18472,12 @@
     "branchesJudgebleInPeek0": [
       {
         "astTypeName": "ClassFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Extern)",
+        "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
         "astTypeName": "ClassFunction",
-        "firstTerminal": "Token::Keyword(Keyword::Async)",
+        "firstTerminal": "Token::Keyword(Keyword::Extern)",
         "isBoxed": false
       },
       {
@@ -19359,27 +19359,27 @@
       "Token::Operator(Operator::RangeInclusive)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
       "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)",
       "Token::Operator(Operator::Wildcard)"
     ],
     "firstTerminals": [
@@ -19957,33 +19957,33 @@
     "functionName": "RelationalOp",
     "astTypeName": "RelationalOp",
     "expectedTerminals": [
-      "Token::Operator(Operator::LessThan)",
-      "Token::Operator(Operator::LessThanOrEqual)",
       "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::GreaterThanOrEqual)"
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::LessThan)",
+      "Token::Operator(Operator::LessThanOrEqual)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::LessThan)",
@@ -19994,16 +19994,6 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "LtOp",
-        "firstTerminal": "Token::Operator(Operator::LessThan)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "LteOp",
-        "firstTerminal": "Token::Operator(Operator::LessThanOrEqual)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "GtOp",
         "firstTerminal": "Token::Operator(Operator::GreaterThan)",
         "isBoxed": false
@@ -20011,6 +20001,16 @@
       {
         "astTypeName": "GteOp",
         "firstTerminal": "Token::Operator(Operator::GreaterThanOrEqual)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LtOp",
+        "firstTerminal": "Token::Operator(Operator::LessThan)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "LteOp",
+        "firstTerminal": "Token::Operator(Operator::LessThanOrEqual)",
         "isBoxed": false
       }
     ],
@@ -20820,27 +20820,27 @@
       "Token::Operator(Operator::ShiftRight)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Operator(Operator::ShiftLeft)",
@@ -21071,63 +21071,63 @@
     "functionName": "Statement",
     "astTypeName": "Statement",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)"
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
       "Token::Keyword(Keyword::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Keyword(Keyword::Return),Token::Delimiter(Delimiter::Semicolon)",
@@ -21739,38 +21739,8 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "VariableDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Let)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "VariableDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Const)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ReturnStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Return)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "BreakStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Break)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ContinueStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Continue)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Ignore)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Await)",
+        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
         "isBoxed": false
       },
       {
@@ -21780,57 +21750,7 @@
       },
       {
         "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Operator(Operator::Not)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Operator(Operator::Subtract)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Try)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Loop)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Delimiter(Delimiter::LeftBrace)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
         "isBoxed": false
       },
       {
@@ -21840,27 +21760,22 @@
       },
       {
         "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::This)",
+        "firstTerminal": "Token::Keyword(Keyword::Await)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
+        "astTypeName": "BreakStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Break)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::While)",
+        "astTypeName": "VariableDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Const)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::If)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprOrAssignmentStatement",
-        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "astTypeName": "ContinueStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Continue)",
         "isBoxed": false
       },
       {
@@ -21870,7 +21785,92 @@
       },
       {
         "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::If)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Ignore)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "VariableDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Let)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Loop)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Match)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
         "firstTerminal": "Token::Keyword(Keyword::Pipe)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ReturnStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Return)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::This)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::Try)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Keyword(Keyword::While)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Literal(Literal::BoolLiteral($bool$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Literal(Literal::CharLiteral($char$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Literal(Literal::IntegerLiteral($i32$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Literal(Literal::StringLiteral($Span$))",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Operator(Operator::BitwiseNot)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Operator(Operator::Not)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ExprOrAssignmentStatement",
+        "firstTerminal": "Token::Operator(Operator::Subtract)",
         "isBoxed": false
       }
     ],
@@ -21883,42 +21883,42 @@
     "functionName": "StatementTail",
     "astTypeName": "StatementTail",
     "expectedTerminals": [
+      "Token::Delimiter(Delimiter::Semicolon)",
       "Token::Operator(Operator::AddAssign)",
       "Token::Operator(Operator::Assignment)",
-      "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
       "Token::Operator(Operator::DivideAssign)",
-      "Token::Delimiter(Delimiter::Semicolon)"
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::SubtractAssign)"
     ],
     "syncPointsTerminals": [
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
       "Token::Delimiter(Delimiter::LeftBrace)",
+      "Token::Delimiter(Delimiter::LeftBracket)",
       "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Delimiter(Delimiter::RightBrace)",
       "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
       "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
       "Token::Keyword(Keyword::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Subtract)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::Semicolon)",
@@ -22031,6 +22031,11 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
+        "astTypeName": "ExprSemiTail",
+        "firstTerminal": "Token::Delimiter(Delimiter::Semicolon)",
+        "isBoxed": false
+      },
+      {
         "astTypeName": "AssignmentTail",
         "firstTerminal": "Token::Operator(Operator::AddAssign)",
         "isBoxed": false
@@ -22042,7 +22047,7 @@
       },
       {
         "astTypeName": "AssignmentTail",
-        "firstTerminal": "Token::Operator(Operator::SubtractAssign)",
+        "firstTerminal": "Token::Operator(Operator::DivideAssign)",
         "isBoxed": false
       },
       {
@@ -22052,12 +22057,7 @@
       },
       {
         "astTypeName": "AssignmentTail",
-        "firstTerminal": "Token::Operator(Operator::DivideAssign)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ExprSemiTail",
-        "firstTerminal": "Token::Delimiter(Delimiter::Semicolon)",
+        "firstTerminal": "Token::Operator(Operator::SubtractAssign)",
         "isBoxed": false
       }
     ],
@@ -22250,20 +22250,20 @@
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Static)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Protocol)",
-      "Token::Keyword(Keyword::Module)",
-      "Token::Keyword(Keyword::Type)",
       "Token::Keyword(Keyword::Import)",
-      "Token::Operator(Operator::At)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
+      "Token::Keyword(Keyword::Type)",
+      "Token::Operator(Operator::At)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftBrace),Token::Delimiter(Delimiter::RightBrace)",
@@ -23030,36 +23030,36 @@
     "astTypeName": "TopLevelStatement",
     "expectedTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Protocol)",
-      "Token::Keyword(Keyword::Module)",
-      "Token::Keyword(Keyword::Type)",
       "Token::Keyword(Keyword::Import)",
+      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
+      "Token::Keyword(Keyword::Type)",
       "Token::Operator(Operator::At)"
     ],
     "syncPointsTerminals": [
       "Token::Comment(Comment::DocComment($Span$))",
-      "Token::Keyword(Keyword::Pub)",
-      "Token::Keyword(Keyword::Static)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Class)",
       "Token::Keyword(Keyword::Enum)",
-      "Token::Keyword(Keyword::Struct)",
       "Token::Keyword(Keyword::Extern)",
-      "Token::Keyword(Keyword::Async)",
       "Token::Keyword(Keyword::Fn)",
-      "Token::Keyword(Keyword::Protocol)",
-      "Token::Keyword(Keyword::Module)",
-      "Token::Keyword(Keyword::Type)",
       "Token::Keyword(Keyword::Import)",
-      "Token::Operator(Operator::At)",
-      "Token::Delimiter(Delimiter::RightBrace)"
+      "Token::Keyword(Keyword::Module)",
+      "Token::Keyword(Keyword::Protocol)",
+      "Token::Keyword(Keyword::Pub)",
+      "Token::Keyword(Keyword::Static)",
+      "Token::Keyword(Keyword::Struct)",
+      "Token::Keyword(Keyword::Type)",
+      "Token::Operator(Operator::At)"
     ],
     "firstTerminals": [
       "Token::Comment(Comment::DocComment($Span$)),Token::Keyword(Keyword::Pub)",
@@ -23107,12 +23107,7 @@
       },
       {
         "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Pub)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Static)",
+        "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
@@ -23127,17 +23122,7 @@
       },
       {
         "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Struct)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ItemWithModifiers",
         "firstTerminal": "Token::Keyword(Keyword::Extern)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Async)",
         "isBoxed": false
       },
       {
@@ -23146,8 +23131,8 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Protocol)",
+        "astTypeName": "ImportDeclaration",
+        "firstTerminal": "Token::Keyword(Keyword::Import)",
         "isBoxed": false
       },
       {
@@ -23157,12 +23142,27 @@
       },
       {
         "astTypeName": "ItemWithModifiers",
-        "firstTerminal": "Token::Keyword(Keyword::Type)",
+        "firstTerminal": "Token::Keyword(Keyword::Protocol)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ImportDeclaration",
-        "firstTerminal": "Token::Keyword(Keyword::Import)",
+        "astTypeName": "ItemWithModifiers",
+        "firstTerminal": "Token::Keyword(Keyword::Pub)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ItemWithModifiers",
+        "firstTerminal": "Token::Keyword(Keyword::Static)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ItemWithModifiers",
+        "firstTerminal": "Token::Keyword(Keyword::Struct)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "ItemWithModifiers",
+        "firstTerminal": "Token::Keyword(Keyword::Type)",
         "isBoxed": false
       },
       {
@@ -23549,87 +23549,87 @@
     "functionName": "TypeLiteral",
     "astTypeName": "TypeLiteral",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::Impl)",
-      "Token::Keyword(Keyword::Typeof)",
       "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Identifier($Span$)",
+      "Token::Keyword(Keyword::Any)",
       "Token::Keyword(Keyword::Bool)",
-      "Token::Keyword(Keyword::Int)",
+      "Token::Keyword(Keyword::Char)",
+      "Token::Keyword(Keyword::DoubleFloat)",
       "Token::Keyword(Keyword::DoubleInt)",
       "Token::Keyword(Keyword::Float)",
-      "Token::Keyword(Keyword::DoubleFloat)",
-      "Token::Keyword(Keyword::Char)",
-      "Token::Keyword(Keyword::Any)",
+      "Token::Keyword(Keyword::Impl)",
+      "Token::Keyword(Keyword::Int)",
       "Token::Keyword(Keyword::Never)",
+      "Token::Keyword(Keyword::Typeof)",
       "Token::Keyword(Keyword::Usize)",
-      "Token::Keyword(Keyword::Void)",
-      "Token::Identifier($Span$)"
+      "Token::Keyword(Keyword::Void)"
     ],
     "syncPointsTerminals": [
-      "Token::Delimiter(Delimiter::Semicolon)",
-      "Token::Operator(Operator::And)",
-      "Token::Keyword(Keyword::Panics)",
-      "Token::Delimiter(Delimiter::LeftBrace)",
-      "Token::Operator(Operator::Assignment)",
       "Token::Delimiter(Delimiter::Comma)",
-      "Token::Delimiter(Delimiter::RightParen)",
-      "Token::Operator(Operator::GreaterThan)",
-      "Token::Operator(Operator::MemberAccess)",
-      "Token::Delimiter(Delimiter::LeftParen)",
-      "Token::Keyword(Keyword::As)",
+      "Token::Delimiter(Delimiter::LeftBrace)",
       "Token::Delimiter(Delimiter::LeftBracket)",
-      "Token::Operator(Operator::PowerOf)",
-      "Token::Operator(Operator::Multiply)",
-      "Token::Operator(Operator::Divide)",
-      "Token::Operator(Operator::Remainder)",
+      "Token::Delimiter(Delimiter::LeftParen)",
+      "Token::Delimiter(Delimiter::RightBrace)",
+      "Token::Delimiter(Delimiter::RightBracket)",
+      "Token::Delimiter(Delimiter::RightParen)",
+      "Token::Delimiter(Delimiter::Semicolon)",
+      "Token::Identifier($Span$)",
+      "Token::Keyword(Keyword::As)",
+      "Token::Keyword(Keyword::Await)",
+      "Token::Keyword(Keyword::Break)",
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Continue)",
+      "Token::Keyword(Keyword::For)",
+      "Token::Keyword(Keyword::If)",
+      "Token::Keyword(Keyword::Ignore)",
+      "Token::Keyword(Keyword::In)",
+      "Token::Keyword(Keyword::Let)",
+      "Token::Keyword(Keyword::Loop)",
+      "Token::Keyword(Keyword::Match)",
+      "Token::Keyword(Keyword::Panics)",
+      "Token::Keyword(Keyword::Pipe)",
+      "Token::Keyword(Keyword::Return)",
+      "Token::Keyword(Keyword::This)",
+      "Token::Keyword(Keyword::Try)",
+      "Token::Keyword(Keyword::While)",
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
       "Token::Operator(Operator::Add)",
-      "Token::Operator(Operator::Subtract)",
-      "Token::Operator(Operator::ShiftLeft)",
-      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::And)",
+      "Token::Operator(Operator::Assignment)",
+      "Token::Operator(Operator::BitwiseNot)",
+      "Token::Operator(Operator::Colon)",
+      "Token::Operator(Operator::Divide)",
+      "Token::Operator(Operator::DivideAssign)",
+      "Token::Operator(Operator::Equality)",
+      "Token::Operator(Operator::FatArrow)",
+      "Token::Operator(Operator::GreaterThan)",
+      "Token::Operator(Operator::GreaterThanOrEqual)",
+      "Token::Operator(Operator::Inequality)",
       "Token::Operator(Operator::LessThan)",
       "Token::Operator(Operator::LessThanOrEqual)",
-      "Token::Operator(Operator::GreaterThanOrEqual)",
-      "Token::Operator(Operator::Equality)",
-      "Token::Operator(Operator::Inequality)",
-      "Token::Operator(Operator::Xor)",
-      "Token::Operator(Operator::Or)",
       "Token::Operator(Operator::LogicalAnd)",
+      "Token::Operator(Operator::LogicalOr)",
+      "Token::Operator(Operator::MemberAccess)",
+      "Token::Operator(Operator::Multiply)",
+      "Token::Operator(Operator::MultiplyAssign)",
+      "Token::Operator(Operator::Not)",
+      "Token::Operator(Operator::Or)",
+      "Token::Operator(Operator::Pipe)",
+      "Token::Operator(Operator::PowerOf)",
       "Token::Operator(Operator::RangeExclusive)",
       "Token::Operator(Operator::RangeInclusive)",
-      "Token::Operator(Operator::LogicalOr)",
-      "Token::Delimiter(Delimiter::RightBracket)",
-      "Token::Operator(Operator::AddAssign)",
+      "Token::Operator(Operator::Remainder)",
+      "Token::Operator(Operator::ShiftLeft)",
+      "Token::Operator(Operator::ShiftRight)",
+      "Token::Operator(Operator::Subtract)",
       "Token::Operator(Operator::SubtractAssign)",
-      "Token::Operator(Operator::MultiplyAssign)",
-      "Token::Operator(Operator::DivideAssign)",
-      "Token::Keyword(Keyword::In)",
-      "Token::Operator(Operator::Colon)",
-      "Token::Operator(Operator::Pipe)",
-      "Token::Delimiter(Delimiter::RightBrace)",
-      "Token::Keyword(Keyword::Return)",
-      "Token::Keyword(Keyword::Break)",
-      "Token::Keyword(Keyword::Continue)",
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)",
-      "Token::Keyword(Keyword::Ignore)",
-      "Token::Keyword(Keyword::Await)",
-      "Token::Operator(Operator::Not)",
-      "Token::Operator(Operator::BitwiseNot)",
-      "Token::Keyword(Keyword::Try)",
-      "Token::Keyword(Keyword::Loop)",
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
-      "Token::Identifier($Span$)",
-      "Token::Keyword(Keyword::This)",
-      "Token::Literal(Literal::StringLiteral($Span$))",
-      "Token::Keyword(Keyword::While)",
-      "Token::Keyword(Keyword::If)",
-      "Token::Keyword(Keyword::Match)",
-      "Token::Keyword(Keyword::For)",
-      "Token::Keyword(Keyword::Pipe)",
-      "Token::Operator(Operator::FatArrow)",
-      "Token::Operator(Operator::Wildcard)"
+      "Token::Operator(Operator::Wildcard)",
+      "Token::Operator(Operator::Xor)"
     ],
     "firstTerminals": [
       "Token::Delimiter(Delimiter::LeftParen),Token::Delimiter(Delimiter::RightParen)",
@@ -23699,18 +23699,18 @@
     "firstAndFollowConflict": true,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "ImplType",
-        "firstTerminal": "Token::Keyword(Keyword::Impl)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "TypeofType",
-        "firstTerminal": "Token::Keyword(Keyword::Typeof)",
-        "isBoxed": false
-      },
-      {
         "astTypeName": "TupleType",
         "firstTerminal": "Token::Delimiter(Delimiter::LeftParen)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "NamedType",
+        "firstTerminal": "Token::Identifier($Span$)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimitiveType",
+        "firstTerminal": "Token::Keyword(Keyword::Any)",
         "isBoxed": false
       },
       {
@@ -23720,7 +23720,12 @@
       },
       {
         "astTypeName": "PrimitiveType",
-        "firstTerminal": "Token::Keyword(Keyword::Int)",
+        "firstTerminal": "Token::Keyword(Keyword::Char)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "PrimitiveType",
+        "firstTerminal": "Token::Keyword(Keyword::DoubleFloat)",
         "isBoxed": false
       },
       {
@@ -23734,23 +23739,23 @@
         "isBoxed": false
       },
       {
-        "astTypeName": "PrimitiveType",
-        "firstTerminal": "Token::Keyword(Keyword::DoubleFloat)",
+        "astTypeName": "ImplType",
+        "firstTerminal": "Token::Keyword(Keyword::Impl)",
         "isBoxed": false
       },
       {
         "astTypeName": "PrimitiveType",
-        "firstTerminal": "Token::Keyword(Keyword::Char)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "PrimitiveType",
-        "firstTerminal": "Token::Keyword(Keyword::Any)",
+        "firstTerminal": "Token::Keyword(Keyword::Int)",
         "isBoxed": false
       },
       {
         "astTypeName": "PrimitiveType",
         "firstTerminal": "Token::Keyword(Keyword::Never)",
+        "isBoxed": false
+      },
+      {
+        "astTypeName": "TypeofType",
+        "firstTerminal": "Token::Keyword(Keyword::Typeof)",
         "isBoxed": false
       },
       {
@@ -23761,11 +23766,6 @@
       {
         "astTypeName": "PrimitiveType",
         "firstTerminal": "Token::Keyword(Keyword::Void)",
-        "isBoxed": false
-      },
-      {
-        "astTypeName": "NamedType",
-        "firstTerminal": "Token::Identifier($Span$)",
         "isBoxed": false
       }
     ],
@@ -24121,18 +24121,18 @@
     "functionName": "VarKeyword",
     "astTypeName": "VarKeyword",
     "expectedTerminals": [
-      "Token::Keyword(Keyword::Let)",
-      "Token::Keyword(Keyword::Const)"
+      "Token::Keyword(Keyword::Const)",
+      "Token::Keyword(Keyword::Let)"
     ],
     "syncPointsTerminals": [
-      "Token::Literal(Literal::CharLiteral($char$))",
-      "Token::Literal(Literal::IntegerLiteral($i32$))",
-      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
-      "Token::Literal(Literal::BoolLiteral($bool$))",
       "Token::Delimiter(Delimiter::LeftParen)",
       "Token::Identifier($Span$)",
-      "Token::Operator(Operator::Wildcard)",
-      "Token::Literal(Literal::StringLiteral($Span$))"
+      "Token::Literal(Literal::BoolLiteral($bool$))",
+      "Token::Literal(Literal::CharLiteral($char$))",
+      "Token::Literal(Literal::FloatLiteral($HashableFloat<f32>$))",
+      "Token::Literal(Literal::IntegerLiteral($i32$))",
+      "Token::Literal(Literal::StringLiteral($Span$))",
+      "Token::Operator(Operator::Wildcard)"
     ],
     "firstTerminals": [
       "Token::Keyword(Keyword::Let)",
@@ -24141,13 +24141,13 @@
     "firstAndFollowConflict": false,
     "branchesJudgebleInPeek0": [
       {
-        "astTypeName": "LetKw",
-        "firstTerminal": "Token::Keyword(Keyword::Let)",
+        "astTypeName": "ConstKw",
+        "firstTerminal": "Token::Keyword(Keyword::Const)",
         "isBoxed": false
       },
       {
-        "astTypeName": "ConstKw",
-        "firstTerminal": "Token::Keyword(Keyword::Const)",
+        "astTypeName": "LetKw",
+        "firstTerminal": "Token::Keyword(Keyword::Let)",
         "isBoxed": false
       }
     ],
