@@ -35,7 +35,7 @@ pub mod ast {
 
 pub struct Ast<'src> {
     ast: ArenaBox<generated_ast::Module>,
-    diagnostics: Vec<Box<dyn CompilerDiagnostic>>,
+    parse_errors: Vec<ParseErr>,
     ast_arena: Arena,
     symbols: SymbolFactory<'src>,
     source_holder: SourceHolder<'src>,
@@ -47,10 +47,11 @@ impl<'src> Ast<'src> {
         arena: Arena,
         source_holder: SourceHolder<'src>,
         symbols: SymbolFactory<'src>,
+        errors: Vec<ParseErr>,
     ) -> Self {
         Self {
             ast,
-            diagnostics: Vec::new(),
+            parse_errors: errors,
             ast_arena: arena,
             symbols,
             source_holder,
@@ -110,22 +111,23 @@ pub fn parse_for_integration_test<'a>(source: &'a str) -> Ast<'a> {
     let stream = TokenStream::new(tokens);
     let mut ast_arena = Arena::new();
     let mut errors_arena = Arena::new();
-    let ast = {
-        let mut parser = Parser::new(
-            stream,
-            CompilerFrontendContext {
-                source,
-                symbol_factory: &mut symbols,
-                ast_arena: &mut ast_arena,
-                errors_arena: &mut errors_arena,
-            },
-        );
-        parser.parse()
-    };
+    let mut parser = Parser::new(
+        stream,
+        CompilerFrontendContext {
+            source,
+            symbol_factory: &mut symbols,
+            ast_arena: &mut ast_arena,
+            errors_arena: &mut errors_arena,
+        },
+    );
+    let ast = parser.parse();
+    let errors = parser.errors;
+
     Ast::new(
         ast.unwrap(),
         ast_arena,
         SourceHolder::new(source, line_starts),
         symbols,
+        errors,
     )
 }

@@ -10,6 +10,7 @@ use crate::tokenizer::{token_stream::TokenStream, tokens::Token};
 pub struct Parser<'ctx, 'src> {
     pub ctx: CompilerFrontendContext<'ctx, 'src>,
     pub tokens: TokenStream,
+    pub errors: Vec<ParseErr>,
 }
 
 impl<'ctx, 'src> Parser<'ctx, 'src> {
@@ -17,11 +18,11 @@ impl<'ctx, 'src> Parser<'ctx, 'src> {
         tokens: TokenStream,
         ctx: CompilerFrontendContext<'ctx, 'src>,
     ) -> Parser<'ctx, 'src> {
-        Self { ctx, tokens }
+        Self { ctx, tokens, errors: Vec::new() }
     }
 
     #[allow(clippy::result_large_err)] // WARNING
-    pub fn parse(mut self) -> Result<ArenaBox<Module>, ParseErr> {
+    pub fn parse(&mut self) -> Result<ArenaBox<Module>, ParseErr> {
         match self.parse_Module() {
             Ok(module) => Ok(self.ctx.ast_arena.alloc(module)),
             Err(err) => Err(err),

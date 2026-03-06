@@ -41,23 +41,24 @@ pub fn fizz_buzz(n: Int) {
             let stream = TokenStream::new(tokens);
             let mut ast_arena = Arena::new();
             let mut errors_arena = Arena::new();
-            let ast = {
-                let parser = Parser::new(
-                    stream,
-                    CompilerFrontendContext {
-                        source,
-                        symbol_factory: &mut symbols,
-                        ast_arena: &mut ast_arena,
-                        errors_arena: &mut errors_arena,
-                    },
-                );
-                parser.parse()
-            };
+            let mut parser = Parser::new(
+                stream,
+                CompilerFrontendContext {
+                    source,
+                    symbol_factory: &mut symbols,
+                    ast_arena: &mut ast_arena,
+                    errors_arena: &mut errors_arena,
+                },
+            );
+            let ast = parser.parse();
+            let errors = parser.errors;
+
             Ast::new(
                 ast.unwrap(),
                 ast_arena,
                 SourceHolder::new(source, line_starts),
                 symbols,
+                errors,
             );
         }));
     });

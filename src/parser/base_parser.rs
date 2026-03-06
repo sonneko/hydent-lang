@@ -30,7 +30,7 @@ pub trait BaseParser: Sized {
 
     fn get_errors_arena(&self) -> &Arena;
 
-    fn report_error(&self, error: Self::Error);
+    fn report_error(&mut self, error: Self::Error);
 
     fn backtrack<T: ASTNode>(
         &mut self,
@@ -178,9 +178,10 @@ impl BaseParser for Parser<'_, '_> {
         }
     }
 
-    fn report_error(&self, err: Self::Error) {
+    fn report_error(&mut self, err: Self::Error) {
         // TODO: add error to error_pool
-        println!("occured error: {}\n", err);
+        eprintln!("occured error: {}\n", err);
+        self.errors.push(err);
     }
 
     fn backtrack<T: ASTNode>(
