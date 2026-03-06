@@ -1,0 +1,23 @@
+type Flags = Usize;
+
+const READ: Flags = 1 << 0;
+const WRITE: Flags = 1 << 1;
+const EXEC: Flags = 1 << 2;
+
+fn check_permission(current: Flags, required: Flags) : Bool {
+    let masked = current & required;
+    return masked == required;
+}
+
+fn main() {
+    let mut my_perms: Flags = READ | WRITE;
+    
+    if check_permission(my_perms, READ) {
+        print("Can read");
+    }
+
+    my_perms = my_perms ^ WRITE; // Toggle write
+    
+    let combined = (READ | WRITE) & ~READ;
+    print(combined as Int);
+}

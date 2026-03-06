@@ -1,0 +1,25 @@
+struct Complex(Float, Float);
+
+module ComplexOps {
+    pub fn add(a: Complex, b: Complex) : Complex {
+        let (r1, i1) = a;
+        let (r2, i2) = b;
+        return Complex(r1 + r2, i1 + i2);
+    }
+
+    pub fn scale(c: Complex, factor: Float) : Complex {
+        let Complex(r, i) = c;
+        return Complex(r * factor, i * factor);
+    }
+
+    static ZERO = Complex(0.0, 0.0);
+    static ONE = Complex(1.0, 0.0);
+}
+
+fn main() {
+    let c1 = Complex(1.2, 3.4);
+    let c2 = ComplexOps::ONE;
+    
+    let res = ComplexOps::add(c1, c2);
+    print(res.0);
+}

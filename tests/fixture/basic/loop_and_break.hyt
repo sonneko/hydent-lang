@@ -1,0 +1,20 @@
+fn find_in_matrix(matrix: [[Int]], target: Int) : Bool {
+    let found = loop "search" {
+        for row in matrix {
+            for val in row {
+                if val == target {
+                    break "search" true;
+                }
+            }
+        }
+        break false;
+    };
+    return found;
+}
+
+fn main() {
+    let data = [[1, 2], [3, 4]];
+    if find_in_matrix(data, 3) {
+        print("Found");
+    }
+}

@@ -1,0 +1,17 @@
+extern fn system_abort() : Never {};
+
+fn divide(a: Int, b: Int) : Int panics {
+    if b == 0 {
+        panic("Division by zero");
+    }
+    return a / b;
+}
+
+fn safe_divide(a: Int, b: Int) : Int {
+    return try divide(a, b) else 0;
+}
+
+fn main() {
+    let result = safe_divide(10, 2);
+    let error = divide(5, 0); // This will crash
+}

@@ -1,0 +1,30 @@
+module Geometry {
+    pub protocol Shape {
+        fn area(this) : Float;
+    }
+
+    pub struct Rect {
+        width: Float;
+        height: Float;
+    }
+
+    pub struct Circle(Float);
+
+    fn calculate_area<T : Shape>(item: T) : Float {
+        return item.area();
+    }
+
+    static PI = 3.141592;
+
+    fn main() {
+        let r = Rect { width: 10.0, height: 5.0 };
+        let c = Circle(2.5);
+
+        ignore pipe r.area() {
+            |> a if a > 10.0 => print("Large");
+            |> _ => print("Small");
+        }
+
+        let total: Float = r.area() + c.area();
+    }
+}

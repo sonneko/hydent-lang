@@ -1,0 +1,16 @@
+fn create_window(
+    title: String, 
+    width: Int = 800, 
+    height: Int = 600
+) : Void {
+    print("Title: " + title);
+    print(width);
+}
+
+fn main() {
+    create_window("App");
+    create_window("Game", 1920, 1080);
+    
+    let (w, h) = (100, 200);
+    create_window("Tool", w, h);
+}

@@ -1,0 +1,149 @@
+@ModuleConfig("FactoryOS", "2.0.1")
+module FactoryManager {
+    import { Serializer, Logger } from "std:utils";
+
+    // ------------------------------------------
+    // 定数と型エイリアスの定義
+    // ------------------------------------------
+    static MAX_RETRY = 3;
+    static mut TOTAL_PROCESSED: Usize = 0;
+    
+    type DeviceId = Int;
+    type HealthScore = Float;
+
+    // ------------------------------------------
+    // プロトコルと列挙型の定義
+    // ------------------------------------------
+    pub protocol Diagnostic {
+        fn check_health(this) : HealthScore;
+        fn reset(mut this) : Void;
+    }
+
+    pub enum DeviceStatus {
+        Idle,
+        Running(Float), // 出力パワー
+        Error(String, Int), // エラーメッセージ, エラーコード
+    }
+
+    // ------------------------------------------
+    // 構造体とクラスの定義
+    // ------------------------------------------
+    pub struct SensorData {
+        final id: DeviceId;
+        final value: DoubleInt;
+        mut timestamp: Usize;
+    }
+
+    class RobotArm : Diagnostic {
+        pub mut status: DeviceStatus;
+        final name: Identifier;
+
+        pub fn new(name: Identifier) : RobotArm {
+            return RobotArm { 
+                status: DeviceStatus::Idle, 
+                name: name 
+            };
+        }
+
+        pub fn check_health(this) : HealthScore {
+            return match this.status {
+                DeviceStatus::Idle => 1.0,
+                DeviceStatus::Running(p) if p > 0.8 => 0.6,
+                DeviceStatus::Running(_) => 0.9,
+                DeviceStatus::Error(_, _) => 0.1,
+            };
+        }
+
+        pub fn reset(mut this) : Void {
+            this.status = DeviceStatus::Idle;
+        }
+
+        pub async fn process(mut this, data: SensorData) : Result<Void, String> panics {
+            if data.value < 0 {
+                return Result::Err("Negative reading");
+            }
+            this.status = DeviceStatus::Running(0.5);
+            return Result::Ok(void);
+        }
+    }
+
+    // ------------------------------------------
+    // 高度な処理 (Piping, Flow Control, Closures)
+    // ------------------------------------------
+    pub async fn run_factory_loop(mut arm: RobotArm, stream: Vec<SensorData>) : Void {
+        loop "factory_main" {
+            for data in stream {
+                // パイプライン処理: データの正規化とチェック
+                let processed = pipe data {
+                    |> SensorData { value: v, .. } if v == 0 => {
+                        Logger::warn("Empty data detected");
+                        v
+                    }
+                    |> SensorData { value: v, .. } => v * 2
+                };
+
+                // ビット演算によるフラグチェック
+                const MASK: Usize = 0b1111_0000;
+                let flags = (data.timestamp & MASK) >> 4;
+
+                if flags != 0 {
+                    let result = try await arm.process(data);
+                    
+                    match result {
+                        Result::Ok(_) => {
+                            TOTAL_PROCESSED += 1;
+                        }
+                        Result::Err(msg) => {
+                            arm.status = DeviceStatus::Error(msg, 500);
+                            break "factory_main"; // 致命的なエラー
+                        }
+                    }
+                }
+
+                // 特殊な「for-pipeline」構文によるフィルタリングとログ
+                for i in vec(1, 2, 3) {
+                    |> n if n % 2 == 0 => Logger::info("Even iteration");
+                    |> _ => continue;
+                }
+            }
+
+            if arm.check_health() < 0.2 {
+                arm.reset();
+            } else {
+                return; // 正常終了
+            }
+        }
+    }
+
+    // ------------------------------------------
+    // メインエントリーポイント
+    // ------------------------------------------
+    fn main() {
+        let mut arm = RobotArm::new("ARM_01");
+        
+        let test_data = vec(
+            SensorData { id: 101, value: 50, timestamp: 0xF0 },
+            SensorData { id: 102, value: 100, timestamp: 0x00 }
+        );
+
+        // 匿名関数の利用と型のキャスト
+        let log_fn = (mut msg: String) -> {
+            let prefix = "[FACTORY]";
+            Logger::info(prefix + msg);
+        };
+
+        log_fn("Starting simulation...");
+        ignore await run_factory_loop(arm, test_data);
+
+        // typeofとasによる動的な判定
+        let x = 10.5;
+        type ScoreType = typeof x;
+        let final_score = arm.check_health() as ScoreType;
+
+        if final_score >= 0.8 {
+            print("Factory is healthy!");
+        } else {
+            print("Maintenance required.");
+        }
+    }
+}

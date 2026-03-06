@@ -1,0 +1,27 @@
+@MockNetwork
+module Network {
+    pub struct Response {
+        code: Int;
+        body: String;
+    }
+
+    pub extern async fn fetch(url: String) : Response;
+
+    async fn handle_request(url: String) : Void {
+        let resp = try await fetch(url);
+        
+        match resp {
+            Response { code: 200, body: b } => {
+                print("Success: " + b);
+            }
+            Response { code: n, body: _ } if n >= 500 => {
+                print("Server Error");
+            }
+            _ => print("Unknown error");
+        }
+    }
+
+    fn main() {
+        ignore await handle_request("https://api.example.com");
+    }
+}

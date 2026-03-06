@@ -1,0 +1,24 @@
+protocol Printable {
+    fn to_string(this) : String;
+}
+
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+fn display_result<T : Printable, E : Printable>(res: Result<T, E>) : Void {
+    match res {
+        Result::Ok(val) => {
+            print("Value: " + val.to_string());
+        }
+        Result::Err(err) => {
+            print("Error: " + err.to_string());
+        }
+    }
+}
+
+fn main() {
+    let success: Result<Int, String> = Result::Ok(200);
+    display_result(success);
+}

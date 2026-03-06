@@ -1,0 +1,34 @@
+class Stack<T> {
+    mut data: Vec<T>;
+    
+    pub fn new() : Stack<T> {
+        return Stack { data: Vec::new() };
+    }
+
+    pub fn push(mut this, item: T) : Void {
+        this.data.push(item);
+    }
+
+    pub fn pop(mut this) : T panics {
+        if let Some(val) = this.data.pop() {
+            return val;
+        } else {
+            return panic("Stack empty");
+        }
+    }
+
+    pub fn is_empty(this) : Bool {
+        return this.data.len() == 0;
+    }
+}
+
+fn test_stack() {
+    let mut s = Stack::new();
+    s.push(1);
+    s.push(2);
+    
+    while !s.is_empty() {
+        let x = s.pop();
+        print(x);
+    }
+}

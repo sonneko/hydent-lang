@@ -1,0 +1,23 @@
+fn process_data(input: Vec<Int>) : Vec<Int> {
+    let result = pipe input {
+        |> list => list.filter((x) -> x > 0)
+        |> filtered => filtered.map((x) -> x * 2)
+    };
+
+    let mut final_list = Vec::new();
+    for x in result {
+        |> val if val % 4 == 0 => final_list.push(val);
+        |> _ => continue;
+    }
+
+    return final_list;
+}
+
+fn main() {
+    let data = vec(1, -2, 3, -4, 5);
+    let processed = process_data(data);
+    
+    for i in processed {
+        print(i);
+    }
+}

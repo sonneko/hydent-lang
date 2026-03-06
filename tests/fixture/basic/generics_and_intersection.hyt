@@ -1,0 +1,15 @@
+protocol Clone { fn clone(this) : Self; }
+protocol Debug { fn dump(this) : Void; }
+
+fn duplicate_and_dump<T : Clone & Debug>(item: T) : T {
+    item.dump();
+    return item.clone();
+}
+
+struct Data { id: Int; }
+// ... protocols implementation ...
+
+fn main() {
+    let d = Data { id: 1 };
+    // duplicate_and_dump(d);
+}

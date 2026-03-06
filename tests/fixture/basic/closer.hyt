@@ -1,0 +1,15 @@
+fn apply_twice(val: Int, f: (Int) -> Int) : Int {
+    return f(f(val));
+}
+
+fn main() {
+    let multiplier = 3;
+    let result = apply_twice(10, (mut x: Int) -> {
+        let factor = 2;
+        return x * factor + multiplier;
+    });
+
+    let simple = apply_twice(5, (n) -> n + 1);
+    
+    print(result);
+}

@@ -1,0 +1,14 @@
+@Link("math_lib")
+module NativeMath {
+    pub extern fn sin(v: DoubleFloat) : DoubleFloat;
+    pub extern fn cos(v: DoubleFloat) : DoubleFloat;
+}
+
+@EntryPoint
+fn start() {
+    let val: DoubleFloat = 0.0;
+    let s = NativeMath::sin(val);
+    let c = NativeMath::cos(val);
+    
+    print("Computed");
+}

@@ -1,0 +1,23 @@
+struct Vec2 {
+    x: Float;
+    y: Float;
+}
+
+module Vec2 {
+    pub fn length(v: Vec2) : Float {
+        return (v.x ** 2.0 + v.y ** 2.0) ** 0.5;
+    }
+
+    pub fn dot(a: Vec2, b: Vec2) : Float {
+        return a.x * b.x + a.y * b.y;
+    }
+}
+
+fn main() {
+    let v1 = Vec2 { x: 3.0, y: 4.0 };
+    let len = Vec2::length(v1);
+    
+    if len > 0.0 {
+        print("Vector exists");
+    }
+}

@@ -1,0 +1,22 @@
+protocol Listener {
+    fn on_event(mut this, msg: String) : Void;
+}
+
+class Dispatcher {
+    mut listeners: [Listener];
+
+    pub fn add(mut this, l: Listener) : Void {
+        this.listeners.push(l);
+    }
+
+    pub fn notify(this, message: String) : Void {
+        for l in this.listeners {
+            l.on_event(message);
+        }
+    }
+}
+
+fn main() {
+    let mut d = Dispatcher { listeners: [] };
+    // ここで具体的な実装を注入する想定
+}
