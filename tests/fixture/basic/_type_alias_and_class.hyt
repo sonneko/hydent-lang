@@ -2,16 +2,16 @@ type NodePtr<T> = ClassNode<T>;
 
 class ClassNode<T> {
     pub val: T;
-    pub next: ?NodePtr<T>;
+    pub next: NodePtr<T>;
 
     pub fn new(v: T) : ClassNode<T> {
         return ClassNode { val: v, next: None };
     }
 }
 
-fn length<T>(node: ?NodePtr<T>) : Int {
+fn length<T>(node: NodePtr<T>) : Int {
     return match node {
-        Some(n) => 1 + length(n.next),
+        Some { n } => 1 + length(n.next),
         None => 0,
     };
 }

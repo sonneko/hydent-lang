@@ -21,7 +21,13 @@ pub fn call_cli() {
                 log("Getting file contents...");
                 let source = std::fs::read_to_string(&path).unwrap();
                 log("Parsing...");
-                let ast = format!("{}", parse_for_integration_test(&source));
+                let result = parse_for_integration_test(&source);
+                eprintln!("{:?}",result.errors());
+                if parsed.should_success && !result.success() {
+                    eprintln!("{}", result);
+                    panic!("Parse failed");
+                }
+                let ast = format!("{}", result);
                 log("Writing into file...");
                 std::fs::write(&out, ast).unwrap();
             }
@@ -45,6 +51,9 @@ pub fn call_cli() {
 struct Cli {
     #[arg(long, global = true, default_value_t = false)]
     verbose: bool,
+
+    #[arg(long, global = true, default_value_t = false)]
+    should_success: bool,
 
     #[command(subcommand)]
     command: Commands,

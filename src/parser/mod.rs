@@ -57,6 +57,14 @@ impl<'src> Ast<'src> {
             source_holder,
         }
     }
+
+    pub fn success(&self) -> bool {
+        self.parse_errors.len() == 0
+    }
+
+    pub fn errors(&self) -> &Vec<ParseErr> {
+        &self.parse_errors
+    }
 }
 
 impl<'src> Display for Ast<'src> {

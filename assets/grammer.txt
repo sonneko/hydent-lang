@@ -245,6 +245,7 @@ product Annotation {
     "@"
     name: Identifier
     args: *LiteralNode
+    ";"
 }
 
 product TypeAliasDeclaration {
@@ -395,12 +396,22 @@ product DivAssignOp { "/=" }
 // ==========================================
 
 product Expression {
-    head: LogicalAndExpr with "boxed"
+    head: RangeExpr with "boxed"
     tails: *LogicalOrTail
 }
 
 product LogicalOrTail {
     "||"
+    expr: RangeExpr with "boxed"
+}
+
+product RangeExpr {
+    head: LogicalAndExpr with "boxed"
+    tails: ?RangeExprTail
+}
+
+product RangeExprTail {
+    op: RangeOp
     expr: LogicalAndExpr with "boxed"
 }
 
@@ -568,6 +579,7 @@ branch BaseExpr {
     ParenExpr
     LiteralNode
     StructLiteralOrIdent
+    ThisKw
 }
 
 product StructLiteralOrIdent {
@@ -739,6 +751,7 @@ product PipelineArm {
     guard: ?IfGuard
     "=>"
     expr: Expression
+    sep: ?ExprSemiTail
 }
 
 product IfGuard {

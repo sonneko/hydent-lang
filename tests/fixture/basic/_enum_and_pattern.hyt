@@ -1,4 +1,4 @@
-@MockNetwork
+@MockNetwork;
 module Network {
     pub struct Response {
         code: Int;

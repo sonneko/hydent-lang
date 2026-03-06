@@ -1,4 +1,4 @@
-@ModuleConfig("FactoryOS", "2.0.1")
+@ModuleConfig "FactoryOS", "2.0.1";
 module FactoryManager {
     import { Serializer, Logger } from "std:utils";
 

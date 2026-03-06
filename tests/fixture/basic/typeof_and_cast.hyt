@@ -1,0 +1,17 @@
+fn process_any(val: Any) : Void {
+    let x = 100;
+
+    if val is Numeric {
+        let n = val as Numeric;
+        print(n + 10);
+    }
+}
+
+fn main() {
+    let my_val: Int = 42;
+    process_any(my_val as Any);
+    
+    let big_int: DoubleInt = 10000000000;
+    let small_int = big_int as Int;
+    print(small_int);
+}

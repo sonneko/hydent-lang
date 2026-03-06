@@ -1,4 +1,4 @@
-fn find_in_matrix(matrix: [[Int]], target: Int) : Bool {
+fn find_in_matrix(matrix: Vec<Vec<Int>>, target: Int) : Bool {
     let found = loop "search" {
         for row in matrix {
             for val in row {
@@ -13,7 +13,7 @@ fn find_in_matrix(matrix: [[Int]], target: Int) : Bool {
 }
 
 fn main() {
-    let data = [[1, 2], [3, 4]];
+    let data = vec(vec(1, 2), vec(3, 4));
     if find_in_matrix(data, 3) {
         print("Found");
     }
