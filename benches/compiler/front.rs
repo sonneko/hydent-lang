@@ -1,3 +1,5 @@
+use std::hint::black_box;
+
 use criterion::{criterion_group, Criterion};
 
 use hydent_lang_compiler::{
@@ -32,7 +34,7 @@ pub fn fizz_buzz(n: Int) {
     }
 }
         "#;
-        b.iter(|| {
+        b.iter(black_box(|| {
             let mut symbols = SymbolFactory::new(source);
             let tokenizer = Tokenizer::new(source, &mut symbols);
             let (tokens, _, line_starts) = tokenizer.tokenize();
@@ -57,6 +59,6 @@ pub fn fizz_buzz(n: Int) {
                 SourceHolder::new(source, line_starts),
                 symbols,
             );
-        });
+        }));
     });
 }
