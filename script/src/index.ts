@@ -40,10 +40,10 @@ function main() {
     const analysis = analyze(ast);
     fs.writeFileSync(IR_FILE_PATH, JSON.stringify(analysis, (_, value) => {
         if (value instanceof Map) {
-            return Object.fromEntries(value);
+            return Object.fromEntries([...value.entries()].sort(([a], [b]) => String(a).localeCompare(String(b))));
         }
         if (value instanceof Set) {
-            return [...value];
+            return [...value].sort();
         }
         return value;
     }, 2), "utf8");

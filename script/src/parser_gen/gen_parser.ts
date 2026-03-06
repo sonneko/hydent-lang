@@ -59,10 +59,10 @@ export class ParserGenerator {
             }
             peek0Groups.get(branch.astTypeName)!.terminals.add(branch.firstTerminal.replace(/\$.*\$/, "_"));
         }
-
-        for (const [astType, group] of peek0Groups.entries()) {
-            const pattern = Array.from(group.terminals).join(" | ");
-            const parseCall = group.isBoxed 
+        const sortedKeys = Array.from(peek0Groups.keys()).sort();
+        for (const astType of sortedKeys) {
+            const pattern = Array.from(peek0Groups.get(astType)!.terminals).sort().join(" | ");
+            const parseCall = peek0Groups.get(astType)!.isBoxed 
                 ? `self.alloc_box(|this| this.parse_${astType}())?` 
                 : `self.parse_${astType}()?`;
             ret += `            Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
@@ -169,7 +169,12 @@ export class ParserGenerator {
             }
         }
         ret += `        Ok(${func.astTypeName} {\n`;
-        for (const element of func.elements.sort()) {
+        const sortedElements = [...func.elements].sort((a, b) => {
+            const nameA = a.kind === 'terminal' ? a.tokenTypeName : a.astTypeName;
+            const nameB = b.kind === 'terminal' ? b.tokenTypeName : b.astTypeName;
+            return nameA.localeCompare(nameB);
+        });
+        for (const element of sortedElements) {
             if (element.kind !== "terminal") {
                 ret += `            ${element.astTypeName}: v_${element.astTypeName},\n`;
             }

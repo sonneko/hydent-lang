@@ -4,7 +4,8 @@ export class ASTTypeGenerator {
     public generateASTType(ir: IR): string {
         let decls = [];
         decls.push(this.generateVisitorTrait(ir));
-        for (const element of ir.sort()) {
+        const sortedIR = [...ir].sort((a, b) => a.astTypeName.localeCompare(b.astTypeName));
+        for (const element of sortedIR) {
             switch (element.kind) {
                 case "branch":
                     decls.push(this.generateBranchASTType(element));
@@ -103,7 +104,7 @@ export class ASTTypeGenerator {
                     return [key, { name: item.astTypeName, isBoxed: item.isBoxed }];
                 })
             )];
-            return [...new Set(taken)].map(v => v[1]).sort();
+            return [...new Set(taken)].map(v => v[1]).sort((a, b) => a.name.localeCompare(b.name));
         })();
         for (const variant of everyVariants) {
             let returnType;
@@ -185,7 +186,7 @@ export class ASTTypeGenerator {
         ret += `impl ${func.astTypeName} {\n`;
         for (const typeName of func.elements
             .filter(element => element.kind !== "terminal")
-            .sort()
+            .sort((a, b) => a.astTypeName.localeCompare(b.astTypeName))
         ) {
             let returnType;
             switch (typeName.kind) {

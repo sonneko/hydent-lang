@@ -2,7 +2,7 @@ import { TokenMap } from "./analyze";
 
 export function generateTokenTypeMap() {
     let ret = "";
-    const allTokens = Object.entries(new TokenMap().getAll());
+    const allTokens = Object.entries(new TokenMap().getAll()).sort((a, b) => a[0].localeCompare(b[0]));
     ret += `use phf::phf_map;\n`;
     ret += `use crate::tokenizer::errors::TokenizeErr;\n`;
     ret += `use crate::tokenizer::tokenize::Tokenizer;\n`;

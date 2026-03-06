@@ -124,7 +124,7 @@ export class Analyzer {
                     .forEach(s => s.firstAndFollowConflict = true);
                 if (this.nullable.has(name)) {
                     this.outputs.push(`❌ LL(2) Conflict in Nullable Rule "${name}":`);
-                    this.outputs.push(`  Tokens in both First and Follow sets: ${[...intersection].join(", ")}`);
+                    this.outputs.push(`  Tokens in both First and Follow sets: ${[...intersection].sort().join(", ")}`);
                     throw new Error("Grammar conflict");
                 }
             }
@@ -491,7 +491,7 @@ export class Analyzer {
         const branchesNeedBacktrack: BranchParserFunction["branchesNeedBacktrack"] = [];
         const expectedTerminals: RustTokenTypeName[] = [];
 
-        for (const t0 in mapPeek0) {
+        Object.keys(mapPeek0).sort().forEach(t0 => {
             expectedTerminals.push(tokenName(t0));
             const variants = mapPeek0[t0];
 
@@ -545,12 +545,12 @@ export class Analyzer {
                     });
                 }
             }
-        }
+        });
 
         const syncPointsTerminals: RustTokenTypeName[] = [];
         const follow = this.followSets.get(rule.name);
         if (follow) {
-            follow.forEach(t => syncPointsTerminals.push(tokenName(t)));
+            [...follow].sort().forEach(t => syncPointsTerminals.push(tokenName(t)));
         }
 
         let firstTerminals: RustTokenTypeName[] = [];

@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from "fs";
 const sourceFiles = readdirSync('../tests/fixture/', {
     withFileTypes: true,
     recursive: true
-});
+}).sort((a, b) => a.name.localeCompare(b.name));
 
 const ok = sourceFiles.filter(file => file.isFile()).every((file) => {
     const isCiMode = process.argv[2] === "ci";
