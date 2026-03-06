@@ -316,6 +316,14 @@
     "size": 4
   },
   {
+    "ast": "RangeExpr",
+    "size": 12
+  },
+  {
+    "ast": "RangeExprTail",
+    "size": 8
+  },
+  {
     "ast": "LogicalAndExpr",
     "size": 12
   },
@@ -621,7 +629,7 @@
   },
   {
     "ast": "PipelineArm",
-    "size": 32
+    "size": 36
   },
   {
     "ast": "IfGuard",

@@ -397,15 +397,27 @@
     class DivAssignOp {
     }
     class Expression {
-        +LogicalAndExpr head
+        +RangeExpr head
         +LogicalOrTail[] tails
     }
-    Expression --> LogicalAndExpr
+    Expression --> RangeExpr
     Expression --> LogicalOrTail
     class LogicalOrTail {
+        +RangeExpr expr
+    }
+    LogicalOrTail --> RangeExpr
+    class RangeExpr {
+        +LogicalAndExpr head
+        +RangeExprTail? tails
+    }
+    RangeExpr --> LogicalAndExpr
+    RangeExpr --> RangeExprTail
+    class RangeExprTail {
+        +RangeOp op
         +LogicalAndExpr expr
     }
-    LogicalOrTail --> LogicalAndExpr
+    RangeExprTail --> RangeOp
+    RangeExprTail --> LogicalAndExpr
     class LogicalAndExpr {
         +BitwiseOrExpr head
         +LogicalAndTail[] tails
@@ -605,6 +617,7 @@
     BaseExpr <|-- ParenExpr
     BaseExpr <|-- LiteralNode
     BaseExpr <|-- StructLiteralOrIdent
+    BaseExpr <|-- ThisKw
     class StructLiteralOrIdent {
         +Identifier head
         +AccesserTail[] tails
@@ -751,10 +764,12 @@
         +Pattern pattern
         +IfGuard? guard
         +Expression expr
+        +ExprSemiTail? sep
     }
     PipelineArm --> Pattern
     PipelineArm --> IfGuard
     PipelineArm --> Expression
+    PipelineArm --> ExprSemiTail
     class IfGuard {
         +Expression expr
     }

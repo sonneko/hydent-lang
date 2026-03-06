@@ -1179,6 +1179,11 @@
           "modifier": "List"
         },
         "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": ""
       }
     ]
   },
@@ -1862,7 +1867,7 @@
         "kind": "Field",
         "name": "head",
         "type": {
-          "name": "LogicalAndExpr",
+          "name": "RangeExpr",
           "modifier": "None"
         },
         "note": "boxed"
@@ -1885,6 +1890,54 @@
       {
         "kind": "Terminal",
         "value": "||",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "expr",
+        "type": {
+          "name": "RangeExpr",
+          "modifier": "None"
+        },
+        "note": "boxed"
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "RangeExpr",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "head",
+        "type": {
+          "name": "LogicalAndExpr",
+          "modifier": "None"
+        },
+        "note": "boxed"
+      },
+      {
+        "kind": "Field",
+        "name": "tails",
+        "type": {
+          "name": "RangeExprTail",
+          "modifier": "Option"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "RangeExprTail",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "op",
+        "type": {
+          "name": "RangeOp",
+          "modifier": "None"
+        },
         "note": ""
       },
       {
@@ -2783,6 +2836,10 @@
       {
         "name": "StructLiteralOrIdent",
         "note": ""
+      },
+      {
+        "name": "ThisKw",
+        "note": ""
       }
     ]
   },
@@ -3532,6 +3589,15 @@
         "type": {
           "name": "Expression",
           "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "sep",
+        "type": {
+          "name": "ExprSemiTail",
+          "modifier": "Option"
         },
         "note": ""
       }
