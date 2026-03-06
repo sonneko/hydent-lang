@@ -59,7 +59,7 @@ impl<'src> Ast<'src> {
     }
 
     pub fn success(&self) -> bool {
-        self.parse_errors.len() == 0
+        self.parse_errors.is_empty()
     }
 
     pub fn errors(&self) -> &Vec<ParseErr> {

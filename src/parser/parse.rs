@@ -18,7 +18,11 @@ impl<'ctx, 'src> Parser<'ctx, 'src> {
         tokens: TokenStream,
         ctx: CompilerFrontendContext<'ctx, 'src>,
     ) -> Parser<'ctx, 'src> {
-        Self { ctx, tokens, errors: Vec::new() }
+        Self {
+            ctx,
+            tokens,
+            errors: Vec::new(),
+        }
     }
 
     #[allow(clippy::result_large_err)] // WARNING

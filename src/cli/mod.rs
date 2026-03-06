@@ -22,7 +22,7 @@ pub fn call_cli() {
                 let source = std::fs::read_to_string(&path).unwrap();
                 log("Parsing...");
                 let result = parse_for_integration_test(&source);
-                eprintln!("{:?}",result.errors());
+                eprintln!("{:?}", result.errors());
                 if parsed.should_success && !result.success() {
                     eprintln!("{}", result);
                     panic!("Parse failed");
