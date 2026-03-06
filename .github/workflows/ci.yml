@@ -118,6 +118,10 @@ jobs:
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
 
+      - name: Install script dependencies
+        run: npm ci
+        working-directory: ./script
+
       - name: Integration Test
         run: npm run compiler-test
         working-directory: ./script
