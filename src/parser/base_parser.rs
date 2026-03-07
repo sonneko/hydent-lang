@@ -2,6 +2,7 @@ use std::any::Any;
 
 use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
 use crate::compiler::span::Span;
+use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::ast_node::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
@@ -56,7 +57,7 @@ pub struct Enviroment {
     pub span: Span,
 }
 
-impl BaseParser for Parser<'_, '_> {
+impl<S: DiagnosticStream> BaseParser for Parser<'_, '_, '_, S> {
     type Error = ParseErr;
     fn alloc_box<T: ASTNode>(
         &mut self,
@@ -172,8 +173,7 @@ impl BaseParser for Parser<'_, '_> {
 
     fn report_error(&mut self, err: Self::Error) {
         // TODO: add error to error_pool
-        eprintln!("occured error: {}\n", err);
-        self.errors.push(err);
+        self.diagnostic_stream.pour(err);
     }
 
     fn backtrack<T: ASTNode>(

@@ -7,6 +7,7 @@ use hydent_lang_compiler::{
         arena::Arena, context::frontend::CompilerFrontendContext, source_holder::SourceHolder,
         symbol::SymbolFactory,
     },
+    diagnostic::stream::IgnoreDiagnosticStream,
     parser::{parse::Parser, Ast},
     tokenizer::{token_stream::TokenStream, tokenize::Tokenizer},
 };
@@ -35,9 +36,10 @@ pub fn fizz_buzz(n: Int) {
 }
         "#;
         b.iter(black_box(|| {
+            let mut diagnostic_stream = IgnoreDiagnosticStream::new();
             let mut symbols = SymbolFactory::new(source);
             let tokenizer = Tokenizer::new(source, &mut symbols);
-            let (tokens, _, line_starts) = tokenizer.tokenize();
+            let (tokens, line_starts) = tokenizer.tokenize(&mut diagnostic_stream);
             let stream = TokenStream::new(tokens);
             let mut ast_arena = Arena::new();
             let mut errors_arena = Arena::new();
@@ -47,18 +49,16 @@ pub fn fizz_buzz(n: Int) {
                     source,
                     symbol_factory: &mut symbols,
                     ast_arena: &mut ast_arena,
-                    errors_arena: &mut errors_arena,
                 },
+                &mut diagnostic_stream,
             );
             let ast = parser.parse();
-            let errors = parser.errors;
 
             Ast::new(
-                ast.unwrap(),
+                ast,
                 ast_arena,
                 SourceHolder::new(source, line_starts),
                 symbols,
-                errors,
             );
         }));
     });

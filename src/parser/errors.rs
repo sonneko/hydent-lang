@@ -1,6 +1,6 @@
 use crate::compiler::arena::{Arena, ArenaIter};
 use crate::parser::base_parser::Enviroment;
-use crate::{diagnostic::CompilerDiagnostic, tokenizer::tokens::Token};
+use crate::{diagnostic::Diagnostic, tokenizer::tokens::Token};
 
 #[derive(Clone, Copy, Debug)]
 pub struct ParseErr {
@@ -8,44 +8,17 @@ pub struct ParseErr {
     found: Enviroment,
 }
 
-impl std::fmt::Display for ParseErr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "expected {:?}, found {} in {}",
-            self.expected, self.found.current, self.found.span
-        )
-    }
-}
-
 pub trait IParseErr {
-    fn build(
-        arena: &Arena,
-        identifier: bool,
-        expected: &'static [Token],
-        found: Enviroment,
-    ) -> Self;
+    fn build(identifier: bool, expected: &'static [Token], found: Enviroment) -> Self;
     fn is_endoffile_error(&self) -> bool;
 }
 
 impl IParseErr for ParseErr {
-    fn build(
-        arena: &Arena,
-        identifier: bool,
-        expected: &'static [Token],
-        found: Enviroment,
-    ) -> Self {
+    fn build(identifier: bool, expected: &'static [Token], found: Enviroment) -> Self {
         Self { expected, found }
     }
 
     fn is_endoffile_error(&self) -> bool {
         self.found.current == Token::EndOfFile
-    }
-}
-
-impl From<ParseErr> for Box<dyn CompilerDiagnostic> {
-    fn from(value: ParseErr) -> Self {
-        // TODO: convert ParseErr into CompilerDiagnostic
-        unimplemented!()
     }
 }

@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use std::sync::{Arc, RwLock};
 
 use crate::compiler::arena::ArenaBox;
-use crate::diagnostic::{diagnose_and_finish, CompilerDiagnostic};
+use crate::diagnostic::Diagnostic;
 
 pub trait Query: 'static {
     type From: Hash + Clone;

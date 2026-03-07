@@ -4,7 +4,7 @@
 
 use clap::{Parser, Subcommand, ValueEnum};
 
-use crate::parser::parse_for_integration_test;
+use crate::{diagnostic, parser::parse_for_integration_test};
 
 pub fn call_cli() {
     let parsed = Cli::parse();
@@ -19,17 +19,19 @@ pub fn call_cli() {
         Commands::Build { path, emit, out } => match emit {
             EmitItems::Ast => {
                 log("Getting file contents...");
-                let source = std::fs::read_to_string(&path).unwrap();
+                let source = std::fs::read_to_string(&path)
+                    .expect("We can't find file or permission denied.");
                 log("Parsing...");
-                let result = parse_for_integration_test(&source);
-                eprintln!("{:?}", result.errors());
-                if parsed.should_success && !result.success() {
-                    eprintln!("{}", result);
-                    panic!("Parse failed");
+                let (ast, diagnostics) = parse_for_integration_test(&source);
+                if diagnostics.is_empty() {
+                    log("Writing into file...");
+                    std::fs::write(&out, ast.to_string()).expect("We failed to write the results.");
+                } else {
+                    log("Error occured while parsing.");
+                    for diagnostic in diagnostics {
+                        println!("{}", diagnostic);
+                    }
                 }
-                let ast = format!("{}", result);
-                log("Writing into file...");
-                std::fs::write(&out, ast).unwrap();
             }
             EmitItems::Hir => {
                 unimplemented!()
@@ -51,9 +53,6 @@ pub fn call_cli() {
 struct Cli {
     #[arg(long, global = true, default_value_t = false)]
     verbose: bool,
-
-    #[arg(long, global = true, default_value_t = false)]
-    should_success: bool,
 
     #[command(subcommand)]
     command: Commands,
