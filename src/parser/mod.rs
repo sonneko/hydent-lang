@@ -118,18 +118,15 @@ pub fn parse_for_integration_test<'a>(source: &'a str) -> Ast<'a> {
     let (tokens, errors, line_starts) = tokenizer.tokenize();
     let stream = TokenStream::new(tokens);
     let mut ast_arena = Arena::new();
-    let mut errors_arena = Arena::new();
     let mut parser = Parser::new(
         stream,
         CompilerFrontendContext {
             source,
             symbol_factory: &mut symbols,
             ast_arena: &mut ast_arena,
-            errors_arena: &mut errors_arena,
         },
     );
     let ast = parser.parse();
-    let errors = parser.errors;
 
     Ast::new(
         ast.unwrap(),

@@ -28,8 +28,6 @@ pub trait BaseParser: Sized {
 
     fn alloc<T: ASTNode>(&mut self, node: T) -> ArenaBox<T>;
 
-    fn get_errors_arena(&self) -> &Arena;
-
     fn report_error(&mut self, error: Self::Error);
 
     fn backtrack<T: ASTNode>(
@@ -79,10 +77,6 @@ impl BaseParser for Parser<'_, '_> {
         self.tokens.next().map(|(token, _)| token)
     }
 
-    fn get_errors_arena(&self) -> &Arena {
-        self.ctx.errors_arena
-    }
-
     fn repeat<T: ASTNode>(
         &mut self,
         mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
@@ -100,7 +94,7 @@ impl BaseParser for Parser<'_, '_> {
                 (true, true) => {
                     let p1 = self.peek::<1>();
 
-                    if !T::FIRST_2_SETS.contains(&p1) {
+                    if !T::is_first2_sets(&p1) {
                         break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
                     }
 
@@ -162,7 +156,6 @@ impl BaseParser for Parser<'_, '_> {
                 Ok(())
             } else {
                 Err(ParseErr::build(
-                    self.get_errors_arena(),
                     matches!(expected, Token::Identifier(_)),
                     std::array::from_ref(expected),
                     self.enviroment(),
@@ -170,7 +163,6 @@ impl BaseParser for Parser<'_, '_> {
             }
         } else {
             Err(ParseErr::build(
-                self.get_errors_arena(),
                 matches!(expected, Token::Identifier(_)),
                 std::array::from_ref(expected),
                 self.enviroment(),

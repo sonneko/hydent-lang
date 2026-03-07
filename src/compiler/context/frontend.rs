@@ -14,7 +14,6 @@ pub struct CompilerFrontendContext<'ctx, 'src> {
     pub source: &'src str,
     pub symbol_factory: &'ctx mut SymbolFactory<'src>,
     pub ast_arena: &'ctx Arena,
-    pub errors_arena: &'ctx Arena,
 }
 
 /// Implements the `Mergeble` trait for `CompilerFrontendContext`.
@@ -69,14 +68,12 @@ impl<'ctx, 'src> CompilerFrontendContext<'ctx, 'src> {
     pub fn new(
         source: &'src str,
         ast_arena: &'ctx Arena,
-        errors_arena: &'ctx Arena,
         symbol_factory: &'ctx mut SymbolFactory<'src>,
     ) -> CompilerFrontendContext<'ctx, 'src> {
         Self {
             symbol_factory,
             source,
             ast_arena,
-            errors_arena,
         }
     }
 }

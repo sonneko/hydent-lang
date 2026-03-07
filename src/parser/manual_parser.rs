@@ -15,12 +15,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::Identifier { symbol })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                true,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(true, &[], self.enviroment()))
         }
     }
     fn parse_StringLiteral(&mut self) -> Result<generated_ast::StringLiteral, Self::Error> {
@@ -28,12 +23,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::StringLiteral { span })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
     fn parse_DocComment(&mut self) -> Result<generated_ast::DocComment, Self::Error> {
@@ -41,12 +31,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::DocComment { span })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
 
@@ -55,12 +40,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::CharLiteral { value })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
 
@@ -69,12 +49,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::IntLiteral { value })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
 
@@ -83,12 +58,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::FloatLiteral { value })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
 
@@ -97,12 +67,7 @@ impl GeneratedParser for Parser<'_, '_> {
             self.consume_token();
             Ok(generated_ast::BoolLiteral { value })
         } else {
-            Err(Self::Error::build(
-                self.get_errors_arena(),
-                false,
-                &[],
-                self.enviroment(),
-            ))
+            Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
 }
