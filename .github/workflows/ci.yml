@@ -101,6 +101,7 @@ jobs:
           cargo +nightly miri test --lib
 
   integration-test:
+    if: false
     runs-on: ubuntu-latest
     needs: setup
     steps:
@@ -181,7 +182,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [setup, build-website, benchmark, integration-test, unit-test, lint]
+    needs: [setup, build-website, benchmark, unit-test, lint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Download Workspace

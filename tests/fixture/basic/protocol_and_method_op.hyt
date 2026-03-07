@@ -3,7 +3,7 @@ protocol Listener {
 }
 
 class Dispatcher {
-    mut listeners: [Listener];
+    mut listeners: Vec<Listener>;
 
     pub fn add(mut this, l: Listener) : Void {
         this.listeners.push(l);
