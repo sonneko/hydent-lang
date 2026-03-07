@@ -1,12 +1,14 @@
 use crate::compiler::source_holder::SourceHolder;
 use crate::compiler::symbol::SymbolFactory;
+use crate::diagnostic::stream::IgnoreDiagnosticStream;
 use crate::tokenizer::tokenize::Tokenizer;
 use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
 
 fn tokenize_helper(input: &str) -> Vec<Token> {
+    let mut diagnostic_stream = IgnoreDiagnosticStream::new();
     let mut symbol_factory = SymbolFactory::new(input);
     let tokenizer = Tokenizer::new(input, &mut symbol_factory);
-    let (tokens, _, _) = tokenizer.tokenize();
+    let (tokens, _) = tokenizer.tokenize(&mut diagnostic_stream);
     tokens.into_iter().map(|(token, _)| token).collect()
 }
 

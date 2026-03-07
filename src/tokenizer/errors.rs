@@ -2,50 +2,26 @@
 
 use std::fmt::Debug;
 
-use crate::diagnostic::CompilerDiagnostic;
+use crate::{compiler::span::Span, diagnostic::Diagnostic};
 
 #[derive(PartialEq)]
-pub enum TokenizeErr {
-    StringLiteralNotClosed(usize),
-    CharLiteralNotClosed(usize),
-    InvalidCharLiteral(usize),
-    InvalidIntegerLiteral(usize),
-    InvalidFloatLiteral(usize),
-    UnknownToken(usize),
-    BlockCommentNotClosed(usize),
+pub enum TokenizeErrKind {
+    StringLiteralNotClosed,
+    CharLiteralNotClosed,
+    InvalidCharLiteral,
+    InvalidIntegerLiteral,
+    InvalidFloatLiteral,
+    UnknownToken,
+    BlockCommentNotClosed,
 }
 
-impl Debug for TokenizeErr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            TokenizeErr::StringLiteralNotClosed(index) => {
-                write!(f, "String literal not closed at index {}", index)
-            }
-            TokenizeErr::CharLiteralNotClosed(index) => {
-                write!(f, "Char literal not closed at index {}", index)
-            }
-            TokenizeErr::InvalidIntegerLiteral(index) => {
-                write!(f, "Invalid integer literal at index {}", index)
-            }
-            TokenizeErr::InvalidFloatLiteral(index) => {
-                write!(f, "Invalid float literal at index {}", index)
-            }
-            TokenizeErr::UnknownToken(index) => {
-                write!(f, "Unknown token at index {}", index)
-            }
-            TokenizeErr::BlockCommentNotClosed(index) => {
-                write!(f, "Block comment not closed at index {}", index)
-            }
-            TokenizeErr::InvalidCharLiteral(index) => {
-                write!(f, "Invalid char literal at index {}", index)
-            }
-        }
-    }
+pub struct TokenizeErr {
+    kind: TokenizeErrKind,
+    span: Span,
 }
 
-impl From<TokenizeErr> for Box<dyn CompilerDiagnostic> {
-    fn from(value: TokenizeErr) -> Self {
-        // TODO: convert TokenizeErr into CompilerDiagnostic
-        unimplemented!()
+impl TokenizeErr {
+    pub fn new(kind: TokenizeErrKind, span: Span) -> Self {
+        Self { kind, span }
     }
 }

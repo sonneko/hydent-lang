@@ -45,7 +45,7 @@ export class ParserGenerator {
             func.branchesJudgebleInPeek1.length === 0 &&
             (func.branchesFallbackInPeek1 || []).length === 0 &&
             func.branchesNeedBacktrack.length === 0) {
-            ret += `        Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
+            ret += `        Err(Self::Error::build(false, &[], self.enviroment()))\n`;
             ret += `    }\n`;
             return ret;
         }
@@ -105,7 +105,7 @@ export class ParserGenerator {
                     ret += `                        return Ok(${func.astTypeName}::${b.astTypeName}(${wrapCall}));\n`;
                     ret += `                    }\n`;
                 }
-                ret += `                    Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment()))\n`;
+                ret += `                    Err(Self::Error::build(false, &[], self.enviroment()))\n`;
                 ret += `                }\n`;
             } else {
                 const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
@@ -115,7 +115,7 @@ export class ParserGenerator {
                         : `self.parse_${fallback.astTypeName}()?`;
                     ret += `                _ => Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall})),\n`;
                 } else {
-                    ret += `                _ => Err(Self::Error::build(self.get_errors_arena(), false, &[], self.enviroment())),\n`;
+                    ret += `                _ => Err(Self::Error::build(false, &[], self.enviroment())),\n`;
                 }
             }
             ret += `            },\n`;
@@ -125,7 +125,6 @@ export class ParserGenerator {
         const hasCustomMatch = func.expectedTerminals.some(t => t.includes("$"));
         
         ret += `            _ => Err(Self::Error::build(\n`;
-        ret += `                self.get_errors_arena(),\n`;
         ret += `                ${hasCustomMatch},\n`;
         ret += `                &[${expected.join(", ")}],\n`;
         ret += `                self.enviroment(),\n`;

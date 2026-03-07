@@ -37,7 +37,7 @@ function main() {
     console.log("✅ AST written to out/spec/frontend/ast.json");
 
     console.log("🤖 Analyzing AST...");
-    const analysis = analyze(ast);
+    const [analysis, outputs] = analyze(ast);
     fs.writeFileSync(IR_FILE_PATH, JSON.stringify(analysis, (_, value) => {
         if (value instanceof Map) {
             return Object.fromEntries([...value.entries()].sort(([a], [b]) => String(a).localeCompare(String(b))));
@@ -47,6 +47,9 @@ function main() {
         }
         return value;
     }, 2), "utf8");
+    if (mode === "ci") {
+        console.warn(outputs);
+    }
     console.log("✅ IR written to out/spec/frontend/ir.json");
 
     console.log("🤖 Generating Parser...");

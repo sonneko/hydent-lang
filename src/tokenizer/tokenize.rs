@@ -2,7 +2,8 @@
 
 use crate::compiler::span::Span;
 use crate::compiler::symbol::SymbolFactory;
-use crate::tokenizer::errors::TokenizeErr;
+use crate::diagnostic::stream::DiagnosticStream;
+use crate::tokenizer::errors::{TokenizeErr, TokenizeErrKind};
 use crate::tokenizer::generated_tokenmap::{
     scan_operator_or_delimiter, scan_short_keywords, LONG_KEYWORDS_MAP,
 };
@@ -30,9 +31,12 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    pub fn tokenize(mut self) -> (WithSpanVec<Token>, WithSpanVec<TokenizeErr>, Vec<u32>) {
+    pub fn tokenize(
+        mut self,
+        mut diagnostic_stream: &mut impl DiagnosticStream,
+    ) -> (WithSpanVec<Token>, Vec<u32>) {
         let mut tokens = Vec::with_capacity(self.input.len() / 4); // expect we need length/4 vector
-        let mut errors = Vec::new();
+        let mut error_count = 0;
 
         while let Some(b) = self.peek() {
             let begin = self.now_pos();
@@ -65,8 +69,10 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             match next {
                 Ok(token) => tokens.push((token, Span::new(begin, self.now_pos()))),
                 Err(err) => {
-                    if errors.len() < 100 {
-                        errors.push((err, Span::new(begin, self.now_pos())));
+                    if error_count < 100 {
+                        diagnostic_stream
+                            .pour(TokenizeErr::new(err, Span::new(begin, self.now_pos())));
+                        error_count += 1;
                     }
                     tokens.push((Token::Invalid, Span::new(begin, self.now_pos())));
                 }
@@ -75,7 +81,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
         tokens.push((Token::EndOfFile, Span::new(self.now_pos(), self.now_pos())));
 
-        (tokens, errors, self.line_starts)
+        (tokens, self.line_starts)
     }
 
     // --- low level helpers ---
@@ -119,7 +125,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     // --- logic to read each tokens ---
 
-    fn read_identifier_or_keyword(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_identifier_or_keyword(&mut self) -> Result<Token, TokenizeErrKind> {
         let begin = self.current_pos;
         let start = self.now_pos();
         while let Some(b) = self.peek() {
@@ -150,7 +156,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_number_literal(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_number_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         let start = self.current_pos;
         let mut is_float = false;
 
@@ -203,16 +209,16 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             slice
                 .parse::<f32>()
                 .map(|v| Token::Literal(Literal::FloatLiteral(v.into())))
-                .map_err(|_| TokenizeErr::InvalidFloatLiteral(start))
+                .map_err(|_| TokenizeErrKind::InvalidFloatLiteral)
         } else {
             slice
                 .parse::<i32>()
                 .map(|v| Token::Literal(Literal::IntegerLiteral(v)))
-                .map_err(|_| TokenizeErr::InvalidIntegerLiteral(start))
+                .map_err(|_| TokenizeErrKind::InvalidIntegerLiteral)
         }
     }
 
-    fn read_string_literal(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_string_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         self.advance(); // skip opening "
         let begin = self.current_pos;
         let start = self.now_pos();
@@ -232,18 +238,16 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 }
             }
         }
-        Err(TokenizeErr::StringLiteralNotClosed(begin))
+        Err(TokenizeErrKind::StringLiteralNotClosed)
     }
 
-    fn read_char_literal(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_char_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         self.advance(); // '
         let start = self.current_pos;
         let c = match self.peek() {
             Some(b'\\') => {
                 self.advance();
-                let esc = self
-                    .peek()
-                    .ok_or(TokenizeErr::CharLiteralNotClosed(start))?;
+                let esc = self.peek().ok_or(TokenizeErrKind::CharLiteralNotClosed)?;
                 self.advance();
                 match esc {
                     b'n' => '\n',
@@ -251,32 +255,32 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                     b't' => '\t',
                     b'\\' => '\\',
                     b'\'' => '\'',
-                    _ => return Err(TokenizeErr::InvalidCharLiteral(start)),
+                    _ => return Err(TokenizeErrKind::InvalidCharLiteral),
                 }
             }
             Some(_) => {
                 let remaining = &self.input[self.current_pos..];
                 let s = std::str::from_utf8(remaining)
-                    .map_err(|_| TokenizeErr::InvalidCharLiteral(start))?;
+                    .map_err(|_| TokenizeErrKind::InvalidCharLiteral)?;
                 let c = s
                     .chars()
                     .next()
-                    .ok_or(TokenizeErr::CharLiteralNotClosed(start))?;
+                    .ok_or(TokenizeErrKind::CharLiteralNotClosed)?;
                 self.advance_n(c.len_utf8());
                 c
             }
-            None => return Err(TokenizeErr::CharLiteralNotClosed(start)),
+            None => return Err(TokenizeErrKind::CharLiteralNotClosed),
         };
 
         if self.peek() == Some(b'\'') {
             self.advance();
             Ok(Token::Literal(Literal::CharLiteral(c)))
         } else {
-            Err(TokenizeErr::CharLiteralNotClosed(start))
+            Err(TokenizeErrKind::CharLiteralNotClosed)
         }
     }
 
-    fn read_line_comment(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_line_comment(&mut self) -> Result<Token, TokenizeErrKind> {
         self.advance_n(2); // //
         let is_doc = self.peek() == Some(b'/');
         if is_doc {
@@ -302,7 +306,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
     }
 
-    fn read_block_comment(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_block_comment(&mut self) -> Result<Token, TokenizeErrKind> {
         let start_err = self.current_pos;
         self.advance_n(2); // skip /*
         let mut depth = 1;
@@ -320,10 +324,10 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 self.advance();
             }
         }
-        Err(TokenizeErr::BlockCommentNotClosed(start_err))
+        Err(TokenizeErrKind::BlockCommentNotClosed)
     }
 
-    fn read_operator_or_delimiter(&mut self) -> Result<Token, TokenizeErr> {
+    fn read_operator_or_delimiter(&mut self) -> Result<Token, TokenizeErrKind> {
         scan_operator_or_delimiter(self)
     }
 

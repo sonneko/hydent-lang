@@ -4,7 +4,7 @@ export function generateTokenTypeMap() {
     let ret = "";
     const allTokens = Object.entries(new TokenMap().getAll()).sort((a, b) => a[0].localeCompare(b[0]));
     ret += `use phf::phf_map;\n`;
-    ret += `use crate::tokenizer::errors::TokenizeErr;\n`;
+    ret += `use crate::tokenizer::errors::TokenizeErrKind;\n`;
     ret += `use crate::tokenizer::tokenize::Tokenizer;\n`;
     ret += `use crate::tokenizer::tokens::{Token, Keyword, Operator, Delimiter};\n\n`;
     ret += `pub static LONG_KEYWORDS_MAP: phf::Map<&'static [u8], Token> = phf_map!{\n`;
@@ -31,13 +31,13 @@ export function generateTokenTypeMap() {
     const operators = allTokens.filter(([_, token]) =>
         (token.includes("Operator") || token.includes("Delimiter"))
     );
-    ret += `pub fn scan_operator_or_delimiter(tokenizer: &mut Tokenizer<'_, '_>) -> Result<Token, TokenizeErr> {\n`;
+    ret += `pub fn scan_operator_or_delimiter(tokenizer: &mut Tokenizer<'_, '_>) -> Result<Token, TokenizeErrKind> {\n`;
     ret += `    let start_pos = tokenizer.current_pos;\n`;
     ret += `    let b = tokenizer.peek();\n`;
     ret += `    match b {\n`;
     const tree = buildTree(operators, 0);
     ret += generateMatchArms(tree, 1);
-    ret += `        _ => Err(TokenizeErr::UnknownToken(start_pos)),\n`;
+    ret += `        _ => Err(TokenizeErrKind::UnknownToken),\n`;
     ret += `    }\n`;
     ret += `}\n`;
 

@@ -6,28 +6,31 @@ const sourceFiles = readdirSync('../tests/fixture/', {
     recursive: true
 }).sort((a, b) => a.name.localeCompare(b.name));
 
-const ok = sourceFiles.filter(file => file.isFile()).every((file) => {
+let isOk = true;
+
+sourceFiles.filter(file => file.isFile()).forEach((file) => {
     const isCiMode = process.argv[2] === "ci";
 
     if (file.name.split(".")[1] !== "hyt") {
-        return true;
+        return;
     }
     const parentPath = file.parentPath.split("/").filter((_, i) => i > 2);
     const name = file.name.split(".")[0];
 
     if (name.startsWith("_")) {
         console.log(`Ignore test detected in ./tests/fixture/${parentPath}/${name}.hyt`);
-        return true;
+        return;
     }
 
     try {
         execSync(
-            `cd ../ && cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose --should-success`,
+            `cd ../ && cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`,
             { encoding: "utf-8", stdio: isCiMode ? "inherit" : "ignore" }
         );
     } catch(e) {
-        console.log(`❌ Parse failed. Run: cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose --should-success`)
-        return false;
+        console.log(`❌ Parse failed. Run: cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`)
+        isOk = false;
+        return;
     }
 
     try {
@@ -43,15 +46,15 @@ const ok = sourceFiles.filter(file => file.isFile()).every((file) => {
 
         console.log(`✅ ASTs in ./tests/fixture/${parentPath}/${name}.hyt match.`);
 
-        return true;
+        return;
     } catch (_) {
         console.error(`❌ No comparation target file detected: ./tests/fixture/${parentPath}/${name}.hyt`);
         execSync(`mv ../tests/fixture/${parentPath}/new-${name}-ast.json ../tests/fixture/${parentPath}/${name}-ast.json`, { encoding: "utf-8", stdio: "ignore" });
-        return false;
+        isOk = false;
     }
 });
 
-if (!ok) {
+if (!isOk) {
     throw new Error("❌ Failed the tests.");
 }
 

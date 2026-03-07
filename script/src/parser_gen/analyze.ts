@@ -87,7 +87,7 @@ export class Analyzer {
         }
     }
 
-    public analyze(): [IR, string[]] {
+    public analyze(): [IR, string] {
         this.computeNullable();
         this.computeFirst();
         this.computeFollow();
@@ -106,7 +106,7 @@ export class Analyzer {
         this.computeCycle(funcs);
         this.checkLL2Confilict(funcs);
 
-        return [funcs, this.outputs];
+        return [funcs, this.outputs.join("\n\n")];
     }
 
     public checkLL2Confilict(funcs: IR) {
@@ -632,9 +632,7 @@ export class Analyzer {
     }
 }
 
-export function analyze(grammar: Grammar, tokenMap?: Record<string, string>): IR {
+export function analyze(grammar: Grammar, tokenMap?: Record<string, string>): [IR, string] {
     const analyzer = new Analyzer(grammar, tokenMap);
-    const [ir, outputs] = analyzer.analyze();
-    console.log(outputs.join("\n"));
-    return ir;
+    return analyzer.analyze();
 }
