@@ -1,10 +1,8 @@
 use crate::compiler::runtime::{Engine, Query};
-use crate::diagnostic::converter::IntoDiagnostic;
-use crate::diagnostic::stream::{DiagnosticStream, StockDiagnosticStream};
+use crate::diagnostic::stream::StockDiagnosticStream;
 use crate::diagnostic::Diagnostic;
 use crate::parser::ast::ASTVisitor;
-use crate::parser::{errors::ParseErr, generated_ast_printer::ASTPrinter, parse::Parser};
-use crate::tokenizer::errors::TokenizeErr;
+use crate::parser::{generated_ast_printer::ASTPrinter, parse::Parser};
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
 use crate::{
@@ -14,7 +12,6 @@ use crate::{
         source_holder::SourceHolder,
         symbol::SymbolFactory,
     },
-    utility::read_file_query::ReadFileQuery,
 };
 use std::fmt::Display;
 

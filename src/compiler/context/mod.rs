@@ -12,10 +12,8 @@ pub mod backend;
 pub mod frontend;
 pub mod middleend;
 
-use crate::compiler::source_holder::SourceHolder;
-
 use crate::compiler::arena::Arena;
-use crate::compiler::symbol::SymbolFactory;
+
 
 /// A trait for types that can be merged.
 ///

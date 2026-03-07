@@ -1,4 +1,4 @@
-use crate::{compiler::span::Span, tokenizer::tokens::Token, type_checker};
+use crate::{compiler::span::Span, tokenizer::tokens::Token};
 
 pub struct TokenStream {
     tokens: Vec<(Token, Span)>,

@@ -1,8 +1,6 @@
 //! tokenize errors enum
 
-use std::fmt::Debug;
-
-use crate::{compiler::span::Span, diagnostic::Diagnostic};
+use crate::compiler::span::Span;
 
 #[derive(PartialEq)]
 pub enum TokenizeErrKind {

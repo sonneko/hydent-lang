@@ -32,7 +32,6 @@ export function generateTokenTypeMap() {
         (token.includes("Operator") || token.includes("Delimiter"))
     );
     ret += `pub fn scan_operator_or_delimiter(tokenizer: &mut Tokenizer<'_, '_>) -> Result<Token, TokenizeErrKind> {\n`;
-    ret += `    let start_pos = tokenizer.current_pos;\n`;
     ret += `    let b = tokenizer.peek();\n`;
     ret += `    match b {\n`;
     const tree = buildTree(operators, 0);

@@ -1,5 +1,4 @@
 use crate::diagnostic::{converter::IntoDiagnostic, Diagnostic};
-use std::fmt::Display;
 
 pub trait DiagnosticStream {
     fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D);
@@ -63,7 +62,7 @@ impl Default for StockDiagnosticStream {
 pub struct IgnoreDiagnosticStream;
 
 impl DiagnosticStream for IgnoreDiagnosticStream {
-    fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D) {}
+    fn pour<D: IntoDiagnostic>(&mut self, _: D) {}
 }
 
 impl IgnoreDiagnosticStream {

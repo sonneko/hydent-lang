@@ -220,7 +220,6 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     fn read_string_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         self.advance(); // skip opening "
-        let begin = self.current_pos;
         let start = self.now_pos();
         while let Some(b) = self.peek() {
             match b {
@@ -243,7 +242,6 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
 
     fn read_char_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         self.advance(); // '
-        let start = self.current_pos;
         let c = match self.peek() {
             Some(b'\\') => {
                 self.advance();
@@ -307,7 +305,6 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     }
 
     fn read_block_comment(&mut self) -> Result<Token, TokenizeErrKind> {
-        let start_err = self.current_pos;
         self.advance_n(2); // skip /*
         let mut depth = 1;
         while let Some(b) = self.peek() {

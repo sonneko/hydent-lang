@@ -1,13 +1,9 @@
-use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
+use crate::compiler::arena::ArenaBox;
 use crate::compiler::context::frontend::CompilerFrontendContext;
-use crate::diagnostic;
 use crate::diagnostic::stream::DiagnosticStream;
-use crate::parser::base_parser::BaseParser;
-use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::generated_ast::Module;
 use crate::parser::generated_parser::GeneratedParser;
-use crate::tokenizer::token_stream;
-use crate::tokenizer::{token_stream::TokenStream, tokens::Token};
+use crate::tokenizer::token_stream::TokenStream;
 
 pub struct Parser<'ctx, 'src, 's, S: DiagnosticStream> {
     pub ctx: CompilerFrontendContext<'ctx, 'src>,

@@ -3,6 +3,3 @@
 //! fetching external crates, and constructing a dependency graph.
 
 mod specify_package_level_dependent;
-
-use crate::compiler::runtime::{Engine, Query};
-use crate::parser::ast;

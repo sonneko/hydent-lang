@@ -1,6 +1,4 @@
-use std::any::Any;
-
-use crate::compiler::arena::{Arena, ArenaBox, ArenaIter};
+use crate::compiler::arena::{ArenaBox, ArenaIter};
 use crate::compiler::span::Span;
 use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::ast_node::ASTNode;

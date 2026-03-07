@@ -1,4 +1,3 @@
-use crate::compiler::source_holder::SourceHolder;
 use crate::compiler::symbol::SymbolFactory;
 use crate::diagnostic::stream::IgnoreDiagnosticStream;
 use crate::tokenizer::tokenize::Tokenizer;
@@ -93,7 +92,7 @@ fn test_multibyte_safety_in_comments_and_strings() {
     assert!(tokens[2].is_identifier());
     assert_eq!(tokens[3], Token::Operator(Operator::Assignment));
 
-    if let Token::Literal(Literal::StringLiteral(span)) = tokens[4] {
+    if let Token::Literal(Literal::StringLiteral(_)) = tokens[4] {
         assert_eq!(tokens[5], Token::Delimiter(Delimiter::Semicolon));
     } else {
         panic!("Expected string literal");

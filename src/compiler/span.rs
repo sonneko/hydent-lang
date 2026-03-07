@@ -8,8 +8,6 @@
 use core::cmp::{Eq, PartialEq};
 use core::hash::Hash;
 
-use crate::compiler::source_holder::SourceHolder;
-
 /// Represents a region of source code.
 #[derive(Eq, PartialEq, Debug, Clone, Copy, Hash)]
 pub struct Span {

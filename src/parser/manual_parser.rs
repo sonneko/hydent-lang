@@ -1,5 +1,3 @@
-use crate::compiler::arena::Arena;
-use crate::compiler::arena::ArenaIter;
 use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::base_parser::BaseParser;
 use crate::parser::errors::IParseErr;

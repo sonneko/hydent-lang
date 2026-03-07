@@ -9,7 +9,6 @@
 //! lightweight numeric IDs. This makes comparisons, hashing, and storage much
 //! more efficient.
 
-use crate::compiler::source_holder::SourceHolder;
 use std::collections::HashMap;
 
 use crate::compiler::span::Span;

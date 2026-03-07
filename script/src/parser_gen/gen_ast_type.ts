@@ -25,7 +25,6 @@ export class ASTTypeGenerator {
         ret += `//  In "/src/parser/generated_ast.rs"\n`;
         ret += `// ==========================================\n\n`;
         ret += `#![allow(non_snake_case)]\n`;
-        ret += `#![allow(clippy::large_enum_variant)]   // TODO: delete this line\n`;
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
         ret += `use crate::parser::ast_node::{ASTNode, Node};\n`;
@@ -88,7 +87,7 @@ export class ASTTypeGenerator {
         ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
         ret += `    const FIRST_1_SETS: TokenBitMap = TokenBitMap::build_map(${first1HasIdentifier}, ${first1HasLiteral}, false, &[${first1Points}]);\n`;
         ret += `    const FIRST_2_SETS: TokenBitMap = TokenBitMap::build_map(${first2HasIdentifier}, ${first2HasLiteral}, false, &[${first2Points}]);\n\n`;
-        ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
+        ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
         ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
@@ -175,7 +174,7 @@ export class ASTTypeGenerator {
         ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
         ret += `    const FIRST_1_SETS: TokenBitMap = TokenBitMap::build_map(${first1HasIdentifier}, ${first1HasLiteral}, false, &[${first1Points}]);\n`;
         ret += `    const FIRST_2_SETS: TokenBitMap = TokenBitMap::build_map(${first2HasIdentifier}, ${first2HasLiteral}, false, &[${first2Points}]);\n\n`;
-        ret += `    fn get_error_situation(err: ParseErr) -> Option<Self> {\n`;
+        ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
         ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;

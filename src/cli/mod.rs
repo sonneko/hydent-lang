@@ -4,7 +4,7 @@
 
 use clap::{Parser, Subcommand, ValueEnum};
 
-use crate::{diagnostic, parser::parse_for_integration_test};
+use crate::parser::parse_for_integration_test;
 
 pub fn call_cli() {
     let parsed = Cli::parse();

@@ -1,6 +1,5 @@
-use crate::compiler::arena::{Arena, ArenaIter};
 use crate::parser::base_parser::Enviroment;
-use crate::{diagnostic::Diagnostic, tokenizer::tokens::Token};
+use crate::tokenizer::tokens::Token;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ParseErr {
@@ -15,6 +14,7 @@ pub trait IParseErr {
 
 impl IParseErr for ParseErr {
     fn build(identifier: bool, expected: &'static [Token], found: Enviroment) -> Self {
+        // WARNING: identifier is ignored
         Self { expected, found }
     }
 

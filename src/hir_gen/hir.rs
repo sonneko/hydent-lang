@@ -1,5 +1,5 @@
 use crate::compiler::{
-    arena::{ArenaBox, ArenaIter},
+    arena::ArenaIter,
     span::Span,
     symbol::Symbol,
 };
