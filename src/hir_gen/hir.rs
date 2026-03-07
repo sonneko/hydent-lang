@@ -1,8 +1,4 @@
-use crate::compiler::{
-    arena::ArenaIter,
-    span::Span,
-    symbol::Symbol,
-};
+use crate::compiler::{arena::ArenaIter, span::Span, symbol::Symbol};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, std::hash::Hash)]
 pub struct Module {

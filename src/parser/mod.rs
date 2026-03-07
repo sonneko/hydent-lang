@@ -1,18 +1,16 @@
 use crate::compiler::runtime::{Engine, Query};
+use crate::compiler::{
+    arena::{Arena, ArenaBox},
+    context::frontend::CompilerFrontendContext,
+    source_holder::SourceHolder,
+    symbol::SymbolFactory,
+};
 use crate::diagnostic::stream::StockDiagnosticStream;
 use crate::diagnostic::Diagnostic;
 use crate::parser::ast::ASTVisitor;
 use crate::parser::{generated_ast_printer::ASTPrinter, parse::Parser};
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
-use crate::{
-    compiler::{
-        arena::{Arena, ArenaBox},
-        context::frontend::CompilerFrontendContext,
-        source_holder::SourceHolder,
-        symbol::SymbolFactory,
-    },
-};
 use std::fmt::Display;
 
 #[cfg(test)]

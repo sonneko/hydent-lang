@@ -14,7 +14,6 @@ pub mod middleend;
 
 use crate::compiler::arena::Arena;
 
-
 /// A trait for types that can be merged.
 ///
 /// This trait is used to merge compiler contexts from different compiler

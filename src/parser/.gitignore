@@ -1,4 +1,0 @@
-generated_parser.rs
-generated_ast.rs
-generated_ast_printer.rs
-tests/ast_size_checker.rs

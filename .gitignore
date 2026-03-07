@@ -1,8 +1,33 @@
-/target
-repomix-output.xml
-.idx
-TODO.txt
-/out/
+# Parser generator output
+/src/parser/generated_parser.rs
+/src/parser/generated_ast.rs
+/src/parser/generated_ast_printer.rs
+/src/parser/tests/ast_size_checker.rs
+/src/tokenizer/generated_tokenmap.rs
+/out
 
-.idx
-.vscode
+# Script dependents and tsconfig
+/script/node_modules
+/script/dist/
+/script/tsconfig.tsbuildinfo
+
+# Cargo outputs
+/target
+
+# Editor or development environment
+/.idx
+/.vscode
+
+# Website
+/website/dist/
+/website/.astro/
+/website/node_modules/
+
+# OS
+.DS_Store
+
+# Other
+repomix-output.xml
+TODO.txt
+.env
+.env.production
