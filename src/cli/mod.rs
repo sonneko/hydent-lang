@@ -31,6 +31,7 @@ pub fn call_cli() {
                     for diagnostic in diagnostics {
                         println!("{}", diagnostic);
                     }
+                    panic!();
                 }
             }
             EmitItems::Hir => {

@@ -1,15 +1,18 @@
 use crate::{
-    diagnostic::converter::IntoDiagnostic, parser::errors::ParseErr, tokenizer::errors::TokenizeErr,
+    diagnostic::{Diagnostic, converter::IntoDiagnostic}, parser::errors::ParseErr, tokenizer::errors::TokenizeErr,
 };
 
 impl IntoDiagnostic for ParseErr {
-    fn into_diagnostic(self) -> crate::diagnostic::Diagnostic {
-        todo!()
+    type Reference = crate::parser::base_parser::Enviroment;
+    fn into_diagnostic(self, reference: &Self::Reference) -> crate::diagnostic::Diagnostic {
+        println!("{:?}", self);
+        Diagnostic::default()
     }
 }
 
 impl IntoDiagnostic for TokenizeErr {
-    fn into_diagnostic(self) -> crate::diagnostic::Diagnostic {
+    type Reference = ();
+    fn into_diagnostic(self, _: &()) -> crate::diagnostic::Diagnostic {
         todo!()
     }
 }

@@ -97,13 +97,21 @@ impl<S: DiagnosticStream> BaseParser for Parser<'_, '_, '_, S> {
                         break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
                     }
 
-                    match self.backtrack(&mut parser_fn) {
+                    match parser_fn(self) {
                         Ok(node) => {
                             self.ctx.ast_arena.alloc_iter_item(&node);
-                            continue;
                         }
-                        Err(_) => {
-                            break Ok(self.ctx.ast_arena.finish_iter_allocation());
+                        Err(err) => {
+                            self.report_error(err);
+                            if let Some(placeholder) = T::get_error_situation(err) {
+                                self.ctx.ast_arena.alloc_iter_item(&placeholder);
+                            }
+                            while let Some(t) = self.peek::<0>() {
+                                if T::is_sync_point(&Some(t)) {
+                                    break;
+                                }
+                                self.consume_token();
+                            }
                         }
                     }
                 }
@@ -171,7 +179,7 @@ impl<S: DiagnosticStream> BaseParser for Parser<'_, '_, '_, S> {
 
     fn report_error(&mut self, err: Self::Error) {
         // TODO: add error to error_pool
-        self.diagnostic_stream.pour(err);
+        self.diagnostic_stream.pour(err, &self.enviroment());
     }
 
     fn backtrack<T: ASTNode>(

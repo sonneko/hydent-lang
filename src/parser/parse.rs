@@ -1,6 +1,7 @@
 use crate::compiler::arena::ArenaBox;
 use crate::compiler::context::frontend::CompilerFrontendContext;
 use crate::diagnostic::stream::DiagnosticStream;
+use crate::parser::base_parser::BaseParser;
 use crate::parser::generated_ast::Module;
 use crate::parser::generated_parser::GeneratedParser;
 use crate::tokenizer::token_stream::TokenStream;
@@ -28,7 +29,7 @@ impl<'ctx, 'src, 's, S: DiagnosticStream> Parser<'ctx, 'src, 's, S> {
         match self.parse_Module() {
             Ok(module) => self.ctx.ast_arena.alloc(module),
             Err(err) => {
-                self.diagnostic_stream.pour(err);
+                self.diagnostic_stream.pour(err, &self.enviroment());
                 self.ctx.ast_arena.alloc(Module {
                     TopLevelStatement: { self.ctx.ast_arena.alloc_with(|| None) },
                 })

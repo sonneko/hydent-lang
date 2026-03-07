@@ -71,7 +71,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
                 Err(err) => {
                     if error_count < 100 {
                         diagnostic_stream
-                            .pour(TokenizeErr::new(err, Span::new(begin, self.now_pos())));
+                            .pour(TokenizeErr::new(err, Span::new(begin, self.now_pos())), &());
                         error_count += 1;
                     }
                     tokens.push((Token::Invalid, Span::new(begin, self.now_pos())));

@@ -1,14 +1,14 @@
 use crate::diagnostic::{converter::IntoDiagnostic, Diagnostic};
 
 pub trait DiagnosticStream {
-    fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D);
+    fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D, reference: &D::Reference);
 }
 
 pub struct InstantStdioDiagnosticStream;
 
 impl DiagnosticStream for InstantStdioDiagnosticStream {
-    fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D) {
-        let diagnostic = diagnostic.into_diagnostic();
+    fn pour<D: IntoDiagnostic>(&mut self, diagnostic: D, reference: &D::Reference) {
+        let diagnostic = diagnostic.into_diagnostic(reference);
         eprintln!("{}", diagnostic);
     }
 }
@@ -30,8 +30,8 @@ pub struct StockDiagnosticStream {
 }
 
 impl DiagnosticStream for StockDiagnosticStream {
-    fn pour<D: IntoDiagnostic>(&mut self, error: D) {
-        let diagnostic = error.into_diagnostic();
+    fn pour<D: IntoDiagnostic>(&mut self, error: D, reference: &D::Reference) {
+        let diagnostic = error.into_diagnostic(reference);
         self.diagnostics.push(diagnostic);
     }
 }
@@ -62,7 +62,7 @@ impl Default for StockDiagnosticStream {
 pub struct IgnoreDiagnosticStream;
 
 impl DiagnosticStream for IgnoreDiagnosticStream {
-    fn pour<D: IntoDiagnostic>(&mut self, _: D) {}
+    fn pour<D: IntoDiagnostic>(&mut self, _: D, _: &D::Reference) {}
 }
 
 impl IgnoreDiagnosticStream {
