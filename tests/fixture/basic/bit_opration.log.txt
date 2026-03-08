@@ -1,0 +1,9 @@
+Getting file contents...
+Parsing...
+<Module>
+    <ItemWithModifiers>
+        <TypeAliasDeclaration>
+            <UsizeType></UsizeType>
+        </TypeAliasDeclaration>
+    </ItemWithModifiers>
+</Module>Writing into file...

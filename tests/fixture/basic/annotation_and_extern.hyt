@@ -1,7 +1,7 @@
 @Link "math_lib";
 module NativeMath {
-    pub extern fn sin(v: DoubleFloat) : DoubleFloat;
-    pub extern fn cos(v: DoubleFloat) : DoubleFloat;
+    pub extern fn sin(v: DoubleFloat) : DoubleFloat {}
+    pub extern fn cos(v: DoubleFloat) : DoubleFloat {}
 }
 
 @EntryPoint;
