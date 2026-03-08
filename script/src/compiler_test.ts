@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
 
 const sourceFiles = readdirSync('../tests/fixture/', {
     withFileTypes: true,
@@ -25,10 +25,12 @@ sourceFiles.filter(file => file.isFile()).forEach((file) => {
     try {
         execSync(
             `cd ../ && cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`,
-            { encoding: "utf-8", stdio: isCiMode ? "inherit" : "ignore" }
+            { encoding: "utf-8", stdio: isCiMode ? "inherit" : "pipe" }
         );
     } catch(e) {
-        console.log(`❌ Parse failed. Run: cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`)
+        console.log(`❌ Parse failed. Run: cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`);
+        const err = (e as any).stdout.toString() + "\n\n" + (e as any).stderr.toString();
+        writeFileSync(`../tests/fixture/${parentPath}/${name}-error.log.txt`, err, { encoding: "utf-8" });
         isOk = false;
         return;
     }
@@ -51,6 +53,7 @@ sourceFiles.filter(file => file.isFile()).forEach((file) => {
         console.error(`❌ No comparation target file detected: ./tests/fixture/${parentPath}/${name}.hyt`);
         execSync(`mv ../tests/fixture/${parentPath}/new-${name}-ast.json ../tests/fixture/${parentPath}/${name}-ast.json`, { encoding: "utf-8", stdio: "ignore" });
         isOk = false;
+        return;
     }
 });
 
