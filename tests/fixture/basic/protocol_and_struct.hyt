@@ -4,11 +4,11 @@ module Geometry {
     }
 
     pub struct Rect {
-        width: Float;
-        height: Float;
+        final width: Float;
+        final height: Float;
     }
 
-    pub struct Circle(Float);
+    pub struct Circle(final Float);
 
     fn calculate_area<T : Shape>(item: T) : Float {
         return item.area();

@@ -1,0 +1,13 @@
+Getting file contents...
+Parsing...
+ParseErr { expected: [Delimiter(LeftBrace)], found: Enviroment { current: Operator(LessThan), span: Span { begin: 11, end: 12 } } }
+Error occured while parsing.
+
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/class_and_generics.hyt --out ./tests/fixture/basic/new-class_and_generics-ast.json --emit ast --verbose`
+
+thread 'main' (30195) panicked at src/cli/mod.rs:34:21:
+explicit panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

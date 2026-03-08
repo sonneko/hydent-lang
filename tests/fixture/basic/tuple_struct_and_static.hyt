@@ -1,4 +1,4 @@
-struct Complex(Float, Float);
+struct Complex(final Float, final Float);
 
 module ComplexOps {
     pub fn add(a: Complex, b: Complex) : Complex {
@@ -21,5 +21,5 @@ fn main() {
     let c2 = ComplexOps::ONE;
     
     let res = ComplexOps::add(c1, c2);
-    print(res.0);
+    print(res.get(0));
 }

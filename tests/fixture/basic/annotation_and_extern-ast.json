@@ -1,1 +1,1 @@
-{"type":"Module","TopLevelStatement":[]}
+{"type":"Module","TopLevelStatement":[{"kind":"Annotation","value":{"type":"Annotation","Identifier":{"type":"Identifier","value":"Link"},"LiteralNode":[{"kind":"StringLiteral","value":{"type":"StringLiteral","value":"math_lib"}}]}}]}

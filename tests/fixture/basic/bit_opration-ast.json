@@ -1,0 +1,1 @@
+{"type":"Module","TopLevelStatement":[{"kind":"ItemWithModifiers","value":{"type":"ItemWithModifiers","DocComment":[],"PubKeyword":null,"ItemDeclaration":{"kind":"TypeAliasDeclaration","value":{"type":"TypeAliasDeclaration","Identifier":{"type":"Identifier","value":"Flags"},"TypeLiteral":{"kind":"UsizeType","value":{"type":"UsizeType"}}}}}}]}

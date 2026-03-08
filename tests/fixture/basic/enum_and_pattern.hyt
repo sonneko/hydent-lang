@@ -1,11 +1,11 @@
 @MockNetwork;
 module Network {
     pub struct Response {
-        code: Int;
-        body: String;
+        final code: Int;
+        final body: String;
     }
 
-    pub extern async fn fetch(url: String) : Response;
+    pub extern async fn fetch(url: String) : Response {}
 
     async fn handle_request(url: String) : Void {
         let resp = try await fetch(url);

@@ -1,0 +1,17 @@
+Getting file contents...
+Parsing...
+Error occured while parsing.
+
+
+
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.48s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/complex.hyt --out ./tests/fixture/basic/new-complex-ast.json --emit ast --verbose`
+tokenize error: TokenizeErr { kind: InvalidIntegerLiteral, span: Span { begin: 2860, end: 2866 } }
+tokenize error: TokenizeErr { kind: InvalidIntegerLiteral, span: Span { begin: 4202, end: 4206 } }
+tokenize error: TokenizeErr { kind: InvalidIntegerLiteral, span: Span { begin: 4267, end: 4271 } }
+
+thread 'main' (30212) panicked at src/cli/mod.rs:34:21:
+explicit panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

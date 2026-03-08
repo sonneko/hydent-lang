@@ -1,0 +1,15 @@
+Getting file contents...
+Parsing...
+ParseErr { expected: [Keyword(Async), Keyword(Class), Keyword(Enum), Keyword(Extern), Keyword(Fn), Keyword(Module), Keyword(Static), Keyword(Struct), Keyword(Type)], found: Enviroment { current: Keyword(Protocol), span: Span { begin: 26, end: 34 } } }
+ParseErr { expected: [Delimiter(RightBrace)], found: Enviroment { current: Operator(Colon), span: Span { begin: 65, end: 66 } } }
+Error occured while parsing.
+
+
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/protocol_and_struct.hyt --out ./tests/fixture/basic/new-protocol_and_struct-ast.json --emit ast --verbose`
+
+thread 'main' (30253) panicked at src/cli/mod.rs:34:21:
+explicit panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

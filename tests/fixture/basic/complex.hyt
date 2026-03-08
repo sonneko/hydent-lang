@@ -1,4 +1,4 @@
-@ModuleConfig "FactoryOS", "2.0.1";
+@ModuleConfig "FactoryOS" "2.0.1";
 module FactoryManager {
     import { Serializer, Logger } from "std:utils";
 
@@ -6,7 +6,7 @@ module FactoryManager {
     // 定数と型エイリアスの定義
     // ------------------------------------------
     static MAX_RETRY = 3;
-    static mut TOTAL_PROCESSED: Usize = 0;
+    static TOTAL_PROCESSED: Usize = 0;
     
     type DeviceId = Int;
     type HealthScore = Float;

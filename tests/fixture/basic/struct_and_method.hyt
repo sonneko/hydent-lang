@@ -1,6 +1,6 @@
 struct Vec2 {
-    x: Float;
-    y: Float;
+    final x: Float;
+    final y: Float;
 }
 
 module Vec2 {

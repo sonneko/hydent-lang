@@ -1,0 +1,17 @@
+Getting file contents...
+Parsing...
+ParseErr { expected: [Delimiter(RightParen)], found: Enviroment { current: Keyword(Final), span: Span { begin: 15, end: 20 } } }
+ParseErr { expected: [Delimiter(RightParen)], found: Enviroment { current: Delimiter(Comma), span: Span { begin: 88, end: 89 } } }
+ParseErr { expected: [Delimiter(RightParen)], found: Enviroment { current: Delimiter(Comma), span: Span { begin: 242, end: 243 } } }
+Error occured while parsing.
+
+
+
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/tuple_struct_and_static.hyt --out ./tests/fixture/basic/new-tuple_struct_and_static-ast.json --emit ast --verbose`
+
+thread 'main' (30269) panicked at src/cli/mod.rs:34:21:
+explicit panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

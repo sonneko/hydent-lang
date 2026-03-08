@@ -6,7 +6,7 @@ fn duplicate_and_dump<T : Clone & Debug>(item: T) : T {
     return item.clone();
 }
 
-struct Data { id: Int; }
+struct Data { final id: Int; }
 // ... protocols implementation ...
 
 fn main() {

@@ -1,4 +1,4 @@
-fn apply_twice(val: Int, f: (Int) -> Int) : Int {
+fn apply_twice(val: Int, f: Fn<(Int), Int>) : Int {
     return f(f(val));
 }
 

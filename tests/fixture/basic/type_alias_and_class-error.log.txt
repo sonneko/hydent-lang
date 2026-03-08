@@ -1,0 +1,19 @@
+Getting file contents...
+Parsing...
+ParseErr { expected: [Operator(Assignment)], found: Enviroment { current: Operator(LessThan), span: Span { begin: 12, end: 13 } } }
+ParseErr { expected: [Delimiter(LeftBrace)], found: Enviroment { current: Operator(LessThan), span: Span { begin: 48, end: 49 } } }
+ParseErr { expected: [Keyword(Async), Keyword(Class), Keyword(Enum), Keyword(Extern), Keyword(Fn), Keyword(Module), Keyword(Static), Keyword(Struct), Keyword(Type)], found: Enviroment { current: Identifier(Symbol(3)), span: Span { begin: 62, end: 65 } } }
+ParseErr { expected: [Keyword(Async), Keyword(Class), Keyword(Enum), Keyword(Extern), Keyword(Fn), Keyword(Module), Keyword(Static), Keyword(Struct), Keyword(Type)], found: Enviroment { current: Identifier(Symbol(4)), span: Span { begin: 78, end: 82 } } }
+Error occured while parsing.
+
+
+
+
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/type_alias_and_class.hyt --out ./tests/fixture/basic/new-type_alias_and_class-ast.json --emit ast --verbose`
+
+thread 'main' (30271) panicked at src/cli/mod.rs:34:21:
+explicit panic
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

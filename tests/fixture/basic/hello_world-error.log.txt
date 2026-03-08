@@ -1,0 +1,10 @@
+Getting file contents...
+Parsing...
+ParseErr { expected: [Delimiter(Semicolon)], found: Enviroment { current: Delimiter(LeftParen), span: Span { begin: 58, end: 59 } } }
+
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running `target/debug/hydent_lang_compiler build ./tests/fixture/basic/hello_world.hyt --out ./tests/fixture/basic/new-hello_world-ast.json --emit ast --verbose`
+
+thread 'main' (30232) has overflowed its stack
+fatal runtime error: stack overflow, aborting

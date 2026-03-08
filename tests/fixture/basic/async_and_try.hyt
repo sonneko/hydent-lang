@@ -11,10 +11,10 @@ module Network {
         let resp = try await fetch(url);
         
         match resp {
-            Response { code: 200, body: b } => {
+            (200, b) => {
                 print("Success: " + b);
             }
-            Response { code: n, body: _ } if n >= 500 => {
+            (n, _ ) => {
                 print("Server Error");
             }
             _ => print("Unknown error");
