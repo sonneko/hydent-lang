@@ -14,6 +14,7 @@ pub struct Parser<'ctx, 'src, 's, S: DiagnosticStream, TR: Tracer> {
     pub tokens: TokenStream,
     pub diagnostic_stream: &'s mut S,
     _marker: PhantomData<TR>,
+    pub is_panic_or_backtrack_mode: bool,
 }
 
 impl<'ctx, 'src, 's, S: DiagnosticStream, TR: Tracer> Parser<'ctx, 'src, 's, S, TR> {
@@ -27,6 +28,7 @@ impl<'ctx, 'src, 's, S: DiagnosticStream, TR: Tracer> Parser<'ctx, 'src, 's, S, 
             tokens,
             diagnostic_stream,
             _marker: PhantomData,
+            is_panic_or_backtrack_mode: false,
         }
     }
 

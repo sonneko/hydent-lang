@@ -4,6 +4,7 @@ use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::ast_node::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
+use crate::parser::recovery::recover;
 use crate::parser::tracer::Tracer;
 use crate::tokenizer::tokens::Token;
 
@@ -48,6 +49,10 @@ pub trait BaseParser: Sized {
         &mut self,
         parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Option<ArenaBox<T>>;
+
+    fn is_panic_or_backtrack_mode(&mut self) -> bool;
+
+    fn set_panic_or_backtrack_mode(&mut self, mode: bool);
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -88,28 +93,39 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
                 break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
             }
 
-            // シンプルに次のトークンが FIRST 集合に含まれるなら要素をパースし続ける
-            if T::is_first1_sets(&next_token) {
-                match parser_fn(self) {
+            match (
+                T::is_first1_sets(&next_token),
+                T::is_follow_sets(&next_token),
+            ) {
+                (true, true) => {
+                    if !T::is_first2_sets(&self.peek::<1>()) {
+                        break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+                    }
+                    match self.backtrack(&mut parser_fn) {
+                        Ok(node) => {
+                            self.ctx.ast_arena.alloc_iter_item(&node);
+                        }
+                        Err(err) => {
+                            break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+                        }
+                    }
+                }
+                (true, false) => match parser_fn(self) {
                     Ok(node) => {
                         self.ctx.ast_arena.alloc_iter_item(&node);
                     }
                     Err(err) => {
                         self.report_error(err);
-                        if let Some(placeholder) = T::get_error_situation(err) {
-                            self.ctx.ast_arena.alloc_iter_item(&placeholder);
-                        }
-                        // エラーリカバリ：次の同期ポイントまでトークンを読み飛ばす
-                        while let Some(t) = self.peek::<0>() {
-                            if T::is_sync_point(&Some(t)) {
-                                break;
-                            }
-                            self.consume_token();
-                        }
+                        recover::<T, S, TR>(self);
                     }
+                },
+                (false, true) => {
+                    break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
                 }
-            } else {
-                break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+                (false, false) => {
+                    //TODO:  build error and report
+                    recover::<T, S, TR>(self);
+                }
             }
         }
     }
@@ -137,14 +153,16 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
     }
 
     fn report_error(&mut self, err: Self::Error) {
-        // TODO: add error to error_pool
-        self.diagnostic_stream.pour(err, &self.enviroment());
+        if !self.is_panic_or_backtrack_mode() {
+            self.diagnostic_stream.pour(err, &self.enviroment());
+        }
     }
 
     fn backtrack<T: ASTNode>(
         &mut self,
         mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error> {
+        self.is_panic_or_backtrack_mode = true;
         self.tokens.checkpoint();
         let node = parser_fn(self);
         match node {
@@ -155,6 +173,7 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
                 self.tokens.rollback();
             }
         }
+        self.is_panic_or_backtrack_mode = false;
         node
     }
 
@@ -191,5 +210,13 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
 
     fn now_span(&self) -> Span {
         self.tokens.get_now_span()
+    }
+
+    fn is_panic_or_backtrack_mode(&mut self) -> bool {
+        self.is_panic_or_backtrack_mode
+    }
+
+    fn set_panic_or_backtrack_mode(&mut self, mode: bool) {
+        self.is_panic_or_backtrack_mode = mode;
     }
 }
