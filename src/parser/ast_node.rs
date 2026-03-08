@@ -29,7 +29,7 @@ pub trait ASTNode:
         Self::FIRST_2_SETS.contains(token)
     }
 
-    fn name() -> &'static str;
+    fn ast_name() -> &'static str;
 }
 
 pub trait Node {
@@ -99,8 +99,8 @@ where
     const FIRST_1_SETS: TokenBitMap = N::FIRST_1_SETS;
     const FIRST_2_SETS: TokenBitMap = N::FIRST_2_SETS;
     const FOLLOW_SETS: TokenBitMap = N::FOLLOW_SETS;
-    fn name() -> &'static str {
-        N::name()
+    fn ast_name() -> &'static str {
+        N::ast_name()
     }
 
     fn get_error_situation(err: ParseErr) -> Option<Self::Target> {

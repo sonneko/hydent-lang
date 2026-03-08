@@ -90,7 +90,7 @@ export class ASTTypeGenerator {
         ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
-        ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
+        ret += `    fn ast_name() -> &'static str { "${func.astTypeName}" }\n`;
         ret += `    type Target = Self;\n`;
         ret += `}\n\n`;
 
@@ -177,7 +177,7 @@ export class ASTTypeGenerator {
         ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;
-        ret += `    fn name() -> &'static str { "${func.astTypeName}" }\n`;
+        ret += `    fn ast_name() -> &'static str { "${func.astTypeName}" }\n`;
         ret += `    type Target = Self;\n`;
         ret += `}\n\n`;
 

@@ -3,12 +3,18 @@ use crate::parser::base_parser::BaseParser;
 use crate::parser::errors::IParseErr;
 use crate::parser::generated_ast;
 use crate::parser::generated_parser::GeneratedParser;
+use crate::parser::tracer::Tracer;
 use crate::parser::Parser;
 use crate::tokenizer::tokens::Comment;
 use crate::tokenizer::tokens::Literal;
 use crate::tokenizer::tokens::Token;
 
-impl<S: DiagnosticStream> GeneratedParser for Parser<'_, '_, '_, S> {
+impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, TR> {
+    type TraceGuard = TR::Guard;
+    fn trace(name: &'static str) -> TR::Guard {
+        TR::trace(name)
+    }
+
     fn parse_Identifier(&mut self) -> Result<generated_ast::Identifier, Self::Error> {
         if let Some(Token::Identifier(symbol)) = self.peek::<0>() {
             self.consume_token();

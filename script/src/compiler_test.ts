@@ -29,7 +29,7 @@ sourceFiles.filter(file => file.isFile()).forEach((file) => {
         );
     } catch(e) {
         console.log(`❌ Parse failed. Run: cargo run build ./tests/fixture/${parentPath}/${name}.hyt --out ./tests/fixture/${parentPath}/new-${name}-ast.json --emit ast --verbose`);
-        const err = (e as any).stdout.toString() + "\n\n" + (e as any).stderr.toString();
+        const err = (e as any).stdout.toString() + "\n\n";
         writeFileSync(`../tests/fixture/${parentPath}/${name}-error.log.txt`, err, { encoding: "utf-8" });
         isOk = false;
         return;

@@ -8,7 +8,7 @@ use hydent_lang_compiler::{
         symbol::SymbolFactory,
     },
     diagnostic::stream::IgnoreDiagnosticStream,
-    parser::{parse::Parser, Ast},
+    parser::{parse::Parser, tracer::NopeTracer, Ast},
     tokenizer::{token_stream::TokenStream, tokenize::Tokenizer},
 };
 
@@ -43,7 +43,7 @@ pub fn fizz_buzz(n: Int) {
             let stream = TokenStream::new(tokens);
             let mut ast_arena = Arena::new();
             let mut errors_arena = Arena::new();
-            let mut parser = Parser::new(
+            let mut parser: Parser<'_, '_, '_, _, NopeTracer> = Parser::new(
                 stream,
                 CompilerFrontendContext {
                     source,

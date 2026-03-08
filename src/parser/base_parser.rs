@@ -4,6 +4,7 @@ use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::ast_node::ASTNode;
 use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::parse::Parser;
+use crate::parser::tracer::Tracer;
 use crate::tokenizer::tokens::Token;
 
 pub trait BaseParser: Sized {
@@ -55,7 +56,7 @@ pub struct Enviroment {
     pub span: Span,
 }
 
-impl<S: DiagnosticStream> BaseParser for Parser<'_, '_, '_, S> {
+impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
     type Error = ParseErr;
     fn alloc_box<T: ASTNode>(
         &mut self,

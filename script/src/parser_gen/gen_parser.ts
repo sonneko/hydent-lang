@@ -26,13 +26,17 @@ export class ParserGenerator {
         ret += `#![allow(clippy::match_single_binding)]\n\n`
         ret += `use crate::parser::base_parser::BaseParser;\n`;
         ret += `use crate::parser::errors::IParseErr;\n`;
+        ret += `use crate::parser::tracer::TraceGuard;\n`;
+        ret += `use crate::parser::ast_node::ASTNode;\n`;
         ret += `use crate::tokenizer::tokens::{Delimiter, Keyword, Literal, Operator, Comment, Token};\n\n`;
         ret += `#[allow(clippy::wildcard_imports)]\n`;
         ret += `use crate::parser::generated_ast::*;\n\n`;
         ret += `#[allow(non_snake_case)]\n`;
-        ret += `pub trait GeneratedParser: BaseParser + Sized {`;
-        ret += funcs.join("");
-        ret += `}`;
+        ret += `pub trait GeneratedParser: BaseParser + Sized {\n`;
+        ret += `    type TraceGuard;\n`;
+        ret += `    fn trace(name: &'static str) -> Self::TraceGuard;\n`;
+        ret += funcs.join("\n");
+        ret += `}\n`;
         return ret;
     }
 
@@ -142,6 +146,7 @@ export class ParserGenerator {
             return ret;
         }
         ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {\n`;
+        ret += `        let _guard = Self::trace(${func.astTypeName}::ast_name());\n`
         for (const element of func.elements) {
             switch (element.kind) {
                 case "normal":

@@ -4,7 +4,7 @@
 
 use clap::{Parser, Subcommand, ValueEnum};
 
-use crate::parser::parse_for_integration_test;
+use crate::parser::parse_for_test;
 
 pub fn call_cli() {
     let parsed = Cli::parse();
@@ -22,7 +22,7 @@ pub fn call_cli() {
                 let source = std::fs::read_to_string(&path)
                     .expect("We can't find file or permission denied.");
                 log("Parsing...");
-                let (ast, diagnostics) = parse_for_integration_test(&source);
+                let (ast, diagnostics) = parse_for_test(&source);
                 if diagnostics.is_empty() {
                     log("Writing into file...");
                     std::fs::write(&out, ast.to_string()).expect("We failed to write the results.");
