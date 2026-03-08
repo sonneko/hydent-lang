@@ -86,71 +86,29 @@ impl<S: DiagnosticStream> BaseParser for Parser<'_, '_, '_, S> {
             if next_token == Some(Token::EndOfFile) || next_token.is_none() {
                 break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
             }
-            match (
-                T::is_first1_sets(&next_token),
-                T::is_follow_sets(&next_token),
-            ) {
-                (true, true) => {
-                    let p1 = self.peek::<1>();
 
-                    if !T::is_first2_sets(&p1) {
-                        break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
+            // シンプルに次のトークンが FIRST 集合に含まれるなら要素をパースし続ける
+            if T::is_first1_sets(&next_token) {
+                match parser_fn(self) {
+                    Ok(node) => {
+                        self.ctx.ast_arena.alloc_iter_item(&node);
                     }
-
-                    match parser_fn(self) {
-                        Ok(node) => {
-                            self.ctx.ast_arena.alloc_iter_item(&node);
+                    Err(err) => {
+                        self.report_error(err);
+                        if let Some(placeholder) = T::get_error_situation(err) {
+                            self.ctx.ast_arena.alloc_iter_item(&placeholder);
                         }
-                        Err(err) => {
-                            self.report_error(err);
-                            if let Some(placeholder) = T::get_error_situation(err) {
-                                self.ctx.ast_arena.alloc_iter_item(&placeholder);
+                        // エラーリカバリ：次の同期ポイントまでトークンを読み飛ばす
+                        while let Some(t) = self.peek::<0>() {
+                            if T::is_sync_point(&Some(t)) {
+                                break;
                             }
-                            while let Some(t) = self.peek::<0>() {
-                                if T::is_sync_point(&Some(t)) {
-                                    break;
-                                }
-                                self.consume_token();
-                            }
+                            self.consume_token();
                         }
                     }
                 }
-                (true, false) => {
-                    // list continue
-                    match parser_fn(self) {
-                        Ok(node) => {
-                            self.ctx.ast_arena.alloc_iter_item(&node);
-                        }
-                        Err(err) => {
-                            self.report_error(err);
-                            if let Some(placeholder) = T::get_error_situation(err) {
-                                self.ctx.ast_arena.alloc_iter_item(&placeholder);
-                            }
-                            while let Some(t) = self.peek::<0>() {
-                                if T::is_sync_point(&Some(t)) {
-                                    break;
-                                }
-                                self.consume_token();
-                            }
-                        }
-                    }
-                }
-                (false, true) => {
-                    // end of list
-                    let iter = self.ctx.ast_arena.finish_iter_allocation::<T>();
-                    return Ok(iter);
-                }
-                (false, false) => {
-                    // must occure error
-                    let err = parser_fn(self).unwrap_err();
-                    self.report_error(err);
-                    while let Some(t) = self.peek::<0>() {
-                        if T::is_sync_point(&Some(t)) {
-                            break;
-                        }
-                        self.consume_token();
-                    }
-                }
+            } else {
+                break Ok(self.ctx.ast_arena.finish_iter_allocation::<T>());
             }
         }
     }
