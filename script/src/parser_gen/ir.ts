@@ -59,18 +59,23 @@ export type ProductParserFunction = {
     firstTerminals: RustTokenTypeName[],
     firstAndFollowConflict: boolean,
     elements: ({
+        name: string,
         kind: "normal",
         astTypeName: RustASTTypeName,
     } | {
+        name: string,
         kind: "boxed",
         astTypeName: RustASTTypeName,
     } | {
+        name: string,
         kind: "repeat",
         astTypeName: RustASTTypeName,
     } | {
+        name: string,
         kind: "option",
         astTypeName: RustASTTypeName,
     } | {
+        name: string,
         kind: "optionWithBox",
         astTypeName: RustASTTypeName,
     } | {

@@ -141,19 +141,19 @@ export class ASTTypeGenerator {
             for (const element of func.elements) {
                 switch (element.kind) {
                     case "normal":
-                        ret += `    pub(super) ${element.astTypeName}: ${element.astTypeName},\n`;
+                        ret += `    pub(super) ${element.name}: ${element.astTypeName},\n`;
                         break;
                     case "boxed":
-                        ret += `    pub(super) ${element.astTypeName}: ArenaBox<${element.astTypeName}>,\n`;
+                        ret += `    pub(super) ${element.name}: ArenaBox<${element.astTypeName}>,\n`;
                         break;
                     case "option":
-                        ret += `    pub(super) ${element.astTypeName}: Option<${element.astTypeName}>,\n`;
+                        ret += `    pub(super) ${element.name}: Option<${element.astTypeName}>,\n`;
                         break;
                     case "optionWithBox":
-                        ret += `    pub(super) ${element.astTypeName}: Option<ArenaBox<${element.astTypeName}>>,\n`;
+                        ret += `    pub(super) ${element.name}: Option<ArenaBox<${element.astTypeName}>>,\n`;
                         break;
                     case "repeat":
-                        ret += `    pub(super) ${element.astTypeName}: ArenaIter<${element.astTypeName}>,\n`;
+                        ret += `    pub(super) ${element.name}: ArenaIter<${element.astTypeName}>,\n`;
                         break;
                 }
             }
@@ -205,8 +205,8 @@ export class ASTTypeGenerator {
                     returnType = `ArenaIter<${typeName.astTypeName}>`;
                     break;
             }
-            ret += `    pub fn ${typeName.astTypeName}(&self) -> &${returnType} {\n`;
-            ret += `        &self.${typeName.astTypeName}\n`;
+            ret += `    pub fn ${typeName.name}(&self) -> &${returnType} {\n`;
+            ret += `        &self.${typeName.name}\n`;
             ret += `    }\n\n`;
         }
         ret += `}\n\n`;

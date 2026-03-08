@@ -582,20 +582,20 @@ export class Analyzer {
                     switch (member.type.modifier) {
                         case "None":
                             if (member.note.includes("boxed")) {
-                                elements.push({ kind: "boxed", astTypeName: astName(member.type.name) });
+                                elements.push({ kind: "boxed", astTypeName: astName(member.type.name), name: member.name });
                             } else {
-                                elements.push({ kind: "normal", astTypeName: astName(member.type.name) });
+                                elements.push({ kind: "normal", astTypeName: astName(member.type.name), name: member.name  });
                             }
                             break;
                         case "Option":
                             if (member.note.includes("boxed")) {
-                                elements.push({ kind: "optionWithBox", astTypeName: astName(member.type.name) });
+                                elements.push({ kind: "optionWithBox", astTypeName: astName(member.type.name), name: member.name  });
                             } else {
-                                elements.push({ kind: "option", astTypeName: astName(member.type.name) });
+                                elements.push({ kind: "option", astTypeName: astName(member.type.name), name: member.name  });
                             }
                             break;
                         case "List":
-                            elements.push({ kind: "repeat", astTypeName: astName(member.type.name) });
+                            elements.push({ kind: "repeat", astTypeName: astName(member.type.name), name: member.name  });
                             break;
                     }
                     break;

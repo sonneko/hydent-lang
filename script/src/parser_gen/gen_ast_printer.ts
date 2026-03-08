@@ -73,21 +73,21 @@ export class ASTPrinterGenerator {
                         ret += `        self.write(r#","${el.astTypeName}":"#)?;\n`;
                         switch (el.kind) {
                             case "normal":
-                                ret += `        node.${el.astTypeName}.accept(self)?;\n`;
+                                ret += `        node.${el.name}().accept(self)?;\n`;
                                 break;
                             case "boxed":
-                                ret += `        node.${el.astTypeName}.get(self.arena).accept(self)?;\n`;
+                                ret += `        node.${el.name}().get(self.arena).accept(self)?;\n`;
                                 break;
                             case "option":
-                                ret += `        if let Some(v) = &node.${el.astTypeName} { v.accept(self)? } else { self.write("null")? };\n`;
+                                ret += `        if let Some(v) = node.${el.name}() { v.accept(self)? } else { self.write("null")? };\n`;
                                 break;
                             case "optionWithBox":
-                                ret += `        if let Some(v) = &node.${el.astTypeName} { v.get(self.arena).accept(self)? } else { self.write("null")? };\n`;
+                                ret += `        if let Some(v) = node.${el.name}() { v.get(self.arena).accept(self)? } else { self.write("null")? };\n`;
                                 break;
                             case "repeat":
                                 ret += `        self.write("[")?;\n`;
                                 ret += `        let mut first = true;\n`;
-                                ret += `        for item in node.${el.astTypeName}.into_ref(self.arena) {\n`;
+                                ret += `        for item in node.${el.name}().into_ref(self.arena) {\n`;
                                 ret += `            if !first { self.write(",")?; }\n`;
                                 ret += `            item.accept(self)?;\n`;
                                 ret += `            first = false;\n`;
