@@ -7,9 +7,9 @@ pub trait ASTNode:
     Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized
 {
     type Target: Copy + Clone + std::fmt::Debug + std::hash::Hash + PartialEq + Eq + 'static + Sized;
-    const FOLLOW_SETS: TokenBitMap;
-    const FIRST_1_SETS: TokenBitMap;
-    const FIRST_2_SETS: TokenBitMap;
+    const FOLLOW_SETS: TokenSet;
+    const FIRST_1_SETS: TokenSet;
+    const FIRST_2_SETS: TokenSet;
 
     fn get_error_situation(err: ParseErr) -> Option<Self::Target>;
 
@@ -36,16 +36,28 @@ pub trait Node {
     fn accept<V: ASTVisitor>(&self, visitor: &mut V) -> V::ReturnType;
 }
 
-pub struct TokenBitMap {
-    keywords: u64,
-    operators: u64,
-    delimiter: u64,
-    literals: bool,
-    identifier: bool,
-    eof: bool,
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct TokenSet {
+    pub keywords: u64,
+    pub operators: u64,
+    pub delimiter: u64,
+    pub literals: bool,
+    pub identifier: bool,
+    pub eof: bool,
 }
 
-impl TokenBitMap {
+impl TokenSet {
+    pub const fn empty() -> Self {
+        Self {
+            keywords: 0,
+            operators: 0,
+            delimiter: 0,
+            literals: false,
+            identifier: false,
+            eof: false,
+        }
+    }
+
     pub const fn build_map(identifier: bool, literals: bool, eof: bool, tokens: &[Token]) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
@@ -54,12 +66,11 @@ impl TokenBitMap {
         let mut i = 0usize;
 
         while i < tokens.len() {
-            // can't use "for in loop" and iterator pattern in const function
             match tokens[i] {
                 Token::Keyword(keyword) => keywords_bits |= 1 << (keyword as u8),
                 Token::Operator(operator) => operators_bits |= 1 << (operator as u8),
                 Token::Delimiter(delimiter) => delimiters_bits |= 1 << (delimiter as u8),
-                _ => panic!("Invalid token in SyncPointBitMap"),
+                _ => panic!("Invalid token in TokenSet"),
             }
             i += 1;
         }
@@ -74,12 +85,34 @@ impl TokenBitMap {
         }
     }
 
+    pub const fn union(self, other: Self) -> Self {
+        Self {
+            keywords: self.keywords | other.keywords,
+            operators: self.operators | other.operators,
+            delimiter: self.delimiter | other.delimiter,
+            literals: self.literals | other.literals,
+            identifier: self.identifier | other.identifier,
+            eof: self.eof | other.eof,
+        }
+    }
+
+    pub const fn intersection(self, other: Self) -> Self {
+        Self {
+            keywords: self.keywords & other.keywords,
+            operators: self.operators & other.operators,
+            delimiter: self.delimiter & other.delimiter,
+            literals: self.literals & other.literals,
+            identifier: self.identifier & other.identifier,
+            eof: self.eof & other.eof,
+        }
+    }
+
     pub fn contains(&self, token: &Option<Token>) -> bool {
-        if let &Some(token) = token {
+        if let Some(token) = token {
             match token {
-                Token::Keyword(keyword) => (1 << (keyword as u8)) & self.keywords != 0,
-                Token::Operator(operator) => (1 << (operator as u8)) & self.operators != 0,
-                Token::Delimiter(delimiter) => (1 << (delimiter as u8)) & self.delimiter != 0,
+                Token::Keyword(keyword) => (1 << (*keyword as u8)) & self.keywords != 0,
+                Token::Operator(operator) => (1 << (*operator as u8)) & self.operators != 0,
+                Token::Delimiter(delimiter) => (1 << (*delimiter as u8)) & self.delimiter != 0,
                 Token::Literal(_) => self.literals,
                 Token::Identifier(_) => self.identifier,
                 Token::EndOfFile => self.eof,
@@ -96,9 +129,9 @@ impl<N> ASTNode for ArenaBox<N>
 where
     N: ASTNode<Target = N>,
 {
-    const FIRST_1_SETS: TokenBitMap = N::FIRST_1_SETS;
-    const FIRST_2_SETS: TokenBitMap = N::FIRST_2_SETS;
-    const FOLLOW_SETS: TokenBitMap = N::FOLLOW_SETS;
+    const FIRST_1_SETS: TokenSet = N::FIRST_1_SETS;
+    const FIRST_2_SETS: TokenSet = N::FIRST_2_SETS;
+    const FOLLOW_SETS: TokenSet = N::FOLLOW_SETS;
     fn ast_name() -> &'static str {
         N::ast_name()
     }
