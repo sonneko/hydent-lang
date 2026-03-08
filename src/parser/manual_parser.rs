@@ -69,4 +69,24 @@ impl<S: DiagnosticStream> GeneratedParser for Parser<'_, '_, '_, S> {
             Err(Self::Error::build(false, &[], self.enviroment()))
         }
     }
+
+    fn parse_DoubleFloatLiteral(
+        &mut self,
+    ) -> Result<generated_ast::DoubleFloatLiteral, Self::Error> {
+        if let Some(Token::Literal(Literal::DoubleFloatLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::DoubleFloatLiteral { value })
+        } else {
+            Err(Self::Error::build(false, &[], self.enviroment()))
+        }
+    }
+
+    fn parse_DoubleIntLiteral(&mut self) -> Result<generated_ast::DoubleIntLiteral, Self::Error> {
+        if let Some(Token::Literal(Literal::DoubleIntegerLiteral(value))) = self.peek::<0>() {
+            self.consume_token();
+            Ok(generated_ast::DoubleIntLiteral { value })
+        } else {
+            Err(Self::Error::build(false, &[], self.enviroment()))
+        }
+    }
 }

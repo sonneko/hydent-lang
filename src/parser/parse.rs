@@ -31,7 +31,7 @@ impl<'ctx, 'src, 's, S: DiagnosticStream> Parser<'ctx, 'src, 's, S> {
             Err(err) => {
                 self.diagnostic_stream.pour(err, &self.enviroment());
                 self.ctx.ast_arena.alloc(Module {
-                    TopLevelStatement: { self.ctx.ast_arena.alloc_with(|| None) },
+                    declarations: self.ctx.ast_arena.alloc_with(|| None),
                 })
             }
         }

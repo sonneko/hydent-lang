@@ -24,8 +24,18 @@ pub struct IntLiteral {
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
+pub struct DoubleIntLiteral {
+    pub value: i64,
+}
+
+#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct FloatLiteral {
     pub value: HashableFloat<f32>,
+}
+
+#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
+pub struct DoubleFloatLiteral {
+    pub value: HashableFloat<f64>,
 }
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]

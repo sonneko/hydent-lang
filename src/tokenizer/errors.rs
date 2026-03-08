@@ -2,7 +2,7 @@
 
 use crate::compiler::span::Span;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum TokenizeErrKind {
     StringLiteralNotClosed,
     CharLiteralNotClosed,
@@ -13,6 +13,7 @@ pub enum TokenizeErrKind {
     BlockCommentNotClosed,
 }
 
+#[derive(Debug)]
 pub struct TokenizeErr {
     kind: TokenizeErrKind,
     span: Span,
