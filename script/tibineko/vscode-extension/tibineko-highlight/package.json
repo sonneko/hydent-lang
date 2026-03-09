@@ -1,0 +1,25 @@
+{
+  "name": "tibineko-highlight",
+  "displayName": "tibineko-highlight",
+  "description": "Tibineko language highlighter for vscode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.109.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "tibineko",
+      "aliases": ["tibineko", "tibineko"],
+      "extensions": ["tibineko"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "tibineko",
+      "scopeName": "index",
+      "path": "./syntaxes/tibineko.tmLanguage.json"
+    }]
+  }
+}

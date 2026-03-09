@@ -1,0 +1,36 @@
+product Module {
+    declarations: *TopLevelStatement
+}
+
+branch TopLevelStatement {
+    FunctionDeclaration
+    ExternFunction
+}
+
+product FunctionDeclaration {
+    "fn" name: Identifier "("
+        params: *ParamWithType
+    ")"
+    return_type: ?ReturnType
+    body: BlockExpression
+}
+
+product ExternFunction {
+    "extern" "fn" name: Identifier "("
+        params: *ParamWithType
+    ")" return_type: ?ReturnType ";"
+}
+
+product ReturnType {
+    ":" TypeLiteral
+}
+
+product ParamWithType {
+
+}
+
+product BlockExpression {
+
+}
+
+product Identifier with "#identifier"
