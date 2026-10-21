@@ -59,14 +59,14 @@ function collectRawDeclarations(value: unknown, into: Record<string, unknown>[] 
     return into;
 }
 
-function isSourceTrivia(text: string): boolean {
-    let index = 0;
+function skipSourceTrivia(text: string, start: number): number | null {
+    let index = start;
     while (index < text.length) {
         if (/[ \t\r\n]/.test(text[index])) {
             index += 1;
             continue;
         }
-        if (text.startsWith("//", index)) {
+        if (text.startsWith("//", index) && text[index + 2] !== "/") {
             const newline = text.indexOf("\n", index + 2);
             index = newline < 0 ? text.length : newline + 1;
             continue;
@@ -85,12 +85,12 @@ function isSourceTrivia(text: string): boolean {
                     index += 1;
                 }
             }
-            if (depth !== 0) return false;
+            if (depth !== 0) return null;
             continue;
         }
-        return false;
+        break;
     }
-    return true;
+    return index;
 }
 
 function validateAst(sourcePath: string, source: string, ast: unknown): string[] {
@@ -142,21 +142,22 @@ function validateAst(sourcePath: string, source: string, ast: unknown): string[]
                 break;
             }
             const value = (item as Record<string, string>).value;
-            const tokenStart = rawSource.indexOf(value, cursor);
-            if (tokenStart < 0) {
-                mismatch = `token ${index} ${JSON.stringify(value)} is absent after source offset ${cursor}`;
-                break;
-            }
-            const gap = rawSource.slice(cursor, tokenStart);
-            if (!isSourceTrivia(gap) || (index === 0 && tokenStart !== 0)) {
-                mismatch = `unexpected source text ${JSON.stringify(gap.slice(0, 80))} before token ${index} ${JSON.stringify(value)}`;
+            const tokenStart = skipSourceTrivia(rawSource, cursor);
+            if (
+                tokenStart === null
+                || !rawSource.startsWith(value, tokenStart)
+                || (index === 0 && tokenStart !== 0)
+            ) {
+                const offset = tokenStart ?? cursor;
+                mismatch = `expected token ${index} ${JSON.stringify(value)} at source offset ${offset}, found ${JSON.stringify(rawSource.slice(offset, offset + 80))}`;
                 break;
             }
             cursor = tokenStart + value.length;
         }
-        const suffix = rawSource.slice(cursor);
-        if (!mismatch && !isSourceTrivia(suffix)) {
-            mismatch = `unmatched source suffix ${JSON.stringify(suffix.slice(0, 80))}`;
+        const suffixStart = skipSourceTrivia(rawSource, cursor);
+        if (!mismatch && suffixStart !== rawSource.length) {
+            const offset = suffixStart ?? cursor;
+            mismatch = `unmatched source suffix ${JSON.stringify(rawSource.slice(offset, offset + 80))}`;
         }
         if (mismatch) {
             errors.push(`RawDeclaration syntax tokens do not match the source slice in order: ${mismatch}`);
