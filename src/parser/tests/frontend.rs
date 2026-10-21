@@ -33,6 +33,16 @@ fn reports_trailing_tokens_after_the_module() {
 }
 
 #[test]
+fn recovers_at_a_later_top_level_declaration() {
+    let (ast, diagnostics) = parse_for_test("fn broken {} fn kept() {}");
+    let rendered = ast.to_string();
+
+    assert!(!diagnostics.is_empty());
+    assert!(rendered.contains(r#""kept""#));
+    assert!(!rendered.contains(r#""broken""#));
+}
+
+#[test]
 fn recovers_inside_a_speculatively_parsed_function() {
     let source = "pub async fn first() { @; println(\"still parsed\"); } fn second() {}";
 

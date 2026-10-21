@@ -107,8 +107,8 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
                             self.ctx.ast_arena.alloc_iter_item(&node);
                         }
                         Err(err) => {
-                            let _ = self.ctx.ast_arena.finish_iter_allocation::<T>();
-                            break Err(err);
+                            self.report_error(err);
+                            recover::<T, S, TR>(self, start_span);
                         }
                     }
                 }

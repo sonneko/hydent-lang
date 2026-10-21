@@ -37,15 +37,18 @@ impl<'ctx, 'src, 's, S: DiagnosticStream, TR: Tracer> Parser<'ctx, 'src, 's, S, 
     }
 
     pub fn parse(&mut self) -> ArenaBox<Module> {
-        let parsed = self.parse_Module().and_then(|module| {
-            self.expect(&Token::EndOfFile)?;
-            Ok(module)
-        });
-
-        match parsed {
-            Ok(module) => self.ctx.ast_arena.alloc(module),
-            Err(err) => {
-                self.diagnostic_stream.pour(err, &self.enviroment());
+        match self.parse_Module() {
+            Ok(module) => {
+                if let Err(error) = self.expect(&Token::EndOfFile) {
+                    // A recovered parse may still leave an unexpected token at
+                    // the end. Report it without throwing away declarations
+                    // that were successfully parsed before it.
+                    self.report_error(error);
+                }
+                self.ctx.ast_arena.alloc(module)
+            }
+            Err(error) => {
+                self.diagnostic_stream.pour(error, &self.enviroment());
                 self.ctx.ast_arena.alloc(Module {
                     declarations: self.ctx.ast_arena.alloc_with(|| None),
                 })

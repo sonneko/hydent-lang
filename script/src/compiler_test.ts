@@ -163,7 +163,13 @@ function main() {
         results.push(record);
         if (errors.length > 0) {
             failed = true;
-            githubError(`Compiler fixture: ${relative(fixtureRoot, sourcePath)}`, errors.join("; "));
+            const astPreview = actualAst === undefined
+                ? "AST JSON unavailable"
+                : `AST JSON preview: ${JSON.stringify(actualAst).slice(0, 5000)}`;
+            githubError(
+                `Compiler fixture: ${relative(fixtureRoot, sourcePath)}`,
+                `${errors.join("; ")}; ${astPreview}`,
+            );
             if (stdout.trim().length > 0) console.error(stdout.trim());
             if (stderr.trim().length > 0) console.error(stderr.trim());
         } else {

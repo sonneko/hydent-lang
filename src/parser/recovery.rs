@@ -25,19 +25,16 @@ pub fn recover<'ctx, 'src, 's, WhileParsing, S, TR>(
 
         let is_first = WhileParsing::is_first1_sets(&token);
         let is_follow = WhileParsing::is_follow_sets(&token);
-        if is_first || is_follow {
-            if advanced || is_follow {
-                break;
-            }
 
-            // A parser failed without consuming its starting token. Discard it
-            // once so the enclosing repeat loop cannot retry forever.
-            parser.consume_token();
-            advanced = true;
-        } else {
-            parser.consume_token();
-            advanced = true;
+        if (is_first && advanced) || (is_follow && !is_first) {
+            break;
         }
+
+        // If parsing failed at its first token, discard that token even when it
+        // is also in FOLLOW. Otherwise FIRST/FOLLOW overlap can leave the cursor
+        // unchanged and retry the same invalid production forever.
+        parser.consume_token();
+        advanced = true;
     }
 
     parser.set_panic_or_backtrack_mode(previous_mode);
