@@ -181,7 +181,11 @@ function main() {
     console.log(`AST outputs and diagnostics: ${relative(repositoryRoot, actualRoot)}`);
 
     if (failed) {
-        githubError("Compiler fixture snapshot failures", failures.join("\n").slice(0, 60000));
+        for (const failure of failures) {
+            // Keep each annotation short and fixture-specific. A single aggregate
+            // annotation is truncated by GitHub, hiding failures near the end.
+            githubError("Compiler fixture snapshot failure", failure.slice(0, 3000));
+        }
         throw new Error("Compiler fixture snapshot tests failed.");
     }
     console.log("\n✅ All compiler fixture snapshot tests passed.");
