@@ -85,11 +85,38 @@ function validateAst(sourcePath: string, source: string, ast: unknown): string[]
     }
 
     for (const rawDeclaration of collectRawDeclarations(ast)) {
-        if (typeof rawDeclaration.source !== "string" || !source.includes(rawDeclaration.source)) {
+        const rawSource = rawDeclaration.source;
+        const syntax = rawDeclaration.syntax;
+        if (typeof rawSource !== "string" || !source.includes(rawSource)) {
             errors.push("RawDeclaration source does not match a source-file slice");
+            continue;
         }
-        if (!Array.isArray(rawDeclaration.syntax) || rawDeclaration.syntax.length === 0) {
+        if (!Array.isArray(syntax) || syntax.length === 0) {
             errors.push("RawDeclaration has no syntax tokens");
+            continue;
+        }
+
+        let cursor = 0;
+        let syntaxMatchesSource = true;
+        for (const [index, item] of syntax.entries()) {
+            if (item === null || typeof item !== "object" || typeof (item as Record<string, unknown>).value !== "string") {
+                syntaxMatchesSource = false;
+                break;
+            }
+            const value = (item as Record<string, string>).value;
+            const tokenStart = rawSource.indexOf(value, cursor);
+            if (
+                tokenStart < cursor
+                || !/^\s*$/.test(rawSource.slice(cursor, tokenStart))
+                || (index === 0 && tokenStart !== 0)
+            ) {
+                syntaxMatchesSource = false;
+                break;
+            }
+            cursor = tokenStart + value.length;
+        }
+        if (!syntaxMatchesSource || !/^\s*$/.test(rawSource.slice(cursor))) {
+            errors.push("RawDeclaration syntax tokens do not match the source slice in order");
         }
     }
 

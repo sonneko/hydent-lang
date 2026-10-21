@@ -165,34 +165,43 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
     fn read_number_literal(&mut self) -> Result<Token, TokenizeErrKind> {
         let start = self.current_pos;
         let mut is_float = false;
+        let (radix, prefix_len) = if self.consume_str(b"0x") {
+            (16, 2)
+        } else if self.consume_str(b"0b") {
+            (2, 2)
+        } else {
+            (10, 0)
+        };
 
-        if self.consume_str(b"0x") {
-            // prefix for Hexadecimal
+        if radix != 10 {
+            let mut saw_digit = false;
+            let mut invalid_digit = false;
             while let Some(b) = self.peek() {
-                if b.is_ascii_hexdigit() {
+                if b == b'_' {
+                    self.advance();
+                } else if b.is_ascii_alphanumeric() {
+                    let valid = match radix {
+                        2 => matches!(b, b'0' | b'1'),
+                        16 => b.is_ascii_hexdigit(),
+                        _ => unreachable!(),
+                    };
+                    saw_digit |= valid;
+                    invalid_digit |= !valid;
                     self.advance();
                 } else {
                     break;
                 }
             }
-        } else if self.consume_str(b"0b") {
-            // prefix for binary notation
-            while let Some(b) = self.peek() {
-                if b == b'0' || b == b'1' {
-                    self.advance();
-                } else {
-                    break;
-                }
+            if !saw_digit || invalid_digit {
+                return Err(TokenizeErrKind::InvalidIntegerLiteral);
             }
         } else {
             while let Some(b) = self.peek() {
-                if b.is_ascii_digit() {
+                if b.is_ascii_digit() || b == b'_' {
                     self.advance();
                 } else if b == b'.' {
-                    if let Some(next) = self.peek_at(1) {
-                        if next == b'.' {
-                            break;
-                        } // for ".." operator
+                    if self.peek_at(1) == Some(b'.') {
+                        break; // Leave range operators for the operator scanner.
                     }
                     is_float = true;
                     self.advance();
@@ -209,16 +218,21 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
         }
 
         let slice = unsafe { std::str::from_utf8_unchecked(&self.input[start..self.current_pos]) };
+        let normalized = slice.replace('_', "");
 
         // TODO: add logic to parse f64 and i64
         if is_float {
-            slice
+            normalized
                 .parse::<f32>()
                 .map(|v| Token::Literal(Literal::FloatLiteral(v.into())))
                 .map_err(|_| TokenizeErrKind::InvalidFloatLiteral)
-        } else {
-            slice
+        } else if radix == 10 {
+            normalized
                 .parse::<i32>()
+                .map(|v| Token::Literal(Literal::IntegerLiteral(v)))
+                .map_err(|_| TokenizeErrKind::InvalidIntegerLiteral)
+        } else {
+            i32::from_str_radix(&normalized[prefix_len..], radix)
                 .map(|v| Token::Literal(Literal::IntegerLiteral(v)))
                 .map_err(|_| TokenizeErrKind::InvalidIntegerLiteral)
         }

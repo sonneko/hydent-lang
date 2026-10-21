@@ -95,10 +95,7 @@ impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, 
         let mut invalid_at = false;
         let mut end = start.end;
 
-        loop {
-            let Some((token, span)) = self.tokens.peek(0) else {
-                break;
-            };
+        while let Some((token, span)) = self.tokens.peek(0) {
             if token == Token::EndOfFile {
                 break;
             }

@@ -5,6 +5,13 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      update_fixture_snapshots:
+        description: "Regenerate compiler AST snapshots from the current parser"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -93,7 +100,19 @@ jobs:
           components: miri
 
       - name: Unit Test
-        run: cargo +stable test --verbose
+        shell: bash
+        run: |
+          set +e
+          cargo +stable test --verbose 2>&1 | tee "$RUNNER_TEMP/unit-test.log"
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            grep -E 'test .* \.\.\. FAILED$|^failures:|^---- .* stdout ----|panicked at|assertion .* failed' "$RUNNER_TEMP/unit-test.log" \
+              | tail -n 40 \
+              | while IFS= read -r line; do
+                  printf '::error title=Rust unit test failure::%s\n' "$line"
+                done
+            exit "$status"
+          fi
 
       - name: Miri test
         run: |
@@ -123,8 +142,29 @@ jobs:
         working-directory: ./script
 
       - name: Integration Test
-        run: npm run compiler-test -- ci
+        env:
+          UPDATE_FIXTURE_SNAPSHOTS: ${{ inputs.update_fixture_snapshots }}
+        run: |
+          if [ "$UPDATE_FIXTURE_SNAPSHOTS" = "true" ]; then
+            npm run compiler-test -- ci --update
+            npm run compiler-test -- ci
+          else
+            npm run compiler-test -- ci
+          fi
         working-directory: ./script
+
+      - name: Commit updated fixture snapshots
+        if: github.event_name == 'workflow_dispatch' && inputs.update_fixture_snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/fixture/basic/*-ast.json
+          if git diff --cached --quiet; then
+            echo "No fixture snapshot changes to commit."
+          else
+            git commit -m "Update compiler fixture AST snapshots"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
 
       - name: Upload fixture AST outputs
         if: always()
