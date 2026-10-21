@@ -92,7 +92,6 @@ impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, 
         let mut function_parameters_seen = false;
         let mut invalid_closer = false;
         let mut invalid_token = false;
-        let mut invalid_at = false;
         let mut end = start.end;
 
         while let Some((token, span)) = self.tokens.peek(0) {
@@ -117,9 +116,6 @@ impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, 
                 && token == Token::Delimiter(Delimiter::LeftParen)
             {
                 function_parameters_seen = true;
-            }
-            if category == "Function" && token == Token::Operator(Operator::At) && depth > 0 {
-                invalid_at = true;
             }
             if token == Token::Invalid {
                 invalid_token = true;
@@ -178,12 +174,10 @@ impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, 
                 && function_parameters_seen
                 && (body_ended || semicolon_terminated));
         let delimiters_are_balanced = brace_depth == 0 && paren_depth == 0 && bracket_depth == 0;
-        let has_invalid_function_syntax = category == "Function" && invalid_at;
         if syntax.is_empty()
             || !delimiters_are_balanced
             || invalid_closer
             || invalid_token
-            || has_invalid_function_syntax
             || !function_is_valid
             || (body_started && !body_ended)
         {

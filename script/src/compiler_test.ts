@@ -97,26 +97,35 @@ function validateAst(sourcePath: string, source: string, ast: unknown): string[]
         }
 
         let cursor = 0;
-        let syntaxMatchesSource = true;
+        let mismatch: string | undefined;
         for (const [index, item] of syntax.entries()) {
-            if (item === null || typeof item !== "object" || typeof (item as Record<string, unknown>).value !== "string") {
-                syntaxMatchesSource = false;
+            if (
+                item === null
+                || typeof item !== "object"
+                || typeof (item as Record<string, unknown>).value !== "string"
+            ) {
+                mismatch = `invalid syntax token at index ${index}`;
                 break;
             }
             const value = (item as Record<string, string>).value;
             const tokenStart = rawSource.indexOf(value, cursor);
-            if (
-                tokenStart < cursor
-                || !/^\s*$/.test(rawSource.slice(cursor, tokenStart))
-                || (index === 0 && tokenStart !== 0)
-            ) {
-                syntaxMatchesSource = false;
+            if (tokenStart < 0) {
+                mismatch = `token ${index} ${JSON.stringify(value)} is absent after source offset ${cursor}`;
+                break;
+            }
+            const gap = rawSource.slice(cursor, tokenStart);
+            if (!/^\s*$/.test(gap) || (index === 0 && tokenStart !== 0)) {
+                mismatch = `unexpected source text ${JSON.stringify(gap.slice(0, 80))} before token ${index} ${JSON.stringify(value)}`;
                 break;
             }
             cursor = tokenStart + value.length;
         }
-        if (!syntaxMatchesSource || !/^\s*$/.test(rawSource.slice(cursor))) {
-            errors.push("RawDeclaration syntax tokens do not match the source slice in order");
+        const suffix = rawSource.slice(cursor);
+        if (!mismatch && !/^\s*$/.test(suffix)) {
+            mismatch = `unmatched source suffix ${JSON.stringify(suffix.slice(0, 80))}`;
+        }
+        if (mismatch) {
+            errors.push(`RawDeclaration syntax tokens do not match the source slice in order: ${mismatch}`);
         }
     }
 
