@@ -43,6 +43,9 @@ fn recovers_inside_a_speculatively_parsed_function() {
     let rendered = ast.to_string();
 
     assert!(!diagnostics.is_empty());
+    println!("::error::frontend test marker: recovery emitted diagnostic");
     assert!(rendered.contains("ExpressionStatement"));
+    println!("::error::frontend test marker: recovered statement preserved");
     assert_eq!(rendered.matches("FunctionDeclaration").count(), 2);
+    println!("::error::frontend test marker: following declaration preserved");
 }
