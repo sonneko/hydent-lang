@@ -75,6 +75,7 @@ product ExternFunctionSemicolon with ";"
 
 product ExternFunctionBody {
     body: BlockExpression
+    semicolon: ?ExternFunctionSemicolon
 }
 
 product ReturnType {
