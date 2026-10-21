@@ -59,6 +59,40 @@ function collectRawDeclarations(value: unknown, into: Record<string, unknown>[] 
     return into;
 }
 
+function isSourceTrivia(text: string): boolean {
+    let index = 0;
+    while (index < text.length) {
+        if (/[ \t\r\n]/.test(text[index])) {
+            index += 1;
+            continue;
+        }
+        if (text.startsWith("//", index)) {
+            const newline = text.indexOf("\n", index + 2);
+            index = newline < 0 ? text.length : newline + 1;
+            continue;
+        }
+        if (text.startsWith("/*", index)) {
+            let depth = 1;
+            index += 2;
+            while (index < text.length && depth > 0) {
+                if (text.startsWith("/*", index)) {
+                    depth += 1;
+                    index += 2;
+                } else if (text.startsWith("*/", index)) {
+                    depth -= 1;
+                    index += 2;
+                } else {
+                    index += 1;
+                }
+            }
+            if (depth !== 0) return false;
+            continue;
+        }
+        return false;
+    }
+    return true;
+}
+
 function validateAst(sourcePath: string, source: string, ast: unknown): string[] {
     const errors: string[] = [];
     if (ast === null || typeof ast !== "object" || Array.isArray(ast)) {
@@ -114,14 +148,14 @@ function validateAst(sourcePath: string, source: string, ast: unknown): string[]
                 break;
             }
             const gap = rawSource.slice(cursor, tokenStart);
-            if (!/^\s*$/.test(gap) || (index === 0 && tokenStart !== 0)) {
+            if (!isSourceTrivia(gap) || (index === 0 && tokenStart !== 0)) {
                 mismatch = `unexpected source text ${JSON.stringify(gap.slice(0, 80))} before token ${index} ${JSON.stringify(value)}`;
                 break;
             }
             cursor = tokenStart + value.length;
         }
         const suffix = rawSource.slice(cursor);
-        if (!mismatch && !/^\s*$/.test(suffix)) {
+        if (!mismatch && !isSourceTrivia(suffix)) {
             mismatch = `unmatched source suffix ${JSON.stringify(suffix.slice(0, 80))}`;
         }
         if (mismatch) {
