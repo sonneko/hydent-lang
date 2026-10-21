@@ -123,6 +123,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout branch for fixture snapshot updates
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
       - name: Download Workspace
         uses: actions/download-artifact@v4
         with:
@@ -155,6 +161,8 @@ jobs:
 
       - name: Commit updated fixture snapshots
         if: github.event_name == 'pull_request'
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -163,7 +171,7 @@ jobs:
             echo "No fixture snapshot changes to commit."
           else
             git commit -m "Update compiler fixture AST snapshots"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            git push origin "HEAD:${TARGET_BRANCH}"
           fi
 
       - name: Upload fixture AST outputs
