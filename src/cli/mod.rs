@@ -23,9 +23,12 @@ pub fn call_cli() {
                     .expect("We can't find file or permission denied.");
                 log("Parsing...");
                 let (ast, diagnostics) = parse_for_test(&source);
+                // Keep the recovered AST even when diagnostics are present. This
+                // lets editor and fixture tooling inspect what the parser could
+                // preserve while the command still reports an unsuccessful build.
+                std::fs::write(&out, ast.to_string()).expect("We failed to write the results.");
                 if diagnostics.is_empty() {
                     log("Writing into file...");
-                    std::fs::write(&out, ast.to_string()).expect("We failed to write the results.");
                 } else {
                     log("Error occured while parsing.");
                     for diagnostic in diagnostics {
