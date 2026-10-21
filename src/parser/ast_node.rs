@@ -43,6 +43,7 @@ pub struct TokenSet {
     pub delimiter: u64,
     pub literals: bool,
     pub identifier: bool,
+    pub comments: bool,
     pub eof: bool,
 }
 
@@ -54,11 +55,18 @@ impl TokenSet {
             delimiter: 0,
             literals: false,
             identifier: false,
+            comments: false,
             eof: false,
         }
     }
 
-    pub const fn build_map(identifier: bool, literals: bool, eof: bool, tokens: &[Token]) -> Self {
+    pub const fn build_map(
+        identifier: bool,
+        literals: bool,
+        comments: bool,
+        eof: bool,
+        tokens: &[Token],
+    ) -> Self {
         let mut keywords_bits = 0u64;
         let mut operators_bits = 0u64;
         let mut delimiters_bits = 0u64;
@@ -70,6 +78,7 @@ impl TokenSet {
                 Token::Keyword(keyword) => keywords_bits |= 1 << (keyword as u8),
                 Token::Operator(operator) => operators_bits |= 1 << (operator as u8),
                 Token::Delimiter(delimiter) => delimiters_bits |= 1 << (delimiter as u8),
+                Token::Comment(_) => {},
                 _ => panic!("Invalid token in TokenSet"),
             }
             i += 1;
@@ -81,6 +90,7 @@ impl TokenSet {
             delimiter: delimiters_bits,
             literals,
             identifier,
+            comments,
             eof,
         }
     }
@@ -92,6 +102,7 @@ impl TokenSet {
             delimiter: self.delimiter | other.delimiter,
             literals: self.literals | other.literals,
             identifier: self.identifier | other.identifier,
+            comments: self.comments | other.comments,
             eof: self.eof | other.eof,
         }
     }
@@ -103,6 +114,7 @@ impl TokenSet {
             delimiter: self.delimiter & other.delimiter,
             literals: self.literals & other.literals,
             identifier: self.identifier & other.identifier,
+            comments: self.comments & other.comments,
             eof: self.eof & other.eof,
         }
     }
@@ -115,8 +127,8 @@ impl TokenSet {
                 Token::Delimiter(delimiter) => (1 << (*delimiter as u8)) & self.delimiter != 0,
                 Token::Literal(_) => self.literals,
                 Token::Identifier(_) => self.identifier,
+                Token::Comment(_) => self.comments,
                 Token::EndOfFile => self.eof,
-                Token::Comment(_) => false,
                 Token::Invalid => false,
             }
         } else {

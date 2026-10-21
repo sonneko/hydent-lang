@@ -51,6 +51,7 @@ describe('Analyzer', () => {
         'a': 'TokenA',
         'b': 'TokenB',
         'c': 'TokenC',
+        '#doc_comment': 'Token::Comment(Comment::DocComment($Span$))',
     };
 
     describe('computeNullable', () => {
@@ -285,7 +286,21 @@ describe('Analyzer', () => {
 
             match(generated.includes('TokenBitMap')).toBe(false);
             match(generated.includes(
-                'const FIRST_2_SETS: TokenSet = TokenSet::build_map(false, false, true, &[TokenA, TokenB, TokenC]);'
+                'const FIRST_2_SETS: TokenSet = TokenSet::build_map(false, false, false, true, &[TokenA, TokenB, TokenC]);'
+            )).toBe(true);
+        });
+
+        it('represents comment terminals in generated TokenSets', () => {
+            const grammar: Grammar = [
+                { kind: 'Product', name: 'DocCommentNode', members: [
+                    { kind: 'Terminal', value: '#doc_comment', note: '' },
+                ]},
+            ];
+            const [ir] = analyze(grammar, mockTokenMap);
+            const generated = new ASTTypeGenerator().generateASTType(ir);
+
+            match(generated.includes(
+                'const FIRST_1_SETS: TokenSet = TokenSet::build_map(false, false, true, false, &[]);'
             )).toBe(true);
         });
     });

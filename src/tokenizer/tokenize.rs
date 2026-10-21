@@ -67,6 +67,7 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             };
 
             match next {
+                Ok(Token::Comment(Comment::LineComment | Comment::BlockComment)) => {},
                 Ok(token) => tokens.push((token, Span::new(begin, self.now_pos()))),
                 Err(err) => {
                     if error_count < 100 {
@@ -136,6 +137,12 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             }
         }
         let slice = &self.input[begin..self.current_pos];
+
+        match slice {
+            b"true" => return Ok(Token::Literal(Literal::BoolLiteral(true))),
+            b"false" => return Ok(Token::Literal(Literal::BoolLiteral(false))),
+            _ => {}
+        }
 
         if slice.len() < 5 {
             match scan_short_keywords(slice) {

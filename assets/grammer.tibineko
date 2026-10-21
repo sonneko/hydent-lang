@@ -9,6 +9,7 @@ branch TopLevelStatement {
 }
 
 product ImportDeclaration {
+    docs: *DocComment
     "import"
     targets: ImportSpecific
     "from"
@@ -30,6 +31,7 @@ product ImportItem {
 product Comma with ","
 
 product FunctionDeclaration {
+    docs: *DocComment
     modifiers: *FunctionModifier
     "fn"
     name: Identifier
@@ -51,6 +53,7 @@ product AsyncModifier with "async"
 product TryModifier with "try"
 
 product ExternFunction {
+    docs: *DocComment
     modifiers: *FunctionModifier
     "extern"
     "fn"
@@ -183,6 +186,7 @@ branch Expression {
     FloatLiteral
     DoubleFloatLiteral
     CharLiteral
+    BoolLiteral
     Identifier
 }
 
@@ -211,3 +215,5 @@ product DoubleIntLiteral with "#double_int"
 product FloatLiteral with "#float"
 product DoubleFloatLiteral with "#double_float"
 product CharLiteral with "#char"
+product BoolLiteral with "#bool"
+product DocComment with "#doc_comment"

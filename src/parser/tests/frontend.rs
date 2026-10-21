@@ -4,10 +4,13 @@ use crate::parser::parse_for_test;
 fn parses_imports_modifiers_parameters_generics_and_calls() {
     let source = r#"
         import { println, print } from "std/io";
+        // Ordinary comments are ignored by the parser.
+        /* block comments are ignored too */
 
+        /// Greets a caller and exercises the expression parser.
         pub async fn greet(name: String, repeat: Int): Result<Int, Error> {
             println(name);
-            return print("done");
+            return print("done", true);
         }
     "#;
 
@@ -18,6 +21,8 @@ fn parses_imports_modifiers_parameters_generics_and_calls() {
     assert!(rendered.contains("ImportDeclaration"));
     assert!(rendered.contains("FunctionDeclaration"));
     assert!(rendered.contains("GenericType"));
+    assert!(rendered.contains("DocComment"));
+    assert!(rendered.contains("BoolLiteral"));
 }
 
 #[test]
