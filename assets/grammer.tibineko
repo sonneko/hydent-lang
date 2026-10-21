@@ -75,14 +75,14 @@ product ExternFunctionBody {
 
 product ReturnType {
     ":"
-    type: TypeLiteral
+    return_type: TypeLiteral
 }
 
 product ParamWithType {
     mutable: ?MutKeyword
     name: Identifier
     ":"
-    type: TypeLiteral
+    parameter_type: TypeLiteral
     default_value: ?DefaultParamValue
     comma: ?Comma
 }
@@ -155,7 +155,7 @@ product LetStatement {
 
 product TypeAnnotation {
     ":"
-    type: TypeLiteral
+    value: TypeLiteral
 }
 
 product Initializer {
