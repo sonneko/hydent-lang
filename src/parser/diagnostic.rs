@@ -1,7 +1,5 @@
 use crate::{
-    diagnostic::{
-        converter::IntoDiagnostic, Diagnostic, DiagnosticLevel, Highlight,
-    },
+    diagnostic::{converter::IntoDiagnostic, Diagnostic, DiagnosticLevel, Highlight},
     parser::{base_parser::Enviroment, errors::ParseErr},
     tokenizer::errors::TokenizeErr,
 };

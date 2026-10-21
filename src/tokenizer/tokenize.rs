@@ -67,7 +67,6 @@ impl<'src, 'ctx> Tokenizer<'src, 'ctx> {
             };
 
             match next {
-                Ok(Token::Comment(Comment::LineComment | Comment::BlockComment)) => {},
                 Ok(token) => tokens.push((token, Span::new(begin, self.now_pos()))),
                 Err(err) => {
                     if error_count < 100 {

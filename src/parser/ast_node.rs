@@ -78,7 +78,7 @@ impl TokenSet {
                 Token::Keyword(keyword) => keywords_bits |= 1 << (keyword as u8),
                 Token::Operator(operator) => operators_bits |= 1 << (operator as u8),
                 Token::Delimiter(delimiter) => delimiters_bits |= 1 << (delimiter as u8),
-                Token::Comment(_) => {},
+                Token::Comment(_) => {}
                 _ => panic!("Invalid token in TokenSet"),
             }
             i += 1;

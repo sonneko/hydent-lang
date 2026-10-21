@@ -8,8 +8,7 @@ use crate::{
 pub fn recover<'ctx, 'src, 's, WhileParsing, S, TR>(
     parser: &mut Parser<'ctx, 'src, 's, S, TR>,
     start_span: Span,
-)
-where
+) where
     WhileParsing: ASTNode,
     S: DiagnosticStream,
     TR: Tracer,
