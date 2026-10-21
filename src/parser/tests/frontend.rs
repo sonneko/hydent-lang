@@ -2,6 +2,7 @@ use crate::parser::parse_for_test;
 
 #[test]
 fn parses_imports_modifiers_parameters_generics_and_calls() {
+    println!("::error::frontend test marker: valid declaration parsing");
     let source = r#"
         import { println, print } from "std/io";
         // Ordinary comments are ignored by the parser.
@@ -27,6 +28,7 @@ fn parses_imports_modifiers_parameters_generics_and_calls() {
 
 #[test]
 fn reports_trailing_tokens_after_the_module() {
+    println!("::error::frontend test marker: trailing tokens");
     let (_, diagnostics) = parse_for_test("fn main() {} fn");
 
     assert!(!diagnostics.is_empty());
@@ -34,6 +36,7 @@ fn reports_trailing_tokens_after_the_module() {
 
 #[test]
 fn recovers_inside_a_speculatively_parsed_function() {
+    println!("::error::frontend test marker: speculative recovery");
     let source = "pub async fn first() { @; println(\"still parsed\"); } fn second() {}";
 
     let (ast, diagnostics) = parse_for_test(source);
