@@ -71,8 +71,9 @@ function main() {
         let sizeChekerResult: string;
         try {
             sizeChekerResult = execSync("cargo test report_ast_size --verbose -- --ignored --nocapture", {
+                cwd: "..",
                 encoding: "utf-8",
-                stdio: ['pipe', 'pipe', 'ignore']
+                stdio: ['pipe', 'pipe', 'inherit']
             }).toString();
         } catch (e) {
             throw new Error("⚠️ AST type size checker rust tests failed");
