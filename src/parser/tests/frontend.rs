@@ -43,16 +43,17 @@ fn recovers_at_a_later_top_level_declaration() {
 }
 
 #[test]
-fn recovers_inside_a_speculatively_parsed_function() {
-    let source = "pub async fn first() { @; println(\"still parsed\"); } fn second() {}";
+fn recovers_after_a_failed_top_level_speculation() {
+    let source = "pub async fn first { @; println(\"still parsed\"); } fn second() {}";
 
     let (ast, diagnostics) = parse_for_test(source);
     let rendered = ast.to_string();
 
     assert!(!diagnostics.is_empty());
-    assert!(rendered.contains("ExpressionStatement"));
+    assert!(rendered.contains("RawDeclaration"));
+    assert!(rendered.contains(r#""second""#));
     assert_eq!(
         rendered.matches("\"kind\":\"FunctionDeclaration\"").count(),
-        2
+        1
     );
 }

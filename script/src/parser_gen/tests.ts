@@ -52,6 +52,8 @@ describe('Analyzer', () => {
         'b': 'TokenB',
         'c': 'TokenC',
         '#doc_comment': 'Token::Comment(Comment::DocComment($Span$))',
+        '#fallback': 'Token::Invalid',
+        '#raw_token': 'Token::Invalid',
     };
 
     describe('computeNullable', () => {
@@ -261,6 +263,36 @@ describe('Analyzer', () => {
 
             match(backtrack >= 0).toBe(true);
             match(fallback > backtrack).toBe(true);
+        });
+
+        it('uses a diagnostic-free wildcard fallback after cleanly trying known alternatives', () => {
+            const grammar: Grammar = [
+                { kind: 'Branch', name: 'Choice', variants: [
+                    { name: 'Known', note: '' },
+                    { name: 'RawDeclaration', note: '' },
+                ]},
+                { kind: 'Product', name: 'Known', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+                { kind: 'Product', name: 'RawDeclaration', members: [
+                    { kind: 'Terminal', value: '#fallback', note: '' },
+                ]},
+            ];
+            const [ir] = analyze(grammar, mockTokenMap);
+            const choice = ir.find(item => item.astTypeName === 'Choice');
+            const generatedParser = new ParserGenerator().generateParser(ir);
+            const generatedAst = new ASTTypeGenerator().generateASTType(ir);
+
+            match(choice !== undefined && choice.kind === 'branch'
+                ? choice.unmatchedFallback?.astTypeName
+                : undefined).toBe('RawDeclaration');
+            match(generatedParser).toContain('self.backtrack_clean(|this| this.parse_Known())');
+            match(generatedParser).toContain(
+                'Err(_) => Ok(Choice::RawDeclaration(self.parse_RawDeclaration()?))'
+            );
+            match(generatedParser.includes('Some(Token::Invalid)')).toBe(false);
+            match(generatedAst).toContain('Token::Invalid');
+            match(generatedAst.includes('FOLLOW_SETS: TokenSet = TokenSet::build_map(false, false, false, true, &[Token::Invalid])')).toBe(false);
         });
 
         it('generates TokenSet FIRST/FOLLOW maps and includes follow lookahead for one-token items', () => {

@@ -9,6 +9,7 @@ export function getUniqueVariants(func: BranchParserFunction) {
         ...func.branchesJudgebleInPeek0,
         ...func.branchesJudgebleInPeek1,
         ...(func.branchesFallbackInPeek1 || []),
+        ...(func.unmatchedFallback ? [func.unmatchedFallback] : []),
         ...func.branchesNeedBacktrack
     ];
     const map = new Map();

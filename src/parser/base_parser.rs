@@ -36,6 +36,13 @@ pub trait BaseParser: Sized {
         parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
     ) -> Result<T, Self::Error>;
 
+    /// Speculatively parse an alternative, rejecting partial parses that emitted
+    /// diagnostics so callers can try a fallback without leaking those errors.
+    fn backtrack_clean<T: ASTNode>(
+        &mut self,
+        parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<T, Self::Error>;
+
     fn enviroment(&self) -> Enviroment;
 
     fn now_span(&self) -> Span;
@@ -189,6 +196,38 @@ impl<S: DiagnosticStream, TR: Tracer> BaseParser for Parser<'_, '_, '_, S, TR> {
         }
         self.is_panic_or_backtrack_mode = previous_mode;
         node
+    }
+
+    fn backtrack_clean<T: ASTNode>(
+        &mut self,
+        mut parser_fn: impl FnMut(&mut Self) -> Result<T, Self::Error>,
+    ) -> Result<T, Self::Error> {
+        let previous_mode = self.is_panic_or_backtrack_mode;
+        let diagnostics_checkpoint = self.deferred_diagnostics.len();
+        self.is_panic_or_backtrack_mode = true;
+        self.tokens.checkpoint();
+        let node = parser_fn(self);
+
+        let result = match node {
+            Ok(value) if self.deferred_diagnostics.len() == diagnostics_checkpoint => {
+                self.tokens.commit();
+                Ok(value)
+            }
+            Ok(_) => {
+                let error = Self::Error::build(false, &[], self.enviroment());
+                self.tokens.rollback();
+                self.deferred_diagnostics.truncate(diagnostics_checkpoint);
+                Err(error)
+            }
+            Err(error) => {
+                self.tokens.rollback();
+                self.deferred_diagnostics.truncate(diagnostics_checkpoint);
+                Err(error)
+            }
+        };
+
+        self.is_panic_or_backtrack_mode = previous_mode;
+        result
     }
 
     fn optional<T: ASTNode>(

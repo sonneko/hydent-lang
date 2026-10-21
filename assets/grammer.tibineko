@@ -6,6 +6,7 @@ branch TopLevelStatement {
     ImportDeclaration
     FunctionDeclaration
     ExternFunction
+    RawDeclaration
 }
 
 product ImportDeclaration {
@@ -217,3 +218,6 @@ product DoubleFloatLiteral with "#double_float"
 product CharLiteral with "#char"
 product BoolLiteral with "#bool"
 product DocComment with "#doc_comment"
+
+product RawDeclaration with "#fallback"
+product RawSyntaxToken with "#raw_token"

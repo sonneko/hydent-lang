@@ -25,8 +25,17 @@ pub fn recover<'ctx, 'src, 's, WhileParsing, S, TR>(
 
         let is_first = WhileParsing::is_first1_sets(&token);
         let is_follow = WhileParsing::is_follow_sets(&token);
+        let has_wildcard_first = WhileParsing::FIRST_1_SETS.any;
 
-        if (is_first && advanced) || (is_follow && !is_first) {
+        // A parser with an unmatched fallback accepts any token as a first
+        // token. In that case FIRST cannot be a recovery synchronization set;
+        // use FOLLOW (which still contains known declaration boundaries).
+        let at_sync_point = if has_wildcard_first {
+            is_follow && advanced
+        } else {
+            (is_first && advanced) || (is_follow && !is_first)
+        };
+        if at_sync_point {
             break;
         }
 

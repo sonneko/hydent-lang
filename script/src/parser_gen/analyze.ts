@@ -209,8 +209,14 @@ export class Analyzer {
                         let memberFirsts: TokenSeq[] = [];
 
                         if (m.kind === "Terminal") {
-                            const t = this.tokenMap.get(m.value);
-                            memberFirsts = [[t]];
+                            // These pseudo terminals declare a manual parser hook,
+                            // not a token that participates in FIRST/FOLLOW sets.
+                            if (m.value === "#fallback" || m.value === "#raw_token") {
+                                memberFirsts = [];
+                            } else {
+                                const t = this.tokenMap.get(m.value);
+                                memberFirsts = [[t]];
+                            }
                         } else {
                             const refName = m.type.name;
                             const refModifier = m.type.modifier;
@@ -485,6 +491,14 @@ export class Analyzer {
         return funcs;
     }
 
+    private isFallbackRule(name: string): boolean {
+        const rule = this.ruleMap.get(name);
+        return rule?.kind === "Product"
+            && rule.members.length === 1
+            && rule.members[0].kind === "Terminal"
+            && rule.members[0].value === "#fallback";
+    }
+
     private analyzeBranchRule(rule: BranchRule): BranchParserFunction {
         const mapPeek0: Record<string, string[]> = {};
         const mapPeek1: Record<string, Record<string, string[]>> = {};
@@ -521,6 +535,7 @@ export class Analyzer {
         const branchesFallbackInPeek1: BranchParserFunction["branchesFallbackInPeek1"] = [];
         const branchesNeedBacktrack: BranchParserFunction["branchesNeedBacktrack"] = [];
         const expectedTerminals: RustTokenTypeName[] = [];
+        const unmatchedFallback = rule.variants.find(variant => this.isFallbackRule(variant.name));
 
         Object.keys(mapPeek0).sort().forEach(t0 => {
             expectedTerminals.push(tokenName(t0));
@@ -601,6 +616,9 @@ export class Analyzer {
             branchesJudgebleInPeek0,
             branchesJudgebleInPeek1,
             branchesFallbackInPeek1,
+            unmatchedFallback: unmatchedFallback
+                ? { astTypeName: astName(unmatchedFallback.name), isBoxed: false }
+                : null,
             branchesNeedBacktrack
         };
     }

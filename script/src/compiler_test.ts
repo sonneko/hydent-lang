@@ -48,6 +48,17 @@ function collectIdentifierValues(value: unknown, into = new Set<string>()): Set<
     return into;
 }
 
+function collectRawDeclarations(value: unknown, into: Record<string, unknown>[] = []): Record<string, unknown>[] {
+    if (Array.isArray(value)) {
+        for (const item of value) collectRawDeclarations(item, into);
+    } else if (value !== null && typeof value === "object") {
+        const node = value as Record<string, unknown>;
+        if (node.type === "RawDeclaration") into.push(node);
+        for (const child of Object.values(node)) collectRawDeclarations(child, into);
+    }
+    return into;
+}
+
 function validateAst(sourcePath: string, source: string, ast: unknown): string[] {
     const errors: string[] = [];
     if (ast === null || typeof ast !== "object" || Array.isArray(ast)) {
@@ -70,6 +81,15 @@ function validateAst(sourcePath: string, source: string, ast: unknown): string[]
     for (const declaration of declarations) {
         if (!identifiers.has(declaration)) {
             errors.push(`AST is missing declaration name ${JSON.stringify(declaration)}`);
+        }
+    }
+
+    for (const rawDeclaration of collectRawDeclarations(ast)) {
+        if (typeof rawDeclaration.source !== "string" || !source.includes(rawDeclaration.source)) {
+            errors.push("RawDeclaration source does not match a source-file slice");
+        }
+        if (!Array.isArray(rawDeclaration.syntax) || rawDeclaration.syntax.length === 0) {
+            errors.push("RawDeclaration has no syntax tokens");
         }
     }
 
