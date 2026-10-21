@@ -41,5 +41,8 @@ fn recovers_inside_a_speculatively_parsed_function() {
 
     assert!(!diagnostics.is_empty());
     assert!(rendered.contains("ExpressionStatement"));
-    assert_eq!(rendered.matches("\"kind\":\"FunctionDeclaration\"").count(), 2);
+    assert_eq!(
+        rendered.matches("\"kind\":\"FunctionDeclaration\"").count(),
+        2
+    );
 }
