@@ -2,7 +2,6 @@ use crate::parser::parse_for_test;
 
 #[test]
 fn parses_imports_modifiers_parameters_generics_and_calls() {
-    println!("::error::frontend test marker: valid declaration parsing");
     let source = r#"
         import { println, print } from "std/io";
         // Ordinary comments are ignored by the parser.
@@ -28,7 +27,6 @@ fn parses_imports_modifiers_parameters_generics_and_calls() {
 
 #[test]
 fn reports_trailing_tokens_after_the_module() {
-    println!("::error::frontend test marker: trailing tokens");
     let (_, diagnostics) = parse_for_test("fn main() {} fn");
 
     assert!(!diagnostics.is_empty());
@@ -36,20 +34,12 @@ fn reports_trailing_tokens_after_the_module() {
 
 #[test]
 fn recovers_inside_a_speculatively_parsed_function() {
-    println!("::error::frontend test marker: speculative recovery");
     let source = "pub async fn first() { @; println(\"still parsed\"); } fn second() {}";
 
     let (ast, diagnostics) = parse_for_test(source);
     let rendered = ast.to_string();
 
     assert!(!diagnostics.is_empty());
-    println!("::error::frontend test marker: recovery emitted diagnostic");
     assert!(rendered.contains("ExpressionStatement"));
-    println!("::error::frontend test marker: recovered statement preserved");
-    let declaration_count = rendered.matches("FunctionDeclaration").count();
-    let rendered_for_annotation = rendered.replace('%', "%25").replace('\n', "%0A");
-    println!(
-        "::error::frontend test marker: declaration count {declaration_count}, AST {rendered_for_annotation}"
-    );
-    assert_eq!(declaration_count, 2);
+    assert_eq!(rendered.matches("\"kind\":\"FunctionDeclaration\"").count(), 2);
 }
