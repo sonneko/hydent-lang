@@ -12,7 +12,6 @@ export class ASTPrinterGenerator {
         ret += "use crate::compiler::{arena::Arena, symbol::SymbolFactory, source_holder::SourceHolder};\n";
         ret += "use crate::parser::generated_ast::*;\n";
         ret += "use crate::parser::ast_node::{ASTNode, Node};\n";
-        ret += "use crate::tokenizer::tokens::Token;\n";
         ret += "\n";
         ret += "pub struct ASTPrinter<'a, 'f, 'b, 'src> {\n";
         ret += "    pub arena: &'a Arena,\n";
@@ -68,17 +67,8 @@ export class ASTPrinterGenerator {
                     ret += `        self.write("]}")?;\n`;
                 } else if (func.astTypeName === "RawSyntaxToken") {
                     ret += `        let raw_text = node.span.into(self.source_holder.get());\n`;
-                    ret += `        let (kind, value) = match node.token {\n`;
-                    ret += `            Token::Identifier(symbol) => ("Identifier", self.symbols.get(&symbol)),\n`;
-                    ret += `            Token::Keyword(_) => ("Keyword", raw_text),\n`;
-                    ret += `            Token::Literal(_) => ("Literal", raw_text),\n`;
-                    ret += `            Token::Operator(_) => ("Operator", raw_text),\n`;
-                    ret += `            Token::Delimiter(_) => ("Delimiter", raw_text),\n`;
-                    ret += `            Token::Comment(_) => ("Comment", raw_text),\n`;
-                    ret += `            Token::Invalid => ("Invalid", raw_text),\n`;
-                    ret += `            Token::EndOfFile => ("EndOfFile", raw_text),\n`;
-                    ret += `        };\n`;
-                    ret += `        self.write(&format!("{{\\\"type\\\":{:?},\\\"value\\\":{:?},\\\"depth\\\":{}}}", kind, value, node.depth))?;\n`;
+                    ret += `        let value = node.identifier.map(|symbol| self.symbols.get(&symbol)).unwrap_or(raw_text);\n`;
+                    ret += `        self.write(&format!("{{\\\"type\\\":{:?},\\\"value\\\":{:?},\\\"depth\\\":{}}}", node.kind, value, node.depth))?;\n`;
                 } else if (isManual) {
                     ret += `        self.write(r#"{"type":"${func.astTypeName}","value":"#)?;\n`;
 

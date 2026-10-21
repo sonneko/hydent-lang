@@ -1,6 +1,5 @@
 use crate::{
     compiler::{arena::ArenaIter, span::Span, symbol::Symbol},
-    tokenizer::tokens::Token,
     utility::hashable_float::HashableFloat,
 };
 
@@ -59,7 +58,8 @@ pub struct BlockComment {}
 /// currently structured grammar. The original source slice is retained too.
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct RawSyntaxToken {
-    pub(super) token: Token,
+    pub(super) kind: &'static str,
+    pub(super) identifier: Option<Symbol>,
     pub(super) span: Span,
     pub(super) depth: u32,
 }

@@ -21,7 +21,22 @@ impl<S: DiagnosticStream, TR: Tracer> Parser<'_, '_, '_, S, TR> {
         }
 
         self.tokens.next();
-        Ok(generated_ast::RawSyntaxToken { token, span, depth })
+        let (kind, identifier) = match token {
+            Token::Identifier(symbol) => ("Identifier", Some(symbol)),
+            Token::Keyword(_) => ("Keyword", None),
+            Token::Literal(_) => ("Literal", None),
+            Token::Operator(_) => ("Operator", None),
+            Token::Delimiter(_) => ("Delimiter", None),
+            Token::Comment(_) => ("Comment", None),
+            Token::Invalid => ("Invalid", None),
+            Token::EndOfFile => ("EndOfFile", None),
+        };
+        Ok(generated_ast::RawSyntaxToken {
+            kind,
+            identifier,
+            span,
+            depth,
+        })
     }
 
     fn raw_declaration_category(&self) -> &'static str {
