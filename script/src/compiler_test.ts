@@ -218,7 +218,11 @@ function main() {
 
         if (run.error) errors.push(`compiler failed to start: ${run.error.message}`);
         if (run.status !== 0) {
-            errors.push(`compiler exited with status ${run.status ?? run.signal ?? "unknown"}`);
+            const output = [stdout.trim(), stderr.trim()].filter(Boolean).join(" | ").replace(/\s+/g, " ").slice(0, 600);
+            errors.push(
+                `compiler exited with status ${run.status ?? run.signal ?? "unknown"}`
+                + (output ? `: ${output}` : ""),
+            );
         }
 
         let actualAst: unknown;
