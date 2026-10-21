@@ -46,6 +46,10 @@ fn recovers_inside_a_speculatively_parsed_function() {
     println!("::error::frontend test marker: recovery emitted diagnostic");
     assert!(rendered.contains("ExpressionStatement"));
     println!("::error::frontend test marker: recovered statement preserved");
-    assert_eq!(rendered.matches("FunctionDeclaration").count(), 2);
-    println!("::error::frontend test marker: following declaration preserved");
+    let declaration_count = rendered.matches("FunctionDeclaration").count();
+    let rendered_for_annotation = rendered.replace('%', "%25").replace('\n', "%0A");
+    println!(
+        "::error::frontend test marker: declaration count {declaration_count}, AST {rendered_for_annotation}"
+    );
+    assert_eq!(declaration_count, 2);
 }
