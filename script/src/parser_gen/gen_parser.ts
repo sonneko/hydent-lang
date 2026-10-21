@@ -99,7 +99,12 @@ export class ParserGenerator {
                 ret += `                Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
             }
 
-            const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
+            const backtrack = [...new Map(
+                func.branchesNeedBacktrack
+                    .filter(b => b.firstTerminal === t0)
+                    .map(branch => [`${branch.astTypeName}:${branch.isBoxed}`, branch]),
+            ).values()];
+            const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
             if (backtrack.length > 0) {
                 ret += `                _ => {\n`;
                 for (const b of backtrack) {
@@ -108,18 +113,22 @@ export class ParserGenerator {
                     ret += `                        return Ok(${func.astTypeName}::${b.astTypeName}(${wrapCall}));\n`;
                     ret += `                    }\n`;
                 }
-                ret += `                    Err(Self::Error::build(false, &[], self.enviroment()))\n`;
-                ret += `                }\n`;
-            } else {
-                const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
                 if (fallback) {
-                    const parseCall = fallback.isBoxed 
-                        ? `self.alloc_box(|this| this.parse_${fallback.astTypeName}())?` 
+                    const parseCall = fallback.isBoxed
+                        ? `self.alloc_box(|this| this.parse_${fallback.astTypeName}())?`
                         : `self.parse_${fallback.astTypeName}()?`;
-                    ret += `                _ => Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall})),\n`;
+                    ret += `                    Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall}))\n`;
                 } else {
-                    ret += `                _ => Err(Self::Error::build(false, &[], self.enviroment())),\n`;
+                    ret += `                    Err(Self::Error::build(false, &[], self.enviroment()))\n`;
                 }
+                ret += `                }\n`;
+            } else if (fallback) {
+                const parseCall = fallback.isBoxed
+                    ? `self.alloc_box(|this| this.parse_${fallback.astTypeName}())?`
+                    : `self.parse_${fallback.astTypeName}()?`;
+                ret += `                _ => Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall})),\n`;
+            } else {
+                ret += `                _ => Err(Self::Error::build(false, &[], self.enviroment())),\n`;
             }
             ret += `            },\n`;
         }

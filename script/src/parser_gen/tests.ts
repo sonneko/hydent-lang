@@ -1,6 +1,8 @@
 import { describe, it, match, or } from '../test_utility';
 import { analyze, Analyzer } from './analyze';
 import { Grammar } from './ast';
+import { ASTTypeGenerator } from './gen_ast_type';
+import { ParserGenerator } from './gen_parser';
 import { parse } from "./parse";
 
 describe('Parser (parse.ts)', () => {
@@ -128,6 +130,32 @@ describe('Analyzer', () => {
     });
 
     describe('computeFirst & computeFollow complex cases', () => {
+        it('should account for multiple repetitions when computing two-token FIRST sequences', () => {
+            const grammar: Grammar = [
+                { kind: 'Branch', name: 'Modifier', variants: [
+                    { name: 'A', note: '' },
+                    { name: 'B', note: '' },
+                ]},
+                { kind: 'Product', name: 'A', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+                { kind: 'Product', name: 'B', members: [
+                    { kind: 'Terminal', value: 'b', note: '' },
+                ]},
+                { kind: 'Product', name: 'S', members: [
+                    { kind: 'Field', name: 'modifiers', type: { name: 'Modifier', modifier: 'List' }, note: '' },
+                    { kind: 'Terminal', value: 'c', note: '' },
+                ]},
+            ];
+            const analyzer = new Analyzer(grammar, mockTokenMap);
+            analyzer.analyze();
+            const firstS = (analyzer as any).firstSets.get('S') as Set<string>;
+
+            match([...firstS]).toContain('TokenA,TokenB');
+            match([...firstS]).toContain('TokenB,TokenA');
+            match([...firstS]).toContain('TokenA,TokenC');
+        });
+
         it('should correctly compute FIRST and FOLLOW sets with mutually recursive and nullable rules', () => {
             const grammar: Grammar = [
                 // S -> A B C
@@ -184,7 +212,7 @@ describe('Analyzer', () => {
                 { kind: 'Product', name: 'V3', members: [{ kind: 'Terminal', value: 'b', note: '' }] },
             ];
 
-            const ir = analyze(grammar, mockTokenMap);
+            const [ir] = analyze(grammar, mockTokenMap);
             const branchIR = ir.find(i => i.kind === 'branch') as any;
 
             match(branchIR).toBeDefined();
@@ -199,6 +227,66 @@ describe('Analyzer', () => {
             match(branchIR.branchesJudgebleInPeek1).toContainEqual(
                 { astTypeName: 'V2', firstTerminal: 'TokenA', secondTerminal: 'TokenC' }
             );
+        });
+    });
+
+    describe('ParserGenerator', () => {
+        it('tries ambiguous alternatives before falling back to a one-token branch', () => {
+            const grammar: Grammar = [
+                {
+                    kind: 'Branch', name: 'Choice', variants: [
+                        { name: 'LongB', note: '' },
+                        { name: 'LongC', note: '' },
+                        { name: 'Short', note: '' },
+                    ]
+                },
+                { kind: 'Product', name: 'LongB', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                    { kind: 'Terminal', value: 'b', note: '' },
+                ]},
+                { kind: 'Product', name: 'LongC', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                    { kind: 'Terminal', value: 'b', note: '' },
+                    { kind: 'Terminal', value: 'c', note: '' },
+                ]},
+                { kind: 'Product', name: 'Short', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+            ];
+            const [ir] = analyze(grammar, mockTokenMap);
+            const generated = new ParserGenerator().generateParser(ir);
+            const backtrack = generated.indexOf('this.parse_LongB()');
+            const fallback = generated.indexOf('Ok(Choice::Short(self.parse_Short()?))');
+
+            match(backtrack >= 0).toBe(true);
+            match(fallback > backtrack).toBe(true);
+        });
+
+        it('generates TokenSet FIRST/FOLLOW maps and includes follow lookahead for one-token items', () => {
+            const grammar: Grammar = [
+                { kind: 'Branch', name: 'Item', variants: [
+                    { name: 'Short', note: '' },
+                    { name: 'Long', note: '' },
+                ]},
+                { kind: 'Product', name: 'Short', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+                { kind: 'Product', name: 'Long', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                    { kind: 'Terminal', value: 'b', note: '' },
+                ]},
+                { kind: 'Product', name: 'Parent', members: [
+                    { kind: 'Field', name: 'items', type: { name: 'Item', modifier: 'List' }, note: '' },
+                    { kind: 'Terminal', value: 'c', note: '' },
+                ]},
+            ];
+            const [ir] = analyze(grammar, mockTokenMap);
+            const generated = new ASTTypeGenerator().generateASTType(ir);
+
+            match(generated.includes('TokenBitMap')).toBe(false);
+            match(generated.includes(
+                'const FIRST_2_SETS: TokenSet = TokenSet::build_map(false, false, true, &[TokenA, TokenB, TokenC]);'
+            )).toBe(true);
         });
     });
 
@@ -223,7 +311,7 @@ describe('Analyzer', () => {
                 }
             ];
 
-            const ir = analyze(grammar, mockTokenMap);
+            const [ir] = analyze(grammar, mockTokenMap);
 
             const addExprIR = ir.find(i => i.astTypeName === 'AddExpr' && i.kind === 'product') as any;
             match(addExprIR).toBeDefined();
@@ -244,6 +332,44 @@ describe('Analyzer', () => {
     });
 
     describe('checkLL2Confilict', () => {
+        it('should detect FIRST/FOLLOW overlap using the first token of a two-token FIRST sequence', () => {
+            const grammar: Grammar = [
+                { kind: 'Product', name: 'S', members: [
+                    { kind: 'Field', name: 'a', type: { name: 'A', modifier: 'None' }, note: '' },
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+                { kind: 'Product', name: 'A', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                    { kind: 'Terminal', value: 'b', note: '' },
+                ]},
+            ];
+            const [ir, warnings] = analyze(grammar, mockTokenMap);
+            const rule = ir.find(item => item.astTypeName === 'A');
+
+            match(rule !== undefined && rule.kind !== 'hook' && rule.firstAndFollowConflict).toBe(true);
+            match(warnings).toContain('TokenA');
+        });
+
+        it('should throw for a nullable rule whose two-token FIRST starts in FOLLOW', () => {
+            const grammar: Grammar = [
+                { kind: 'Product', name: 'S', members: [
+                    { kind: 'Field', name: 'a', type: { name: 'A', modifier: 'None' }, note: '' },
+                    { kind: 'Terminal', value: 'a', note: '' },
+                ]},
+                { kind: 'Branch', name: 'A', variants: [
+                    { name: 'A_long', note: '' },
+                    { name: 'A_empty', note: '' },
+                ]},
+                { kind: 'Product', name: 'A_long', members: [
+                    { kind: 'Terminal', value: 'a', note: '' },
+                    { kind: 'Terminal', value: 'b', note: '' },
+                ]},
+                { kind: 'Product', name: 'A_empty', members: [] },
+            ];
+
+            match(() => analyze(grammar, mockTokenMap)).toThrowError('Grammar conflict');
+        });
+
         it('should throw an error if a Nullable rule has intersecting FIRST and FOLLOW sets', () => {
             // S -> A "a"
             // A -> "a" | (empty)

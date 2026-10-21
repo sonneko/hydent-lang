@@ -114,8 +114,12 @@ export class Analyzer {
         allRules.forEach(name => {
             const firstSets = this.firstSets.get(name)!;
             const followSets = this.followSets.get(name)!;
-            // TODO
-            const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
+            const firstTerminals = new Set(
+                [...firstSets]
+                    .map(sequence => parseSeqKey(sequence)[0])
+                    .filter((token): token is RustTokenTypeName => token !== undefined)
+            );
+            const intersection = new Set([...firstTerminals].filter(token => followSets.has(token)));
             if (intersection.size !== 0) {
                 this.outputs.push(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
                 funcs
@@ -212,12 +216,17 @@ export class Analyzer {
                             const refModifier = m.type.modifier;
 
                             const subFirstStrs = this.firstSets.get(refName);
-                            if (subFirstStrs) {
-                                subFirstStrs.forEach(s => memberFirsts.push(parseSeqKey(s)));
-                            }
+                            const subFirsts = subFirstStrs
+                                ? [...subFirstStrs].map(parseSeqKey)
+                                : [];
 
-                            if (refModifier === "List" || refModifier === "Option" || this.nullable.has(refName)) {
-                                memberFirsts.push([]);
+                            if (refModifier === "List") {
+                                memberFirsts = this.repeatFirstSequences(subFirsts);
+                            } else {
+                                memberFirsts = subFirsts;
+                                if (refModifier === "Option" || this.nullable.has(refName)) {
+                                    memberFirsts.push([]);
+                                }
                             }
                         }
 
@@ -247,6 +256,28 @@ export class Analyzer {
                 }
             }
         }
+    }
+
+    private repeatFirstSequences(firsts: TokenSeq[]): TokenSeq[] {
+        const sequences = new Map<string, TokenSeq>([[seqKey([]), []]]);
+        const queue: TokenSeq[] = [[]];
+
+        while (queue.length > 0) {
+            const base = queue.shift()!;
+            if (base.length >= 2) continue;
+
+            for (const suffix of firsts) {
+                if (suffix.length === 0) continue;
+                const sequence = concatSeq(base, suffix);
+                const key = seqKey(sequence);
+                if (sequences.has(key)) continue;
+
+                sequences.set(key, sequence);
+                if (sequence.length < 2) queue.push(sequence);
+            }
+        }
+
+        return [...sequences.values()];
     }
 
     private computeFollow() {

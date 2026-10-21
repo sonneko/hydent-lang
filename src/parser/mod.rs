@@ -8,7 +8,8 @@ use crate::compiler::{
 use crate::diagnostic::stream::StockDiagnosticStream;
 use crate::diagnostic::Diagnostic;
 use crate::parser::ast::ASTVisitor;
-use crate::parser::tracer::LogTracer;
+use crate::parser::tracer::NopeTracer;
+use crate::utility::read_file_query::ReadFileQuery;
 use crate::parser::{generated_ast_printer::ASTPrinter, parse::Parser};
 use crate::tokenizer::token_stream::TokenStream;
 use crate::tokenizer::tokenize::Tokenizer;
@@ -72,33 +73,33 @@ impl<'src> Display for Ast<'src> {
 pub struct ParseFileQuery;
 impl Query for ParseFileQuery {
     type From = String;
-    type To = ();
+    type To = Result<String, String>;
+
     fn run<E: Engine>(engine: &E, src_path: Self::From) -> Self::To {
-        // let src = engine.fetch::<ReadFileQuery>(src_path);
-        // let source_holder = SourceHolder::new(&src);
-        // let ast_arena = Arena::new();
-        // let errors_arena = Arena::new();
-        // let mut ctx = CompilerFrontendContext {
-        //     source: source_holder,
-        //     symbol_factory: SymbolFactory::new(source_holder),
-        //     ast_arena: &ast_arena,
-        //     errors_arena: &ast_arena,
-        // };
+        let source = match engine.fetch::<ReadFileQuery>(src_path.clone()) {
+            Ok(Ok(source)) => source,
+            Ok(Err(error)) => {
+                return Err(format!("failed to read `{src_path}`: {error:?}"));
+            }
+            Err(error) => match error {},
+        };
 
-        // let tokens = {
-        //     let tokenizer = Tokenizer::new(&src, &mut ctx.symbol_factory);
-        //     let (tokens, _) = tokenizer.tokenize();
-        //     tokens
-        // };
+        let (ast, diagnostics) = parse_for_test(&source);
+        if !diagnostics.is_empty() {
+            let diagnostics = diagnostics
+                .into_iter()
+                .map(|diagnostic| {
+                    format!(
+                        "{}[E{}] at {}: {}",
+                        diagnostic.level, diagnostic.id, diagnostic.primary, diagnostic.message
+                    )
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
+            return Err(diagnostics);
+        }
 
-        // let parser = Parser::new(TokenStream::new(tokens), ctx);
-        // let ast = parser
-        //     .parse()
-        //     .map_err(<ParseErr as Into<Box<dyn CompilerDiagnostic>>>::into);
-
-        // // TODO: construct parse result and return
-
-        todo!()
+        Ok(ast.to_string())
     }
 }
 
@@ -109,7 +110,7 @@ pub fn parse_for_test<'a>(source: &'a str) -> (Ast<'a>, Vec<Diagnostic>) {
     let (tokens, line_starts) = tokenizer.tokenize(&mut diagnostic_stream);
     let stream = TokenStream::new(tokens);
     let mut ast_arena = Arena::new();
-    let mut parser: Parser<'_, '_, '_, _, LogTracer> = Parser::new(
+    let mut parser: Parser<'_, '_, '_, _, NopeTracer> = Parser::new(
         stream,
         CompilerFrontendContext {
             source,

@@ -47,11 +47,12 @@ pub struct Diagnostic {
 
 impl std::fmt::Display for Diagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        //         write!(f,
-        // r#"{}[E{}]: {}
-        //  -->
-
-        // "#, self.level, self.id, self.message)
+        write!(f, "{}[E{}]: {} at {}", self.level, self.id, self.message, self.primary)?;
+        for highlight in &self.highlights {
+            if let Some(label) = highlight.label {
+                write!(f, "\n  {}: {}", highlight.span, label)?;
+            }
+        }
         Ok(())
     }
 }

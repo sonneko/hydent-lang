@@ -9,7 +9,7 @@ import { astName } from "./parser_gen/ir";
 import { generateTokenTypeMap } from "./parser_gen/gen_tokenmap";
 import { generateMermaidHtml } from "./parser_gen/gen_mermaid";
 
-const BNF_FILE_PATH = "../assets/grammer.txt";
+const BNF_FILE_PATH = "../assets/grammer.tibineko";
 const AST_FILE_PATH = "../out/spec/frontend/ast.json";
 const IR_FILE_PATH = "../out/spec/frontend/ir.json";
 const PARSER_FILE_PATH = "../src/parser/generated_parser.rs";

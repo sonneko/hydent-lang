@@ -22,8 +22,7 @@ export class ASTPrinterGenerator {
         ret += "\n";
         ret += "impl<'a, 'f, 'b, 'src> ASTPrinter<'a, 'f, 'b, 'src> {\n";
         ret += "    fn write(&mut self, s: &str) -> Result<(), std::fmt::Error> {\n";
-        ret += "        self.writer.write_str(s);\n";
-        ret += "        Ok(())\n";
+        ret += "        self.writer.write_str(s)\n";
         ret += "    }";
         ret += "}\n\n";
 
