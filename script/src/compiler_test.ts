@@ -99,6 +99,7 @@ function main() {
 
     const sourceFiles = listSourceFiles(fixtureRoot);
     const results: Array<Record<string, unknown>> = [];
+    const failures: string[] = [];
     let failed = false;
 
     for (const sourcePath of sourceFiles) {
@@ -165,10 +166,9 @@ function main() {
             failed = true;
             const astPreview = actualAst === undefined
                 ? "AST JSON unavailable"
-                : `AST JSON preview: ${JSON.stringify(actualAst).slice(0, 5000)}`;
-            githubError(
-                `Compiler fixture: ${relative(fixtureRoot, sourcePath)}`,
-                `${errors.join("; ")}; ${astPreview}`,
+                : JSON.stringify(actualAst).slice(0, 1200);
+            failures.push(
+                `${relative(fixtureRoot, sourcePath)}: ${errors.join("; ")}; AST JSON: ${astPreview}`,
             );
             if (stdout.trim().length > 0) console.error(stdout.trim());
             if (stderr.trim().length > 0) console.error(stderr.trim());
@@ -181,6 +181,7 @@ function main() {
     console.log(`AST outputs and diagnostics: ${relative(repositoryRoot, actualRoot)}`);
 
     if (failed) {
+        githubError("Compiler fixture snapshot failures", failures.join("\n").slice(0, 60000));
         throw new Error("Compiler fixture snapshot tests failed.");
     }
     console.log("\n✅ All compiler fixture snapshot tests passed.");
