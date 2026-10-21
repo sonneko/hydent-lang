@@ -1,1 +1,535 @@
-{"type":"Module","TopLevelStatement":[]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Protocol",
+        "source": "protocol Listener {\n    fn on_event(mut this, msg: String) : Void;\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "protocol",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Listener",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "on_event",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "msg",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Class",
+        "source": "class Dispatcher {\n    mut listeners: Vec<Listener>;\n\n    pub fn add(mut this, l: Listener) : Void {\n        this.listeners.push(l);\n    }\n\n    pub fn notify(this, message: String) : Void {\n        for l in this.listeners {\n            l.on_event(message);\n        }\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "class",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Dispatcher",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "listeners",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Vec",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Listener",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "add",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "l",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Listener",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "listeners",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "push",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "l",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "notify",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "message",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "for",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "l",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "in",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "listeners",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "l",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "on_event",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "message",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let mut d = Dispatcher { listeners: [] };\n    // ここで具体的な実装を注入する想定\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "d",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Dispatcher",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "listeners",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "[",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "]",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

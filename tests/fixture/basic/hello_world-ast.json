@@ -1,0 +1,77 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "ImportDeclaration",
+      "value": {
+        "type": "ImportDeclaration",
+        "DocComment": [],
+        "ImportSpecific": {
+          "type": "ImportSpecific",
+          "ImportItem": [
+            {
+              "type": "ImportItem",
+              "Identifier": {
+                "type": "Identifier",
+                "value": "println"
+              },
+              "Comma": null
+            }
+          ]
+        },
+        "StringLiteral": {
+          "type": "StringLiteral",
+          "value": "std/io"
+        }
+      }
+    },
+    {
+      "kind": "FunctionDeclaration",
+      "value": {
+        "type": "FunctionDeclaration",
+        "DocComment": [],
+        "FunctionModifier": [],
+        "Identifier": {
+          "type": "Identifier",
+          "value": "main"
+        },
+        "ParamWithType": [],
+        "ReturnType": null,
+        "BlockExpression": {
+          "type": "BlockExpression",
+          "Statement": [
+            {
+              "kind": "ExpressionStatement",
+              "value": {
+                "type": "ExpressionStatement",
+                "Expression": {
+                  "kind": "CallExpression",
+                  "value": {
+                    "type": "CallExpression",
+                    "Identifier": {
+                      "type": "Identifier",
+                      "value": "println"
+                    },
+                    "CallArgument": [
+                      {
+                        "type": "CallArgument",
+                        "Expression": {
+                          "kind": "StringLiteral",
+                          "value": {
+                            "type": "StringLiteral",
+                            "value": "Hello World"
+                          }
+                        },
+                        "Comma": null
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,1 +1,455 @@
-{"type":"Module","TopLevelStatement":[]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Protocol",
+        "source": "protocol Clone { fn clone(this) : Self; }",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "protocol",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Clone",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "clone",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Self",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Protocol",
+        "source": "protocol Debug { fn dump(this) : Void; }",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "protocol",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Debug",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "dump",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn duplicate_and_dump<T : Clone & Debug>(item: T) : T {\n    item.dump();\n    return item.clone();\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "duplicate_and_dump",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Clone",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "&",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Debug",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "item",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "item",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "dump",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "item",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "clone",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Struct",
+        "source": "struct Data { final id: Int; }",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Data",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "id",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let d = Data { id: 1 };\n    // duplicate_and_dump(d);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "d",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Data",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "id",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

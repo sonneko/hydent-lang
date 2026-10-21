@@ -1,1 +1,364 @@
-{"type":"Module","TopLevelStatement":[{"kind":"ImportDeclaration","value":{"type":"ImportDeclaration","ImportTargets":{"kind":"ImportSpecific","value":{"type":"ImportSpecific","IdentifierList":{"type":"IdentifierList","Identifier":[{"type":"Identifier","value":"println"}]}}},"StringLiteral":{"type":"StringLiteral","value":"std/io"}}},{"kind":"ItemWithModifiers","value":{"type":"ItemWithModifiers","DocComment":[],"PubKeyword":null,"ItemDeclaration":{"kind":"FunctionDeclaration","value":{"type":"FunctionDeclaration","ExternKeyword":null,"AsyncKeyword":null,"Identifier":{"type":"Identifier","value":"fizz_buzz"},"ParamsWithTypes":{"type":"ParamsWithTypes","ParamWithType":[{"kind":"RegularParam","value":{"type":"RegularParam","MutKeyword":null,"Identifier":{"type":"Identifier","value":"n"},"TypeLiteral":{"kind":"IntType","value":{"type":"IntType"}},"DefaultParamValue":null}}]},"ReturnType":null,"PanicsKeyword":null,"BlockExpression":null}}}}]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "ImportDeclaration",
+      "value": {
+        "type": "ImportDeclaration",
+        "DocComment": [],
+        "ImportSpecific": {
+          "type": "ImportSpecific",
+          "ImportItem": [
+            {
+              "type": "ImportItem",
+              "Identifier": {
+                "type": "Identifier",
+                "value": "println"
+              },
+              "Comma": null
+            }
+          ]
+        },
+        "StringLiteral": {
+          "type": "StringLiteral",
+          "value": "std/io"
+        }
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn fizz_buzz(n: Int) {\n    match (n % 3, n % 5) {\n        (0, 0) => println(\"fizzbuzz\"),\n        (0, _) => println(\"fizz\"),\n        (_, 0) => println(\"buzz\"),\n        (_, _) => println(n),\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "fizz_buzz",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "match",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "%",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "3",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "%",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "5",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "println",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"fizzbuzz\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "println",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"fizz\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "println",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"buzz\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "println",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

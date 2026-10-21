@@ -1,0 +1,725 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Module",
+        "source": "module Geometry {\n    pub protocol Shape {\n        fn area(this) : Float;\n    }\n\n    pub struct Rect {\n        final width: Float;\n        final height: Float;\n    }\n\n    pub struct Circle(final Float);\n\n    fn calculate_area<T : Shape>(item: T) : Float {\n        return item.area();\n    }\n\n    static PI = 3.141592;\n\n    fn main() {\n        let r = Rect { width: 10.0, height: 5.0 };\n        let c = Circle(2.5);\n\n        ignore pipe r.area() {\n            |> a if a > 10.0 => print(\"Large\");\n            |> _ => print(\"Small\");\n        }\n\n        let total: Float = r.area() + c.area();\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "module",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Geometry",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "protocol",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Shape",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "area",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Rect",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "width",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "height",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Circle",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "calculate_area",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Shape",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "item",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "item",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "area",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "static",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "PI",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "3.141592",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Rect",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "width",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "10.0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "height",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "5.0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "c",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Circle",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "2.5",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "ignore",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pipe",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "area",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "10.0",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"Large\"",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"Small\"",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "total",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "area",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "c",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "area",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

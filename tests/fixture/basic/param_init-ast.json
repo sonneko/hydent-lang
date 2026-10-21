@@ -1,0 +1,410 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn create_window(\n    title: String, \n    width: Int = 800, \n    height: Int = 600\n) : Void {\n    print(\"Title: \" + title);\n    print(width);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "create_window",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "title",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "width",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "800",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "height",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "600",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"Title: \"",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "title",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "width",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    create_window(\"App\");\n    create_window(\"Game\", 1920, 1080);\n    \n    let (w, h) = (100, 200);\n    create_window(\"Tool\", w, h);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "create_window",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"App\"",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "create_window",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"Game\"",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "1920",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "1080",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "w",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "h",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "100",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "200",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "create_window",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"Tool\"",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "w",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "h",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}
