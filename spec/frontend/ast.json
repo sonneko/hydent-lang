@@ -19,22 +19,26 @@
     "name": "TopLevelStatement",
     "variants": [
       {
-        "name": "ItemWithModifiers",
-        "note": "boxed"
-      },
-      {
         "name": "ImportDeclaration",
         "note": ""
       },
       {
-        "name": "Annotation",
+        "name": "FunctionDeclaration",
+        "note": ""
+      },
+      {
+        "name": "ExternFunction",
+        "note": ""
+      },
+      {
+        "name": "RawDeclaration",
         "note": ""
       }
     ]
   },
   {
     "kind": "Product",
-    "name": "ItemWithModifiers",
+    "name": "ImportDeclaration",
     "members": [
       {
         "kind": "Field",
@@ -46,64 +50,6 @@
         "note": ""
       },
       {
-        "kind": "Field",
-        "name": "is_public",
-        "type": {
-          "name": "PubKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "decl",
-        "type": {
-          "name": "ItemDeclaration",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "ItemDeclaration",
-    "variants": [
-      {
-        "name": "StaticVariableDeclaration",
-        "note": ""
-      },
-      {
-        "name": "ClassDeclaration",
-        "note": ""
-      },
-      {
-        "name": "EnumDeclaration",
-        "note": ""
-      },
-      {
-        "name": "StructDeclaration",
-        "note": ""
-      },
-      {
-        "name": "FunctionDeclaration",
-        "note": ""
-      },
-      {
-        "name": "ModuleDeclaration",
-        "note": ""
-      },
-      {
-        "name": "TypeAliasDeclaration",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ImportDeclaration",
-    "members": [
-      {
         "kind": "Terminal",
         "value": "import",
         "note": ""
@@ -112,7 +58,7 @@
         "kind": "Field",
         "name": "targets",
         "type": {
-          "name": "ImportTargets",
+          "name": "ImportSpecific",
           "modifier": "None"
         },
         "note": ""
@@ -124,7 +70,7 @@
       },
       {
         "kind": "Field",
-        "name": "source",
+        "name": "path",
         "type": {
           "name": "StringLiteral",
           "modifier": "None"
@@ -134,20 +80,6 @@
       {
         "kind": "Terminal",
         "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "ImportTargets",
-    "variants": [
-      {
-        "name": "ImportSpecific",
-        "note": ""
-      },
-      {
-        "name": "ImportAllAs",
         "note": ""
       }
     ]
@@ -163,478 +95,9 @@
       },
       {
         "kind": "Field",
-        "name": "targets",
+        "name": "items",
         "type": {
-          "name": "IdentifierList",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ImportAllAs",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "*",
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "as",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "alias",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StaticVariableDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "static",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "=",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "value",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ClassDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "class",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "members",
-        "type": {
-          "name": "ClassMember",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "ClassMember",
-    "variants": [
-      {
-        "name": "ClassFunction",
-        "note": ""
-      },
-      {
-        "name": "FieldDeclaration",
-        "note": ""
-      },
-      {
-        "name": "ClassTypeAlias",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ClassFunction",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "docs",
-        "type": {
-          "name": "DocComment",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "is_public",
-        "type": {
-          "name": "PubKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "decl",
-        "type": {
-          "name": "FunctionDeclaration",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ClassTypeAlias",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "docs",
-        "type": {
-          "name": "DocComment",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "is_public",
-        "type": {
-          "name": "PubKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "decl",
-        "type": {
-          "name": "TypeAliasDeclaration",
-          "modifier": "None"
-        },
-        "note": "boxed"
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "FieldDeclaration",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "docs",
-        "type": {
-          "name": "DocComment",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "is_public",
-        "type": {
-          "name": "PubKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "modifier",
-        "type": {
-          "name": "FieldModifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ":",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_lit",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "FieldModifier",
-    "variants": [
-      {
-        "name": "FinalKeyword",
-        "note": ""
-      },
-      {
-        "name": "MutKeyword",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "EnumDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "enum",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "members",
-        "type": {
-          "name": "EnumMember",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "EnumMember",
-    "variants": [
-      {
-        "name": "EnumVariant",
-        "note": ""
-      },
-      {
-        "name": "EnumFunction",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "EnumFunction",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "docs",
-        "type": {
-          "name": "DocComment",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "is_public",
-        "type": {
-          "name": "PubKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "decl",
-        "type": {
-          "name": "FunctionDeclaration",
-          "modifier": "None"
-        },
-        "note": "boxed"
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "EnumVariant",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "types",
-        "type": {
-          "name": "EnumVariantTypes",
-          "modifier": "Option"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "EnumVariantTypes",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "types",
-        "type": {
-          "name": "TypeLiteralList",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "struct",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "body",
-        "type": {
-          "name": "StructBody",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "StructBody",
-    "variants": [
-      {
-        "name": "StructBlockBody",
-        "note": ""
-      },
-      {
-        "name": "StructTupleBody",
-        "note": ""
-      },
-      {
-        "name": "StructEmptyBody",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructBlockBody",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "fields",
-        "type": {
-          "name": "FieldDeclaration",
+          "name": "ImportItem",
           "modifier": "List"
         },
         "note": ""
@@ -648,36 +111,35 @@
   },
   {
     "kind": "Product",
-    "name": "StructTupleBody",
+    "name": "ImportItem",
     "members": [
       {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
         "kind": "Field",
-        "name": "types",
+        "name": "name",
         "type": {
-          "name": "TypeLiteralList",
+          "name": "Identifier",
           "modifier": "None"
         },
         "note": ""
       },
       {
-        "kind": "Terminal",
-        "value": ")",
+        "kind": "Field",
+        "name": "comma",
+        "type": {
+          "name": "Comma",
+          "modifier": "Option"
+        },
         "note": ""
       }
     ]
   },
   {
     "kind": "Product",
-    "name": "StructEmptyBody",
+    "name": "Comma",
     "members": [
       {
         "kind": "Terminal",
-        "value": ";",
+        "value": ",",
         "note": ""
       }
     ]
@@ -688,19 +150,19 @@
     "members": [
       {
         "kind": "Field",
-        "name": "extern_kw",
+        "name": "docs",
         "type": {
-          "name": "ExternKeyword",
-          "modifier": "Option"
+          "name": "DocComment",
+          "modifier": "List"
         },
         "note": ""
       },
       {
         "kind": "Field",
-        "name": "async_kw",
+        "name": "modifiers",
         "type": {
-          "name": "AsyncKeyword",
-          "modifier": "Option"
+          "name": "FunctionModifier",
+          "modifier": "List"
         },
         "note": ""
       },
@@ -727,8 +189,8 @@
         "kind": "Field",
         "name": "params",
         "type": {
-          "name": "ParamsWithTypes",
-          "modifier": "Option"
+          "name": "ParamWithType",
+          "modifier": "List"
         },
         "note": ""
       },
@@ -748,34 +210,10 @@
       },
       {
         "kind": "Field",
-        "name": "panics_kw",
-        "type": {
-          "name": "PanicsKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
         "name": "body",
         "type": {
           "name": "BlockExpression",
-          "modifier": "Option"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ParamsWithTypes",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "ParamWithType",
-          "modifier": "List"
+          "modifier": "None"
         },
         "note": ""
       }
@@ -783,25 +221,211 @@
   },
   {
     "kind": "Branch",
-    "name": "ParamWithType",
+    "name": "FunctionModifier",
     "variants": [
       {
-        "name": "RegularParam",
+        "name": "PubModifier",
         "note": ""
       },
       {
-        "name": "ThisParam",
+        "name": "AsyncModifier",
+        "note": ""
+      },
+      {
+        "name": "TryModifier",
         "note": ""
       }
     ]
   },
   {
     "kind": "Product",
-    "name": "RegularParam",
+    "name": "PubModifier",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "pub",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "AsyncModifier",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "async",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "TryModifier",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "try",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ExternFunction",
     "members": [
       {
         "kind": "Field",
-        "name": "mut_kw",
+        "name": "docs",
+        "type": {
+          "name": "DocComment",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "modifiers",
+        "type": {
+          "name": "FunctionModifier",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": "extern",
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": "fn",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": "(",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "params",
+        "type": {
+          "name": "ParamWithType",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ")",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "return_type",
+        "type": {
+          "name": "ReturnType",
+          "modifier": "Option"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "ending",
+        "type": {
+          "name": "ExternFunctionEnding",
+          "modifier": "None"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "ExternFunctionEnding",
+    "variants": [
+      {
+        "name": "ExternFunctionSemicolon",
+        "note": ""
+      },
+      {
+        "name": "ExternFunctionBody",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ExternFunctionSemicolon",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ExternFunctionBody",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "body",
+        "type": {
+          "name": "BlockExpression",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "semicolon",
+        "type": {
+          "name": "ExternFunctionSemicolon",
+          "modifier": "Option"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ReturnType",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": ":",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "return_type",
+        "type": {
+          "name": "TypeLiteral",
+          "modifier": "None"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ParamWithType",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "mutable",
         "type": {
           "name": "MutKeyword",
           "modifier": "Option"
@@ -824,7 +448,7 @@
       },
       {
         "kind": "Field",
-        "name": "type_lit",
+        "name": "parameter_type",
         "type": {
           "name": "TypeLiteral",
           "modifier": "None"
@@ -838,6 +462,26 @@
           "name": "DefaultParamValue",
           "modifier": "Option"
         },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "comma",
+        "type": {
+          "name": "Comma",
+          "modifier": "Option"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "MutKeyword",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "mut",
         "note": ""
       }
     ]
@@ -853,7 +497,7 @@
       },
       {
         "kind": "Field",
-        "name": "expr",
+        "name": "value",
         "type": {
           "name": "Expression",
           "modifier": "None"
@@ -863,161 +507,15 @@
     ]
   },
   {
-    "kind": "Product",
-    "name": "ThisParam",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "this",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ReturnType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "->",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_lit",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ModuleDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "module",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "declarations",
-        "type": {
-          "name": "TopLevelStatement",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "Annotation",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "@",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "args",
-        "type": {
-          "name": "LiteralNode",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TypeAliasDeclaration",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "type",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "=",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_lit",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
     "kind": "Branch",
     "name": "TypeLiteral",
     "variants": [
       {
-        "name": "TypeAccesser",
+        "name": "GenericType",
         "note": ""
       },
       {
-        "name": "ImplType",
-        "note": ""
-      },
-      {
-        "name": "Typeof",
-        "note": ""
-      },
-      {
-        "name": "BoolType",
+        "name": "Identifier",
         "note": ""
       },
       {
@@ -1037,7 +535,15 @@
         "note": ""
       },
       {
+        "name": "BoolType",
+        "note": ""
+      },
+      {
         "name": "CharType",
+        "note": ""
+      },
+      {
+        "name": "VoidType",
         "note": ""
       },
       {
@@ -1045,1862 +551,69 @@
         "note": ""
       },
       {
-        "name": "AnyType",
-        "note": ""
-      },
-      {
-        "name": "TupleType",
-        "note": ""
-      },
-      {
         "name": "NeverType",
         "note": ""
       },
       {
-        "name": "VoidType",
+        "name": "AnyType",
         "note": ""
       }
     ]
   },
   {
     "kind": "Product",
-    "name": "TypeAccesser",
+    "name": "GenericType",
     "members": [
       {
         "kind": "Field",
-        "name": "accesser",
+        "name": "name",
         "type": {
-          "name": "Accesser",
+          "name": "Identifier",
           "modifier": "None"
         },
         "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ImplType",
-    "members": [
+      },
       {
         "kind": "Terminal",
-        "value": "impl",
+        "value": "<",
         "note": ""
       },
       {
         "kind": "Field",
-        "name": "type_lit",
+        "name": "arguments",
+        "type": {
+          "name": "TypeArgument",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ">",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "TypeArgument",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "value",
         "type": {
           "name": "TypeLiteral",
           "modifier": "None"
         },
         "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "Typeof",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "typeof",
-        "note": ""
       },
       {
         "kind": "Field",
-        "name": "expr",
+        "name": "comma",
         "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TupleType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "types",
-        "type": {
-          "name": "TypeLiteralList",
+          "name": "Comma",
           "modifier": "Option"
         },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "Expression",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "AdditiveExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AdditiveExpr",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "left",
-        "type": {
-          "name": "MultiplicativeExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "rest",
-        "type": {
-          "name": "AdditiveRest",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AdditiveRest",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "op",
-        "type": {
-          "name": "AdditiveOp",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "right",
-        "type": {
-          "name": "MultiplicativeExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "AdditiveOp",
-    "variants": [
-      {
-        "name": "PlusOp",
-        "note": ""
-      },
-      {
-        "name": "MinusOp",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MultiplicativeExpr",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "left",
-        "type": {
-          "name": "PrimaryExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "rest",
-        "type": {
-          "name": "MultiplicativeRest",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MultiplicativeRest",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "op",
-        "type": {
-          "name": "MultiplicativeOp",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "right",
-        "type": {
-          "name": "PrimaryExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "MultiplicativeOp",
-    "variants": [
-      {
-        "name": "MulOp",
-        "note": ""
-      },
-      {
-        "name": "DivOp",
-        "note": ""
-      },
-      {
-        "name": "ModOp",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "PrimaryExpr",
-    "variants": [
-      {
-        "name": "BlockExpression",
-        "note": ""
-      },
-      {
-        "name": "IfExpression",
-        "note": ""
-      },
-      {
-        "name": "WhileExpression",
-        "note": ""
-      },
-      {
-        "name": "Accesser",
-        "note": ""
-      },
-      {
-        "name": "LiteralExpr",
-        "note": ""
-      },
-      {
-        "name": "FunctionCall",
-        "note": ""
-      },
-      {
-        "name": "MethodCall",
-        "note": ""
-      },
-      {
-        "name": "FieldAccess",
-        "note": ""
-      },
-      {
-        "name": "TupleOrGroupedExpression",
-        "note": ""
-      },
-      {
-        "name": "StructLiteral",
-        "note": ""
-      },
-      {
-        "name": "ArrayLiteral",
-        "note": ""
-      },
-      {
-        "name": "IndexAccess",
-        "note": ""
-      },
-      {
-        "name": "CastExpression",
-        "note": ""
-      },
-      {
-        "name": "AwaitExpression",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "LiteralExpr",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "literal",
-        "type": {
-          "name": "LiteralNode",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "LiteralNode",
-    "variants": [
-      {
-        "name": "StringLiteral",
-        "note": ""
-      },
-      {
-        "name": "CharLiteral",
-        "note": ""
-      },
-      {
-        "name": "NumLiteral",
-        "note": ""
-      },
-      {
-        "name": "BoolLiteral",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "FunctionCall",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "try_kw",
-        "type": {
-          "name": "TryKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "params",
-        "type": {
-          "name": "Params",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MethodCall",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "try_kw",
-        "type": {
-          "name": "TryKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ".",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "params",
-        "type": {
-          "name": "Params",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "FieldAccess",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ".",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TupleOrGroupedExpression",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "exprs",
-        "type": {
-          "name": "ExpressionList",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructLiteral",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "fields",
-        "type": {
-          "name": "StructLiteralFields",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructLiteralFields",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "StructFieldInit",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "StructFieldInit",
-    "variants": [
-      {
-        "name": "StructFieldInitWithExpr",
-        "note": ""
-      },
-      {
-        "name": "StructFieldInitShorthand",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructFieldInitWithExpr",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ":",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructFieldInitShorthand",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ArrayLiteral",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "[",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "exprs",
-        "type": {
-          "name": "ExpressionList",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "]",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "IndexAccess",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "PrimaryExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "[",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "index",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "]",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "CastExpression",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "PrimaryExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "as",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_lit",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AwaitExpression",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "await",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "PrimaryExpr",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "BlockExpression",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "statements",
-        "type": {
-          "name": "Statement",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "last_expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "IfExpression",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "if",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "condition",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "body",
-        "type": {
-          "name": "BlockExpression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "else_ifs",
-        "type": {
-          "name": "ElseIfClause",
-          "modifier": "List"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "else_clause",
-        "type": {
-          "name": "ElseClause",
-          "modifier": "Option"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ElseIfClause",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "else",
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "if",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "condition",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "body",
-        "type": {
-          "name": "BlockExpression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ElseClause",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "else",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "body",
-        "type": {
-          "name": "BlockExpression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "WhileExpression",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "while",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "condition",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "body",
-        "type": {
-          "name": "BlockExpression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "Statement",
-    "variants": [
-      {
-        "name": "IfExpression",
-        "note": ""
-      },
-      {
-        "name": "WhileExpression",
-        "note": ""
-      },
-      {
-        "name": "ExpressionStatement",
-        "note": ""
-      },
-      {
-        "name": "VariableDeclaration",
-        "note": ""
-      },
-      {
-        "name": "ReturnStatement",
-        "note": ""
-      },
-      {
-        "name": "BreakStatement",
-        "note": ""
-      },
-      {
-        "name": "ContinueStatement",
-        "note": ""
-      },
-      {
-        "name": "AssignmentStatement",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ExpressionStatement",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "ignore_kw",
-        "type": {
-          "name": "IgnoreKeyword",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "VariableDeclaration",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "keyword",
-        "type": {
-          "name": "VariableDeclarationKeyword",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "pattern",
-        "type": {
-          "name": "Pattern",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_decl",
-        "type": {
-          "name": "VariableTypeDecl",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "assignment",
-        "type": {
-          "name": "VariableDeclarationAssignment",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "VariableDeclarationKeyword",
-    "variants": [
-      {
-        "name": "LetKeyword",
-        "note": ""
-      },
-      {
-        "name": "ConstKeyword",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "VariableTypeDecl",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": ":",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "type_lit",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "VariableDeclarationAssignment",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "op",
-        "type": {
-          "name": "AssignmentOperator",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AssignmentStatement",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "op",
-        "type": {
-          "name": "AssignmentOperator",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ReturnStatement",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "return",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "BreakStatement",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "break",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "expr",
-        "type": {
-          "name": "Expression",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ContinueStatement",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "continue",
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ";",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "Pattern",
-    "variants": [
-      {
-        "name": "PatternIdentifier",
-        "note": ""
-      },
-      {
-        "name": "PatternWildcard",
-        "note": ""
-      },
-      {
-        "name": "TupleStructPattern",
-        "note": ""
-      },
-      {
-        "name": "TuplePattern",
-        "note": ""
-      },
-      {
-        "name": "StructPattern",
-        "note": ""
-      },
-      {
-        "name": "PatternAccesser",
-        "note": ""
-      },
-      {
-        "name": "PatternLiteral",
-        "note": ""
-      },
-      {
-        "name": "RangePattern",
-        "note": ""
-      },
-      {
-        "name": "BindingPattern",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PatternIdentifier",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PatternWildcard",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "_",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TupleStructPattern",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "patterns",
-        "type": {
-          "name": "PatternList",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TuplePattern",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "(",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "patterns",
-        "type": {
-          "name": "PatternList",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ")",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructPattern",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "{",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "fields",
-        "type": {
-          "name": "StructPatternFields",
-          "modifier": "Option"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "}",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructPatternFields",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "StructPatternField",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "StructPatternField",
-    "variants": [
-      {
-        "name": "StructPatternFieldWithPattern",
-        "note": ""
-      },
-      {
-        "name": "StructPatternFieldShorthand",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructPatternFieldWithPattern",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": ":",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "pattern",
-        "type": {
-          "name": "Pattern",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "StructPatternFieldShorthand",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "RangePattern",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "start",
-        "type": {
-          "name": "LiteralNode",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "op",
-        "type": {
-          "name": "RangeOp",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "end",
-        "type": {
-          "name": "LiteralNode",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "RangeOp",
-    "variants": [
-      {
-        "name": "RangeExclusiveOp",
-        "note": ""
-      },
-      {
-        "name": "RangeInclusiveOp",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "RangeExclusiveOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "..",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "RangeInclusiveOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "..=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "BindingPattern",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Terminal",
-        "value": "@",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "pattern",
-        "type": {
-          "name": "Pattern",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PatternAccesser",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "accesser",
-        "type": {
-          "name": "Accesser",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PatternLiteral",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "literal",
-        "type": {
-          "name": "LiteralNode",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "IdentifierList",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "Identifier",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TypeLiteralList",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "TypeLiteral",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PatternList",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "Pattern",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ExpressionList",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "items",
-        "type": {
-          "name": "Expression",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "Params",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "exprs",
-        "type": {
-          "name": "ExpressionList",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "Accesser",
-    "members": [
-      {
-        "kind": "Field",
-        "name": "first",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "rest",
-        "type": {
-          "name": "AccesserRest",
-          "modifier": "List"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AccesserRest",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "::",
-        "note": ""
-      },
-      {
-        "kind": "Field",
-        "name": "name",
-        "type": {
-          "name": "Identifier",
-          "modifier": "None"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PubKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "pub",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ExternKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "extern",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AsyncKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "async",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PanicsKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "panics",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "FinalKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "final",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MutKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "mut",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "TryKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "try",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "IgnoreKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "ignore",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "LetKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "let",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ConstKeyword",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "const",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PlusOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "+",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MinusOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "-",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MulOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "*",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "DivOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "/",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "ModOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "%",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "EqAssignmentOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MinusAssignmentOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "-=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "PlusAssignmentOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "+=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "MulAssignmentOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "*=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "DivAssignmentOp",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "/=",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "BoolType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "Bool",
         "note": ""
       }
     ]
@@ -2951,44 +664,22 @@
   },
   {
     "kind": "Product",
+    "name": "BoolType",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "Bool",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
     "name": "CharType",
     "members": [
       {
         "kind": "Terminal",
         "value": "Char",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "UsizeType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "Usize",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "AnyType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "Any",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "NeverType",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "Never",
         "note": ""
       }
     ]
@@ -3006,41 +697,353 @@
   },
   {
     "kind": "Product",
-    "name": "Identifier",
+    "name": "UsizeType",
     "members": [
       {
         "kind": "Terminal",
-        "value": "#identifier",
+        "value": "Usize",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "NeverType",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "Never",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "AnyType",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "Any",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "BlockExpression",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "{",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "statements",
+        "type": {
+          "name": "Statement",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": "}",
         "note": ""
       }
     ]
   },
   {
     "kind": "Branch",
-    "name": "AssignmentOperator",
+    "name": "Statement",
     "variants": [
       {
-        "name": "EqAssignmentOp",
+        "name": "LetStatement",
         "note": ""
       },
       {
-        "name": "MinusAssignmentOp",
+        "name": "ReturnStatement",
         "note": ""
       },
       {
-        "name": "PlusAssignmentOp",
+        "name": "ExpressionStatement",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "LetStatement",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "let",
         "note": ""
       },
       {
-        "name": "MulAssignmentOp",
+        "kind": "Field",
+        "name": "mutable",
+        "type": {
+          "name": "MutKeyword",
+          "modifier": "Option"
+        },
         "note": ""
       },
       {
-        "name": "DivAssignmentOp",
+        "kind": "Field",
+        "name": "name",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
         "note": ""
       },
       {
-        "name": "ModAssignmentOp",
+        "kind": "Field",
+        "name": "type_annotation",
+        "type": {
+          "name": "TypeAnnotation",
+          "modifier": "Option"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "initializer",
+        "type": {
+          "name": "Initializer",
+          "modifier": "Option"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "TypeAnnotation",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": ":",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "TypeLiteral",
+          "modifier": "None"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Initializer",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "=",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ReturnStatement",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "return",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "Option"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "ExpressionStatement",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ";",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Branch",
+    "name": "Expression",
+    "variants": [
+      {
+        "name": "CallExpression",
+        "note": ""
+      },
+      {
+        "name": "GroupedExpression",
+        "note": ""
+      },
+      {
+        "name": "StringLiteral",
+        "note": ""
+      },
+      {
+        "name": "IntLiteral",
+        "note": ""
+      },
+      {
+        "name": "DoubleIntLiteral",
+        "note": ""
+      },
+      {
+        "name": "FloatLiteral",
+        "note": ""
+      },
+      {
+        "name": "DoubleFloatLiteral",
+        "note": ""
+      },
+      {
+        "name": "CharLiteral",
+        "note": ""
+      },
+      {
+        "name": "BoolLiteral",
+        "note": ""
+      },
+      {
+        "name": "Identifier",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "CallExpression",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "callee",
+        "type": {
+          "name": "Identifier",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": "(",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "arguments",
+        "type": {
+          "name": "CallArgument",
+          "modifier": "List"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ")",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "CallArgument",
+    "members": [
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "comma",
+        "type": {
+          "name": "Comma",
+          "modifier": "Option"
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "GroupedExpression",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "(",
+        "note": ""
+      },
+      {
+        "kind": "Field",
+        "name": "value",
+        "type": {
+          "name": "Expression",
+          "modifier": "None"
+        },
+        "note": ""
+      },
+      {
+        "kind": "Terminal",
+        "value": ")",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "Identifier",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "#identifier",
         "note": ""
       }
     ]
@@ -3058,55 +1061,11 @@
   },
   {
     "kind": "Product",
-    "name": "CharLiteral",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "#char",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Branch",
-    "name": "NumLiteral",
-    "variants": [
-      {
-        "name": "IntLiteral",
-        "note": ""
-      },
-      {
-        "name": "FloatLiteral",
-        "note": ""
-      },
-      {
-        "name": "DoubleIntLiteral",
-        "note": ""
-      },
-      {
-        "name": "DoubleFloatLiteral",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
     "name": "IntLiteral",
     "members": [
       {
         "kind": "Terminal",
         "value": "#int",
-        "note": ""
-      }
-    ]
-  },
-  {
-    "kind": "Product",
-    "name": "FloatLiteral",
-    "members": [
-      {
-        "kind": "Terminal",
-        "value": "#float",
         "note": ""
       }
     ]
@@ -3124,11 +1083,33 @@
   },
   {
     "kind": "Product",
+    "name": "FloatLiteral",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "#float",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
     "name": "DoubleFloatLiteral",
     "members": [
       {
         "kind": "Terminal",
         "value": "#double_float",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "CharLiteral",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "#char",
         "note": ""
       }
     ]
@@ -3151,6 +1132,28 @@
       {
         "kind": "Terminal",
         "value": "#doc_comment",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "RawDeclaration",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "#fallback",
+        "note": ""
+      }
+    ]
+  },
+  {
+    "kind": "Product",
+    "name": "RawSyntaxToken",
+    "members": [
+      {
+        "kind": "Terminal",
+        "value": "#raw_token",
         "note": ""
       }
     ]

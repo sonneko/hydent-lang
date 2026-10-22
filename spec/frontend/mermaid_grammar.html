@@ -30,596 +30,126 @@
     }
     Module --> TopLevelStatement
     class _TopLevelStatement
-    TopLevelStatement <|-- ItemWithModifiers
     TopLevelStatement <|-- ImportDeclaration
-    TopLevelStatement <|-- Annotation
-    class ItemWithModifiers {
-        +DocComment[] docs
-        +PubKeyword? is_public
-        +ItemDeclaration decl
-    }
-    ItemWithModifiers --> DocComment
-    ItemWithModifiers --> PubKeyword
-    ItemWithModifiers --> ItemDeclaration
-    class _ItemDeclaration
-    ItemDeclaration <|-- StaticVariableDeclaration
-    ItemDeclaration <|-- ClassDeclaration
-    ItemDeclaration <|-- EnumDeclaration
-    ItemDeclaration <|-- StructDeclaration
-    ItemDeclaration <|-- FunctionDeclaration
-    ItemDeclaration <|-- ModuleDeclaration
-    ItemDeclaration <|-- TypeAliasDeclaration
+    TopLevelStatement <|-- FunctionDeclaration
+    TopLevelStatement <|-- ExternFunction
+    TopLevelStatement <|-- RawDeclaration
     class ImportDeclaration {
-        +ImportTargets targets
-        +StringLiteral source
+        +DocComment[] docs
+        +ImportSpecific targets
+        +StringLiteral path
     }
-    ImportDeclaration --> ImportTargets
+    ImportDeclaration --> DocComment
+    ImportDeclaration --> ImportSpecific
     ImportDeclaration --> StringLiteral
-    class _ImportTargets
-    ImportTargets <|-- ImportSpecific
-    ImportTargets <|-- ImportAllAs
     class ImportSpecific {
-        +IdentifierList? targets
+        +ImportItem[] items
     }
-    ImportSpecific --> IdentifierList
-    class ImportAllAs {
-        +Identifier alias
-    }
-    ImportAllAs --> Identifier
-    class StaticVariableDeclaration {
+    ImportSpecific --> ImportItem
+    class ImportItem {
         +Identifier name
-        +Expression value
+        +Comma? comma
     }
-    StaticVariableDeclaration --> Identifier
-    StaticVariableDeclaration --> Expression
-    class ClassDeclaration {
-        +Identifier name
-        +ClassMember[] members
-    }
-    ClassDeclaration --> Identifier
-    ClassDeclaration --> ClassMember
-    class _ClassMember
-    ClassMember <|-- ClassFunction
-    ClassMember <|-- FieldDeclaration
-    ClassMember <|-- ClassTypeAlias
-    class ClassFunction {
-        +DocComment[] docs
-        +PubKeyword? is_public
-        +FunctionDeclaration decl
-    }
-    ClassFunction --> DocComment
-    ClassFunction --> PubKeyword
-    ClassFunction --> FunctionDeclaration
-    class ClassTypeAlias {
-        +DocComment[] docs
-        +PubKeyword? is_public
-        +TypeAliasDeclaration decl
-    }
-    ClassTypeAlias --> DocComment
-    ClassTypeAlias --> PubKeyword
-    ClassTypeAlias --> TypeAliasDeclaration
-    class FieldDeclaration {
-        +DocComment[] docs
-        +PubKeyword? is_public
-        +FieldModifier modifier
-        +Identifier name
-        +TypeLiteral type_lit
-    }
-    FieldDeclaration --> DocComment
-    FieldDeclaration --> PubKeyword
-    FieldDeclaration --> FieldModifier
-    FieldDeclaration --> Identifier
-    FieldDeclaration --> TypeLiteral
-    class _FieldModifier
-    FieldModifier <|-- FinalKeyword
-    FieldModifier <|-- MutKeyword
-    class EnumDeclaration {
-        +Identifier name
-        +EnumMember[] members
-    }
-    EnumDeclaration --> Identifier
-    EnumDeclaration --> EnumMember
-    class _EnumMember
-    EnumMember <|-- EnumVariant
-    EnumMember <|-- EnumFunction
-    class EnumFunction {
-        +DocComment[] docs
-        +PubKeyword? is_public
-        +FunctionDeclaration decl
-    }
-    EnumFunction --> DocComment
-    EnumFunction --> PubKeyword
-    EnumFunction --> FunctionDeclaration
-    class EnumVariant {
-        +Identifier name
-        +EnumVariantTypes? types
-    }
-    EnumVariant --> Identifier
-    EnumVariant --> EnumVariantTypes
-    class EnumVariantTypes {
-        +TypeLiteralList types
-    }
-    EnumVariantTypes --> TypeLiteralList
-    class StructDeclaration {
-        +Identifier name
-        +StructBody body
-    }
-    StructDeclaration --> Identifier
-    StructDeclaration --> StructBody
-    class _StructBody
-    StructBody <|-- StructBlockBody
-    StructBody <|-- StructTupleBody
-    StructBody <|-- StructEmptyBody
-    class StructBlockBody {
-        +FieldDeclaration[] fields
-    }
-    StructBlockBody --> FieldDeclaration
-    class StructTupleBody {
-        +TypeLiteralList types
-    }
-    StructTupleBody --> TypeLiteralList
-    class StructEmptyBody {
+    ImportItem --> Identifier
+    ImportItem --> Comma
+    class Comma {
     }
     class FunctionDeclaration {
-        +ExternKeyword? extern_kw
-        +AsyncKeyword? async_kw
+        +DocComment[] docs
+        +FunctionModifier[] modifiers
         +Identifier name
-        +ParamsWithTypes? params
+        +ParamWithType[] params
         +ReturnType? return_type
-        +PanicsKeyword? panics_kw
-        +BlockExpression? body
+        +BlockExpression body
     }
-    FunctionDeclaration --> ExternKeyword
-    FunctionDeclaration --> AsyncKeyword
+    FunctionDeclaration --> DocComment
+    FunctionDeclaration --> FunctionModifier
     FunctionDeclaration --> Identifier
-    FunctionDeclaration --> ParamsWithTypes
+    FunctionDeclaration --> ParamWithType
     FunctionDeclaration --> ReturnType
-    FunctionDeclaration --> PanicsKeyword
     FunctionDeclaration --> BlockExpression
-    class ParamsWithTypes {
-        +ParamWithType[] items
+    class _FunctionModifier
+    FunctionModifier <|-- PubModifier
+    FunctionModifier <|-- AsyncModifier
+    FunctionModifier <|-- TryModifier
+    class PubModifier {
     }
-    ParamsWithTypes --> ParamWithType
-    class _ParamWithType
-    ParamWithType <|-- RegularParam
-    ParamWithType <|-- ThisParam
-    class RegularParam {
-        +MutKeyword? mut_kw
+    class AsyncModifier {
+    }
+    class TryModifier {
+    }
+    class ExternFunction {
+        +DocComment[] docs
+        +FunctionModifier[] modifiers
         +Identifier name
-        +TypeLiteral type_lit
-        +DefaultParamValue? default_value
+        +ParamWithType[] params
+        +ReturnType? return_type
+        +ExternFunctionEnding ending
     }
-    RegularParam --> MutKeyword
-    RegularParam --> Identifier
-    RegularParam --> TypeLiteral
-    RegularParam --> DefaultParamValue
-    class DefaultParamValue {
-        +Expression expr
+    ExternFunction --> DocComment
+    ExternFunction --> FunctionModifier
+    ExternFunction --> Identifier
+    ExternFunction --> ParamWithType
+    ExternFunction --> ReturnType
+    ExternFunction --> ExternFunctionEnding
+    class _ExternFunctionEnding
+    ExternFunctionEnding <|-- ExternFunctionSemicolon
+    ExternFunctionEnding <|-- ExternFunctionBody
+    class ExternFunctionSemicolon {
     }
-    DefaultParamValue --> Expression
-    class ThisParam {
+    class ExternFunctionBody {
+        +BlockExpression body
+        +ExternFunctionSemicolon? semicolon
     }
+    ExternFunctionBody --> BlockExpression
+    ExternFunctionBody --> ExternFunctionSemicolon
     class ReturnType {
-        +TypeLiteral type_lit
+        +TypeLiteral return_type
     }
     ReturnType --> TypeLiteral
-    class ModuleDeclaration {
+    class ParamWithType {
+        +MutKeyword? mutable
         +Identifier name
-        +TopLevelStatement[] declarations
+        +TypeLiteral parameter_type
+        +DefaultParamValue? default_value
+        +Comma? comma
     }
-    ModuleDeclaration --> Identifier
-    ModuleDeclaration --> TopLevelStatement
-    class Annotation {
-        +Identifier name
-        +LiteralNode[] args
+    ParamWithType --> MutKeyword
+    ParamWithType --> Identifier
+    ParamWithType --> TypeLiteral
+    ParamWithType --> DefaultParamValue
+    ParamWithType --> Comma
+    class MutKeyword {
     }
-    Annotation --> Identifier
-    Annotation --> LiteralNode
-    class TypeAliasDeclaration {
-        +Identifier name
-        +TypeLiteral type_lit
+    class DefaultParamValue {
+        +Expression value
     }
-    TypeAliasDeclaration --> Identifier
-    TypeAliasDeclaration --> TypeLiteral
+    DefaultParamValue --> Expression
     class _TypeLiteral
-    TypeLiteral <|-- TypeAccesser
-    TypeLiteral <|-- ImplType
-    TypeLiteral <|-- Typeof
-    TypeLiteral <|-- BoolType
+    TypeLiteral <|-- GenericType
+    TypeLiteral <|-- Identifier
     TypeLiteral <|-- IntType
     TypeLiteral <|-- DoubleIntType
     TypeLiteral <|-- FloatType
     TypeLiteral <|-- DoubleFloatType
+    TypeLiteral <|-- BoolType
     TypeLiteral <|-- CharType
-    TypeLiteral <|-- UsizeType
-    TypeLiteral <|-- AnyType
-    TypeLiteral <|-- TupleType
-    TypeLiteral <|-- NeverType
     TypeLiteral <|-- VoidType
-    class TypeAccesser {
-        +Accesser accesser
-    }
-    TypeAccesser --> Accesser
-    class ImplType {
-        +TypeLiteral type_lit
-    }
-    ImplType --> TypeLiteral
-    class Typeof {
-        +Expression expr
-    }
-    Typeof --> Expression
-    class TupleType {
-        +TypeLiteralList? types
-    }
-    TupleType --> TypeLiteralList
-    class Expression {
-        +AdditiveExpr expr
-    }
-    Expression --> AdditiveExpr
-    class AdditiveExpr {
-        +MultiplicativeExpr left
-        +AdditiveRest[] rest
-    }
-    AdditiveExpr --> MultiplicativeExpr
-    AdditiveExpr --> AdditiveRest
-    class AdditiveRest {
-        +AdditiveOp op
-        +MultiplicativeExpr right
-    }
-    AdditiveRest --> AdditiveOp
-    AdditiveRest --> MultiplicativeExpr
-    class _AdditiveOp
-    AdditiveOp <|-- PlusOp
-    AdditiveOp <|-- MinusOp
-    class MultiplicativeExpr {
-        +PrimaryExpr left
-        +MultiplicativeRest[] rest
-    }
-    MultiplicativeExpr --> PrimaryExpr
-    MultiplicativeExpr --> MultiplicativeRest
-    class MultiplicativeRest {
-        +MultiplicativeOp op
-        +PrimaryExpr right
-    }
-    MultiplicativeRest --> MultiplicativeOp
-    MultiplicativeRest --> PrimaryExpr
-    class _MultiplicativeOp
-    MultiplicativeOp <|-- MulOp
-    MultiplicativeOp <|-- DivOp
-    MultiplicativeOp <|-- ModOp
-    class _PrimaryExpr
-    PrimaryExpr <|-- BlockExpression
-    PrimaryExpr <|-- IfExpression
-    PrimaryExpr <|-- WhileExpression
-    PrimaryExpr <|-- Accesser
-    PrimaryExpr <|-- LiteralExpr
-    PrimaryExpr <|-- FunctionCall
-    PrimaryExpr <|-- MethodCall
-    PrimaryExpr <|-- FieldAccess
-    PrimaryExpr <|-- TupleOrGroupedExpression
-    PrimaryExpr <|-- StructLiteral
-    PrimaryExpr <|-- ArrayLiteral
-    PrimaryExpr <|-- IndexAccess
-    PrimaryExpr <|-- CastExpression
-    PrimaryExpr <|-- AwaitExpression
-    class LiteralExpr {
-        +LiteralNode literal
-    }
-    LiteralExpr --> LiteralNode
-    class _LiteralNode
-    LiteralNode <|-- StringLiteral
-    LiteralNode <|-- CharLiteral
-    LiteralNode <|-- NumLiteral
-    LiteralNode <|-- BoolLiteral
-    class FunctionCall {
-        +TryKeyword? try_kw
-        +Accesser accesser
-        +Params? params
-    }
-    FunctionCall --> TryKeyword
-    FunctionCall --> Accesser
-    FunctionCall --> Params
-    class MethodCall {
-        +TryKeyword? try_kw
-        +Accesser accesser
+    TypeLiteral <|-- UsizeType
+    TypeLiteral <|-- NeverType
+    TypeLiteral <|-- AnyType
+    class GenericType {
         +Identifier name
-        +Params? params
-    }
-    MethodCall --> TryKeyword
-    MethodCall --> Accesser
-    MethodCall --> Identifier
-    MethodCall --> Params
-    class FieldAccess {
-        +Accesser accesser
-        +Identifier name
-    }
-    FieldAccess --> Accesser
-    FieldAccess --> Identifier
-    class TupleOrGroupedExpression {
-        +ExpressionList? exprs
-    }
-    TupleOrGroupedExpression --> ExpressionList
-    class StructLiteral {
-        +Accesser accesser
-        +StructLiteralFields? fields
-    }
-    StructLiteral --> Accesser
-    StructLiteral --> StructLiteralFields
-    class StructLiteralFields {
-        +StructFieldInit[] items
-    }
-    StructLiteralFields --> StructFieldInit
-    class _StructFieldInit
-    StructFieldInit <|-- StructFieldInitWithExpr
-    StructFieldInit <|-- StructFieldInitShorthand
-    class StructFieldInitWithExpr {
-        +Identifier name
-        +Expression expr
-    }
-    StructFieldInitWithExpr --> Identifier
-    StructFieldInitWithExpr --> Expression
-    class StructFieldInitShorthand {
-        +Identifier name
-    }
-    StructFieldInitShorthand --> Identifier
-    class ArrayLiteral {
-        +ExpressionList? exprs
-    }
-    ArrayLiteral --> ExpressionList
-    class IndexAccess {
-        +PrimaryExpr expr
-        +Expression index
-    }
-    IndexAccess --> PrimaryExpr
-    IndexAccess --> Expression
-    class CastExpression {
-        +PrimaryExpr expr
-        +TypeLiteral type_lit
-    }
-    CastExpression --> PrimaryExpr
-    CastExpression --> TypeLiteral
-    class AwaitExpression {
-        +PrimaryExpr expr
-    }
-    AwaitExpression --> PrimaryExpr
-    class BlockExpression {
-        +Statement[] statements
-        +Expression? last_expr
-    }
-    BlockExpression --> Statement
-    BlockExpression --> Expression
-    class IfExpression {
-        +Expression condition
-        +BlockExpression body
-        +ElseIfClause[] else_ifs
-        +ElseClause? else_clause
-    }
-    IfExpression --> Expression
-    IfExpression --> BlockExpression
-    IfExpression --> ElseIfClause
-    IfExpression --> ElseClause
-    class ElseIfClause {
-        +Expression condition
-        +BlockExpression body
-    }
-    ElseIfClause --> Expression
-    ElseIfClause --> BlockExpression
-    class ElseClause {
-        +BlockExpression body
-    }
-    ElseClause --> BlockExpression
-    class WhileExpression {
-        +Expression condition
-        +BlockExpression body
-    }
-    WhileExpression --> Expression
-    WhileExpression --> BlockExpression
-    class _Statement
-    Statement <|-- IfExpression
-    Statement <|-- WhileExpression
-    Statement <|-- ExpressionStatement
-    Statement <|-- VariableDeclaration
-    Statement <|-- ReturnStatement
-    Statement <|-- BreakStatement
-    Statement <|-- ContinueStatement
-    Statement <|-- AssignmentStatement
-    class ExpressionStatement {
-        +IgnoreKeyword? ignore_kw
-        +Expression expr
-    }
-    ExpressionStatement --> IgnoreKeyword
-    ExpressionStatement --> Expression
-    class VariableDeclaration {
-        +VariableDeclarationKeyword keyword
-        +Pattern pattern
-        +VariableTypeDecl? type_decl
-        +VariableDeclarationAssignment? assignment
-    }
-    VariableDeclaration --> VariableDeclarationKeyword
-    VariableDeclaration --> Pattern
-    VariableDeclaration --> VariableTypeDecl
-    VariableDeclaration --> VariableDeclarationAssignment
-    class _VariableDeclarationKeyword
-    VariableDeclarationKeyword <|-- LetKeyword
-    VariableDeclarationKeyword <|-- ConstKeyword
-    class VariableTypeDecl {
-        +TypeLiteral type_lit
-    }
-    VariableTypeDecl --> TypeLiteral
-    class VariableDeclarationAssignment {
-        +AssignmentOperator op
-        +Expression expr
-    }
-    VariableDeclarationAssignment --> AssignmentOperator
-    VariableDeclarationAssignment --> Expression
-    class AssignmentStatement {
-        +Accesser accesser
-        +AssignmentOperator op
-        +Expression expr
-    }
-    AssignmentStatement --> Accesser
-    AssignmentStatement --> AssignmentOperator
-    AssignmentStatement --> Expression
-    class ReturnStatement {
-        +Expression expr
-    }
-    ReturnStatement --> Expression
-    class BreakStatement {
-        +Expression expr
-    }
-    BreakStatement --> Expression
-    class ContinueStatement {
-    }
-    class _Pattern
-    Pattern <|-- PatternIdentifier
-    Pattern <|-- PatternWildcard
-    Pattern <|-- TupleStructPattern
-    Pattern <|-- TuplePattern
-    Pattern <|-- StructPattern
-    Pattern <|-- PatternAccesser
-    Pattern <|-- PatternLiteral
-    Pattern <|-- RangePattern
-    Pattern <|-- BindingPattern
-    class PatternIdentifier {
-        +Identifier name
-    }
-    PatternIdentifier --> Identifier
-    class PatternWildcard {
-    }
-    class TupleStructPattern {
-        +Accesser accesser
-        +PatternList? patterns
-    }
-    TupleStructPattern --> Accesser
-    TupleStructPattern --> PatternList
-    class TuplePattern {
-        +PatternList? patterns
-    }
-    TuplePattern --> PatternList
-    class StructPattern {
-        +Accesser accesser
-        +StructPatternFields? fields
-    }
-    StructPattern --> Accesser
-    StructPattern --> StructPatternFields
-    class StructPatternFields {
-        +StructPatternField[] items
-    }
-    StructPatternFields --> StructPatternField
-    class _StructPatternField
-    StructPatternField <|-- StructPatternFieldWithPattern
-    StructPatternField <|-- StructPatternFieldShorthand
-    class StructPatternFieldWithPattern {
-        +Identifier name
-        +Pattern pattern
-    }
-    StructPatternFieldWithPattern --> Identifier
-    StructPatternFieldWithPattern --> Pattern
-    class StructPatternFieldShorthand {
-        +Identifier name
-    }
-    StructPatternFieldShorthand --> Identifier
-    class RangePattern {
-        +LiteralNode start
-        +RangeOp op
-        +LiteralNode end
-    }
-    RangePattern --> LiteralNode
-    RangePattern --> RangeOp
-    RangePattern --> LiteralNode
-    class _RangeOp
-    RangeOp <|-- RangeExclusiveOp
-    RangeOp <|-- RangeInclusiveOp
-    class RangeExclusiveOp {
-    }
-    class RangeInclusiveOp {
-    }
-    class BindingPattern {
-        +Identifier name
-        +Pattern pattern
-    }
-    BindingPattern --> Identifier
-    BindingPattern --> Pattern
-    class PatternAccesser {
-        +Accesser accesser
-    }
-    PatternAccesser --> Accesser
-    class PatternLiteral {
-        +LiteralNode literal
-    }
-    PatternLiteral --> LiteralNode
-    class IdentifierList {
-        +Identifier[] items
-    }
-    IdentifierList --> Identifier
-    class TypeLiteralList {
-        +TypeLiteral[] items
-    }
-    TypeLiteralList --> TypeLiteral
-    class PatternList {
-        +Pattern[] items
-    }
-    PatternList --> Pattern
-    class ExpressionList {
-        +Expression[] items
-    }
-    ExpressionList --> Expression
-    class Params {
-        +ExpressionList exprs
-    }
-    Params --> ExpressionList
-    class Accesser {
-        +Identifier first
-        +AccesserRest[] rest
-    }
-    Accesser --> Identifier
-    Accesser --> AccesserRest
-    class AccesserRest {
-        +Identifier name
-    }
-    AccesserRest --> Identifier
-    class PubKeyword {
-    }
-    class ExternKeyword {
-    }
-    class AsyncKeyword {
-    }
-    class PanicsKeyword {
-    }
-    class FinalKeyword {
-    }
-    class MutKeyword {
-    }
-    class TryKeyword {
-    }
-    class IgnoreKeyword {
-    }
-    class LetKeyword {
-    }
-    class ConstKeyword {
-    }
-    class PlusOp {
-    }
-    class MinusOp {
-    }
-    class MulOp {
-    }
-    class DivOp {
-    }
-    class ModOp {
-    }
-    class EqAssignmentOp {
-    }
-    class MinusAssignmentOp {
-    }
-    class PlusAssignmentOp {
-    }
-    class MulAssignmentOp {
-    }
-    class DivAssignmentOp {
-    }
-    class BoolType {
-    }
+        +TypeArgument[] arguments
+    }
+    GenericType --> Identifier
+    GenericType --> TypeArgument
+    class TypeArgument {
+        +TypeLiteral value
+        +Comma? comma
+    }
+    TypeArgument --> TypeLiteral
+    TypeArgument --> Comma
     class IntType {
     }
     class DoubleIntType {
@@ -628,45 +158,100 @@
     }
     class DoubleFloatType {
     }
+    class BoolType {
+    }
     class CharType {
-    }
-    class UsizeType {
-    }
-    class AnyType {
-    }
-    class NeverType {
     }
     class VoidType {
     }
+    class UsizeType {
+    }
+    class NeverType {
+    }
+    class AnyType {
+    }
+    class BlockExpression {
+        +Statement[] statements
+    }
+    BlockExpression --> Statement
+    class _Statement
+    Statement <|-- LetStatement
+    Statement <|-- ReturnStatement
+    Statement <|-- ExpressionStatement
+    class LetStatement {
+        +MutKeyword? mutable
+        +Identifier name
+        +TypeAnnotation? type_annotation
+        +Initializer? initializer
+    }
+    LetStatement --> MutKeyword
+    LetStatement --> Identifier
+    LetStatement --> TypeAnnotation
+    LetStatement --> Initializer
+    class TypeAnnotation {
+        +TypeLiteral value
+    }
+    TypeAnnotation --> TypeLiteral
+    class Initializer {
+        +Expression value
+    }
+    Initializer --> Expression
+    class ReturnStatement {
+        +Expression? value
+    }
+    ReturnStatement --> Expression
+    class ExpressionStatement {
+        +Expression value
+    }
+    ExpressionStatement --> Expression
+    class _Expression
+    Expression <|-- CallExpression
+    Expression <|-- GroupedExpression
+    Expression <|-- StringLiteral
+    Expression <|-- IntLiteral
+    Expression <|-- DoubleIntLiteral
+    Expression <|-- FloatLiteral
+    Expression <|-- DoubleFloatLiteral
+    Expression <|-- CharLiteral
+    Expression <|-- BoolLiteral
+    Expression <|-- Identifier
+    class CallExpression {
+        +Identifier callee
+        +CallArgument[] arguments
+    }
+    CallExpression --> Identifier
+    CallExpression --> CallArgument
+    class CallArgument {
+        +Expression value
+        +Comma? comma
+    }
+    CallArgument --> Expression
+    CallArgument --> Comma
+    class GroupedExpression {
+        +Expression value
+    }
+    GroupedExpression --> Expression
     class Identifier {
     }
-    class _AssignmentOperator
-    AssignmentOperator <|-- EqAssignmentOp
-    AssignmentOperator <|-- MinusAssignmentOp
-    AssignmentOperator <|-- PlusAssignmentOp
-    AssignmentOperator <|-- MulAssignmentOp
-    AssignmentOperator <|-- DivAssignmentOp
-    AssignmentOperator <|-- ModAssignmentOp
     class StringLiteral {
     }
-    class CharLiteral {
-    }
-    class _NumLiteral
-    NumLiteral <|-- IntLiteral
-    NumLiteral <|-- FloatLiteral
-    NumLiteral <|-- DoubleIntLiteral
-    NumLiteral <|-- DoubleFloatLiteral
     class IntLiteral {
-    }
-    class FloatLiteral {
     }
     class DoubleIntLiteral {
     }
+    class FloatLiteral {
+    }
     class DoubleFloatLiteral {
+    }
+    class CharLiteral {
     }
     class BoolLiteral {
     }
     class DocComment {
+    }
+    class RawDeclaration {
+    }
+    class RawSyntaxToken {
     }
         </pre>
     </div>
