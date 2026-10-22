@@ -100,7 +100,7 @@ function generateMatchArms(node: TreeNode, indent: number): string {
             if (child.token) {
                 res += `${space}            Ok(${child.token})\n`;
             } else {
-                res += `${space}            Err(TokenizeErr::UnknownToken(tokenizer.current_pos))\n`;
+                res += `${space}            Err(TokenizeErrKind::UnknownToken)\n`;
             }
             res += `${space}        }\n`;
             res += `${space}    }\n`;

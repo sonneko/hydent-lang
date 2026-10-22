@@ -114,8 +114,12 @@ export class Analyzer {
         allRules.forEach(name => {
             const firstSets = this.firstSets.get(name)!;
             const followSets = this.followSets.get(name)!;
-            // TODO
-            const intersection = new Set([...firstSets].filter(v => followSets.has(v)));
+            const firstTerminals = new Set(
+                [...firstSets]
+                    .map(sequence => parseSeqKey(sequence)[0])
+                    .filter((token): token is RustTokenTypeName => token !== undefined)
+            );
+            const intersection = new Set([...firstTerminals].filter(token => followSets.has(token)));
             if (intersection.size !== 0) {
                 this.outputs.push(`    👀 WARNING: Tokens in both First and Follow sets: ${[...intersection].join(", ")} in Rule ${name}`);
                 funcs
@@ -205,19 +209,30 @@ export class Analyzer {
                         let memberFirsts: TokenSeq[] = [];
 
                         if (m.kind === "Terminal") {
-                            const t = this.tokenMap.get(m.value);
-                            memberFirsts = [[t]];
+                            // These pseudo terminals declare a manual parser hook,
+                            // not a token that participates in FIRST/FOLLOW sets.
+                            if (m.value === "#fallback" || m.value === "#raw_token") {
+                                memberFirsts = [];
+                            } else {
+                                const t = this.tokenMap.get(m.value);
+                                memberFirsts = [[t]];
+                            }
                         } else {
                             const refName = m.type.name;
                             const refModifier = m.type.modifier;
 
                             const subFirstStrs = this.firstSets.get(refName);
-                            if (subFirstStrs) {
-                                subFirstStrs.forEach(s => memberFirsts.push(parseSeqKey(s)));
-                            }
+                            const subFirsts = subFirstStrs
+                                ? [...subFirstStrs].map(parseSeqKey)
+                                : [];
 
-                            if (refModifier === "List" || refModifier === "Option" || this.nullable.has(refName)) {
-                                memberFirsts.push([]);
+                            if (refModifier === "List") {
+                                memberFirsts = this.repeatFirstSequences(subFirsts);
+                            } else {
+                                memberFirsts = subFirsts;
+                                if (refModifier === "Option" || this.nullable.has(refName)) {
+                                    memberFirsts.push([]);
+                                }
                             }
                         }
 
@@ -247,6 +262,28 @@ export class Analyzer {
                 }
             }
         }
+    }
+
+    private repeatFirstSequences(firsts: TokenSeq[]): TokenSeq[] {
+        const sequences = new Map<string, TokenSeq>([[seqKey([]), []]]);
+        const queue: TokenSeq[] = [[]];
+
+        while (queue.length > 0) {
+            const base = queue.shift()!;
+            if (base.length >= 2) continue;
+
+            for (const suffix of firsts) {
+                if (suffix.length === 0) continue;
+                const sequence = concatSeq(base, suffix);
+                const key = seqKey(sequence);
+                if (sequences.has(key)) continue;
+
+                sequences.set(key, sequence);
+                if (sequence.length < 2) queue.push(sequence);
+            }
+        }
+
+        return [...sequences.values()];
     }
 
     private computeFollow() {
@@ -454,6 +491,14 @@ export class Analyzer {
         return funcs;
     }
 
+    private isFallbackRule(name: string): boolean {
+        const rule = this.ruleMap.get(name);
+        return rule?.kind === "Product"
+            && rule.members.length === 1
+            && rule.members[0].kind === "Terminal"
+            && rule.members[0].value === "#fallback";
+    }
+
     private analyzeBranchRule(rule: BranchRule): BranchParserFunction {
         const mapPeek0: Record<string, string[]> = {};
         const mapPeek1: Record<string, Record<string, string[]>> = {};
@@ -490,6 +535,7 @@ export class Analyzer {
         const branchesFallbackInPeek1: BranchParserFunction["branchesFallbackInPeek1"] = [];
         const branchesNeedBacktrack: BranchParserFunction["branchesNeedBacktrack"] = [];
         const expectedTerminals: RustTokenTypeName[] = [];
+        const unmatchedFallback = rule.variants.find(variant => this.isFallbackRule(variant.name));
 
         Object.keys(mapPeek0).sort().forEach(t0 => {
             expectedTerminals.push(tokenName(t0));
@@ -570,6 +616,9 @@ export class Analyzer {
             branchesJudgebleInPeek0,
             branchesJudgebleInPeek1,
             branchesFallbackInPeek1,
+            unmatchedFallback: unmatchedFallback
+                ? { astTypeName: astName(unmatchedFallback.name), isBoxed: false }
+                : null,
             branchesNeedBacktrack
         };
     }

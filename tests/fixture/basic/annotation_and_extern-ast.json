@@ -1,24 +1,420 @@
 {
-    "type": "Module",
-    "TopLevelStatement": [
-        {
-            "kind": "Annotation",
-            "value": {
-                "type": "Annotation",
-                "Identifier": {
-                    "type": "Identifier",
-                    "value": "Link"
-                },
-                "LiteralNode": [
-                    {
-                        "kind": "StringLiteral",
-                        "value": {
-                            "type": "StringLiteral",
-                            "value": "math_lib"
-                        }
-                    }
-                ]
-            }
-        }
-    ]
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Annotation",
+        "source": "@Link \"math_lib\";",
+        "syntax": [
+          {
+            "type": "Operator",
+            "value": "@",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Link",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "\"math_lib\"",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Module",
+        "source": "module NativeMath {\n    pub extern fn sin(v: DoubleFloat) : DoubleFloat {}\n    pub extern fn cos(v: DoubleFloat) : DoubleFloat {}\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "module",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "NativeMath",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "extern",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "sin",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleFloat",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleFloat",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "extern",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "cos",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleFloat",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleFloat",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Annotation",
+        "source": "@EntryPoint;",
+        "syntax": [
+          {
+            "type": "Operator",
+            "value": "@",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "EntryPoint",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn start() {\n    let val: DoubleFloat = 0.0;\n    let s = NativeMath::sin(val);\n    let c = NativeMath::cos(val);\n    \n    print(\"Computed\");\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "start",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleFloat",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "0.0",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "s",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "NativeMath",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "sin",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "c",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "NativeMath",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "cos",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"Computed\"",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
 }

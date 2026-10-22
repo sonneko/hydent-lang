@@ -1,0 +1,850 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Struct",
+        "source": "struct Complex(final Float, final Float);",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Module",
+        "source": "module ComplexOps {\n    pub fn add(a: Complex, b: Complex) : Complex {\n        let (r1, i1) = a;\n        let (r2, i2) = b;\n        return Complex(r1 + r2, i1 + i2);\n    }\n\n    pub fn scale(c: Complex, factor: Float) : Complex {\n        let Complex(r, i) = c;\n        return Complex(r * factor, i * factor);\n    }\n\n    static ZERO = Complex(0.0, 0.0);\n    static ONE = Complex(1.0, 0.0);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "module",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "ComplexOps",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "add",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r1",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i1",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r1",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "r2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i1",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "scale",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "c",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "factor",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "c",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "r",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "*",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "factor",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "i",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "*",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "factor",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "static",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ZERO",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "0.0",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0.0",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "static",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ONE",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "1.0",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0.0",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let c1 = Complex(1.2, 3.4);\n    let c2 = ComplexOps::ONE;\n    \n    let res = ComplexOps::add(c1, c2);\n    print(res.get(0));\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "c1",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Complex",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "1.2",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "3.4",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "c2",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ComplexOps",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ONE",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "res",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ComplexOps",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "add",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "c1",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "c2",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "res",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "get",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

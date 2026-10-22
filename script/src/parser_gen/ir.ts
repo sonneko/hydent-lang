@@ -43,6 +43,10 @@ export type BranchParserFunction = {
         firstTerminal: RustTokenTypeName,
         isBoxed: boolean,
     }[],
+    unmatchedFallback: {
+        astTypeName: RustASTTypeName,
+        isBoxed: boolean,
+    } | null,
     branchesNeedBacktrack: {
         astTypeName: RustASTTypeName,
         firstTerminal: RustTokenTypeName,

@@ -51,6 +51,27 @@ fn test_numbers() {
 }
 
 #[test]
+fn test_radix_and_separated_integer_literals() {
+    let tokens = tokenize_helper("0xF0 0x00 0xF_0 0b1111_0000 1_234");
+
+    assert_eq!(tokens[0], Token::Literal(Literal::IntegerLiteral(240)));
+    assert_eq!(tokens[1], Token::Literal(Literal::IntegerLiteral(0)));
+    assert_eq!(tokens[2], Token::Literal(Literal::IntegerLiteral(240)));
+    assert_eq!(tokens[3], Token::Literal(Literal::IntegerLiteral(240)));
+    assert_eq!(tokens[4], Token::Literal(Literal::IntegerLiteral(1234)));
+    assert_eq!(tokens[5], Token::EndOfFile);
+}
+
+#[test]
+fn test_invalid_radix_digits_remain_single_invalid_tokens() {
+    let tokens = tokenize_helper("0b102 0xG");
+
+    assert_eq!(tokens[0], Token::Invalid);
+    assert_eq!(tokens[1], Token::Invalid);
+    assert_eq!(tokens[2], Token::EndOfFile);
+}
+
+#[test]
 fn test_operators_and_ranges() {
     let input = ".. ..= . => -> |>";
     let tokens = tokenize_helper(input);

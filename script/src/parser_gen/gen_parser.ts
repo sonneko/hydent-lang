@@ -44,10 +44,40 @@ export class ParserGenerator {
         let ret = "";
         ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error> {\n`;
 
+        const unmatchedFallback = func.unmatchedFallback;
+        const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
+        const hasCustomMatch = func.expectedTerminals.some(t => t.includes("$"));
+        const errorResult = `Err(Self::Error::build(\n`
+            + `                ${hasCustomMatch},\n`
+            + `                &[${expected.join(", ")}],\n`
+            + `                self.enviroment(),\n`
+            + `            ))`;
+        const fallbackResult = () => {
+            if (!unmatchedFallback) return errorResult;
+            const parseCall = unmatchedFallback.isBoxed
+                ? `self.alloc_box(|this| this.parse_${unmatchedFallback.astTypeName}())?`
+                : `self.parse_${unmatchedFallback.astTypeName}()?`;
+            return `Ok(${func.astTypeName}::${unmatchedFallback.astTypeName}(${parseCall}))`;
+        };
+        const parseCandidate = (astType: string, isBoxed: boolean) => {
+            if (!unmatchedFallback) {
+                const parseCall = isBoxed
+                    ? `self.alloc_box(|this| this.parse_${astType}())?`
+                    : `self.parse_${astType}()?`;
+                return `Ok(${func.astTypeName}::${astType}(${parseCall}))`;
+            }
+            const wrappedNode = isBoxed ? `self.alloc(node)` : `node`;
+            return `match self.backtrack_clean(|this| this.parse_${astType}()) {\n`
+                + `                    Ok(node) => Ok(${func.astTypeName}::${astType}(${wrappedNode})),\n`
+                + `                    Err(_) => ${fallbackResult()},\n`
+                + `                }`;
+        };
+
         if (func.branchesJudgebleInPeek0.length === 0 &&
             func.branchesJudgebleInPeek1.length === 0 &&
             (func.branchesFallbackInPeek1 || []).length === 0 &&
-            func.branchesNeedBacktrack.length === 0) {
+            func.branchesNeedBacktrack.length === 0 &&
+            !unmatchedFallback) {
             ret += `        Err(Self::Error::build(false, &[], self.enviroment()))\n`;
             ret += `    }\n`;
             return ret;
@@ -57,6 +87,7 @@ export class ParserGenerator {
 
         const peek0Groups = new Map<string, { isBoxed: boolean, terminals: Set<string> }>();
         for (const branch of func.branchesJudgebleInPeek0) {
+            if (unmatchedFallback && branch.astTypeName === unmatchedFallback.astTypeName) continue;
             if (!peek0Groups.has(branch.astTypeName)) {
                 peek0Groups.set(branch.astTypeName, { isBoxed: branch.isBoxed, terminals: new Set() });
             }
@@ -64,25 +95,24 @@ export class ParserGenerator {
         }
         const sortedKeys = Array.from(peek0Groups.keys()).sort();
         for (const astType of sortedKeys) {
-            const pattern = Array.from(peek0Groups.get(astType)!.terminals).sort().join(" | ");
-            const parseCall = peek0Groups.get(astType)!.isBoxed 
-                ? `self.alloc_box(|this| this.parse_${astType}())?` 
-                : `self.parse_${astType}()?`;
-            ret += `            Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
+            const group = peek0Groups.get(astType)!;
+            const pattern = Array.from(group.terminals).sort().join(" | ");
+            ret += `            Some(${pattern}) => ${parseCandidate(astType, group.isBoxed)},\n`;
         }
 
         const complexFirstTerminals = [...new Set([
             ...func.branchesJudgebleInPeek1.map(b => b.firstTerminal),
             ...func.branchesNeedBacktrack.map(b => b.firstTerminal),
-            ...(func.branchesFallbackInPeek1 || []).map(b => b.firstTerminal)
-        ])];
+            ...(func.branchesFallbackInPeek1 || []).map(b => b.firstTerminal),
+        ])].filter(t0 => !(unmatchedFallback && t0 === "Token::Invalid"));
 
         for (const t0 of complexFirstTerminals.sort()) {
             const cleanT0 = t0.replace(/\$.*\$/, "_");
             ret += `            Some(${cleanT0}) => match self.peek::<1>() {\n`;
 
-            const peek1 = func.branchesJudgebleInPeek1.filter(b => b.firstTerminal === t0);
-
+            const peek1 = func.branchesJudgebleInPeek1.filter(b =>
+                b.firstTerminal === t0 && !(unmatchedFallback && b.astTypeName === unmatchedFallback.astTypeName),
+            );
             const peek1Groups = new Map<string, { isBoxed: boolean, terminals: Set<string> }>();
             for (const branch of peek1) {
                 if (!peek1Groups.has(branch.astTypeName)) {
@@ -93,45 +123,52 @@ export class ParserGenerator {
 
             for (const [astType, group] of peek1Groups.entries()) {
                 const pattern = Array.from(group.terminals).join(" | ");
-                const parseCall = group.isBoxed 
-                    ? `self.alloc_box(|this| this.parse_${astType}())?` 
-                    : `self.parse_${astType}()?`;
-                ret += `                Some(${pattern}) => Ok(${func.astTypeName}::${astType}(${parseCall})),\n`;
+                ret += `                Some(${pattern}) => ${parseCandidate(astType, group.isBoxed)},\n`;
             }
 
-            const backtrack = func.branchesNeedBacktrack.filter(b => b.firstTerminal === t0);
+            const backtrack = [...new Map(
+                func.branchesNeedBacktrack
+                    .filter(b => b.firstTerminal === t0 && !(unmatchedFallback && b.astTypeName === unmatchedFallback.astTypeName))
+                    .map(branch => [`${branch.astTypeName}:${branch.isBoxed}`, branch]),
+            ).values()];
+            const localFallback = (func.branchesFallbackInPeek1 || []).find(b =>
+                b.firstTerminal === t0 && !(unmatchedFallback && b.astTypeName === unmatchedFallback.astTypeName),
+            );
             if (backtrack.length > 0) {
                 ret += `                _ => {\n`;
-                for (const b of backtrack) {
-                    const wrapCall = b.isBoxed ? `self.alloc(node)` : `node`;
-                    ret += `                    if let Ok(node) = self.backtrack(|this| this.parse_${b.astTypeName}()) {\n`;
-                    ret += `                        return Ok(${func.astTypeName}::${b.astTypeName}(${wrapCall}));\n`;
+                for (const branch of backtrack) {
+                    const wrappedNode = branch.isBoxed ? `self.alloc(node)` : `node`;
+                    const tryCall = unmatchedFallback ? "backtrack_clean" : "backtrack";
+                    ret += `                    if let Ok(node) = self.${tryCall}(|this| this.parse_${branch.astTypeName}()) {\n`;
+                    ret += `                        return Ok(${func.astTypeName}::${branch.astTypeName}(${wrappedNode}));\n`;
                     ret += `                    }\n`;
                 }
-                ret += `                    Err(Self::Error::build(false, &[], self.enviroment()))\n`;
-                ret += `                }\n`;
-            } else {
-                const fallback = (func.branchesFallbackInPeek1 || []).find(b => b.firstTerminal === t0);
-                if (fallback) {
-                    const parseCall = fallback.isBoxed 
-                        ? `self.alloc_box(|this| this.parse_${fallback.astTypeName}())?` 
-                        : `self.parse_${fallback.astTypeName}()?`;
-                    ret += `                _ => Ok(${func.astTypeName}::${fallback.astTypeName}(${parseCall})),\n`;
+                if (localFallback) {
+                    if (unmatchedFallback) {
+                        const wrappedNode = localFallback.isBoxed ? `self.alloc(node)` : `node`;
+                        ret += `                    if let Ok(node) = self.backtrack_clean(|this| this.parse_${localFallback.astTypeName}()) {\n`;
+                        ret += `                        return Ok(${func.astTypeName}::${localFallback.astTypeName}(${wrappedNode}));\n`;
+                        ret += `                    }\n`;
+                        ret += `                    ${fallbackResult()}\n`;
+                    } else {
+                        const parseCall = localFallback.isBoxed
+                            ? `self.alloc_box(|this| this.parse_${localFallback.astTypeName}())?`
+                            : `self.parse_${localFallback.astTypeName}()?`;
+                        ret += `                    Ok(${func.astTypeName}::${localFallback.astTypeName}(${parseCall}))\n`;
+                    }
                 } else {
-                    ret += `                _ => Err(Self::Error::build(false, &[], self.enviroment())),\n`;
+                    ret += `                    ${fallbackResult()}\n`;
                 }
+                ret += `                }\n`;
+            } else if (localFallback) {
+                ret += `                _ => ${parseCandidate(localFallback.astTypeName, localFallback.isBoxed)},\n`;
+            } else {
+                ret += `                _ => ${fallbackResult()},\n`;
             }
             ret += `            },\n`;
         }
 
-        const expected = [...new Set(func.expectedTerminals.filter(t => !t.includes("$") && !t.includes("_")))];
-        const hasCustomMatch = func.expectedTerminals.some(t => t.includes("$"));
-        
-        ret += `            _ => Err(Self::Error::build(\n`;
-        ret += `                ${hasCustomMatch},\n`;
-        ret += `                &[${expected.join(", ")}],\n`;
-        ret += `                self.enviroment(),\n`;
-        ret += `            )),\n`;
+        ret += `            _ => ${fallbackResult()},\n`;
         ret += `        }\n`;
         ret += `    }\n`;
 
@@ -140,7 +177,8 @@ export class ParserGenerator {
 
     private generateProductParserFunction(func: ProductParserFunction): string {
         let ret = "";
-        let isManual = func.elements.some(element => element.kind === "terminal" && element.tokenTypeName.includes("$"));
+        let isManual = func.elements.some(element => element.kind === "terminal"
+            && (element.tokenTypeName.includes("$") || element.tokenTypeName === "Token::Invalid"));
         if (isManual) {
             ret += `\n    fn parse_${func.functionName}(&mut self) -> Result<${func.astTypeName}, Self::Error>;\n`;
             return ret;

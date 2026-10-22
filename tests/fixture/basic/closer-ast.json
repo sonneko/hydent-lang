@@ -1,0 +1,490 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn apply_twice(val: Int, f: Fn<(Int), Int>) : Int {\n    return f(f(val));\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "apply_twice",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "f",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Fn",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "f",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "f",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let multiplier = 3;\n    let result = apply_twice(10, (mut x: Int) -> {\n        let factor = 2;\n        return x * factor + multiplier;\n    });\n\n    let simple = apply_twice(5, (n) -> n + 1);\n    \n    print(result);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "multiplier",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "3",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "apply_twice",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "10",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "->",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "factor",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "*",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "factor",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "multiplier",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "simple",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "apply_twice",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "5",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "->",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,18 +1,198 @@
+use crate::compiler::span::Span;
 use crate::diagnostic::stream::DiagnosticStream;
 use crate::parser::base_parser::BaseParser;
-use crate::parser::errors::IParseErr;
+use crate::parser::errors::{IParseErr, ParseErr};
 use crate::parser::generated_ast;
 use crate::parser::generated_parser::GeneratedParser;
 use crate::parser::tracer::Tracer;
 use crate::parser::Parser;
-use crate::tokenizer::tokens::Comment;
-use crate::tokenizer::tokens::Literal;
-use crate::tokenizer::tokens::Token;
+use crate::tokenizer::tokens::{Comment, Delimiter, Keyword, Literal, Operator, Token};
+
+impl<S: DiagnosticStream, TR: Tracer> Parser<'_, '_, '_, S, TR> {
+    fn take_raw_syntax_token(
+        &mut self,
+        depth: u32,
+    ) -> Result<generated_ast::RawSyntaxToken, ParseErr> {
+        let Some((token, span)) = self.tokens.peek(0) else {
+            return Err(ParseErr::build(false, &[], self.enviroment()));
+        };
+        if token == Token::EndOfFile {
+            return Err(ParseErr::build(false, &[], self.enviroment()));
+        }
+
+        self.tokens.next();
+        let (kind, identifier) = match token {
+            Token::Identifier(symbol) => ("Identifier", Some(symbol)),
+            Token::Keyword(_) => ("Keyword", None),
+            Token::Literal(_) => ("Literal", None),
+            Token::Operator(_) => ("Operator", None),
+            Token::Delimiter(_) => ("Delimiter", None),
+            Token::Comment(_) => ("Comment", None),
+            Token::Invalid => ("Invalid", None),
+            Token::EndOfFile => ("EndOfFile", None),
+        };
+        Ok(generated_ast::RawSyntaxToken {
+            kind,
+            identifier,
+            span,
+            depth,
+        })
+    }
+
+    fn raw_declaration_category(&self) -> &'static str {
+        if self.peek::<0>() == Some(Token::Operator(Operator::At)) {
+            return "Annotation";
+        }
+
+        for index in 0..16 {
+            match self.tokens.peek(index).map(|(token, _)| token) {
+                Some(Token::Keyword(Keyword::Import)) => return "ImportDeclaration",
+                Some(Token::Keyword(Keyword::Module)) => return "Module",
+                Some(Token::Keyword(Keyword::Fn)) => return "Function",
+                Some(Token::Keyword(Keyword::Extern)) => return "ExternFunction",
+                Some(Token::Keyword(Keyword::Struct)) => return "Struct",
+                Some(Token::Keyword(Keyword::Class)) => return "Class",
+                Some(Token::Keyword(Keyword::Protocol)) => return "Protocol",
+                Some(Token::Keyword(Keyword::Enum)) => return "Enum",
+                Some(Token::Keyword(Keyword::Type)) => return "TypeAlias",
+                Some(Token::Keyword(Keyword::Const)) => return "Constant",
+                Some(Token::Keyword(Keyword::Static)) => return "Static",
+                Some(Token::EndOfFile) | None => break,
+                _ => {}
+            }
+        }
+        "Syntax"
+    }
+}
 
 impl<S: DiagnosticStream, TR: Tracer> GeneratedParser for Parser<'_, '_, '_, S, TR> {
     type TraceGuard = TR::Guard;
     fn trace(name: &'static str) -> TR::Guard {
         TR::trace(name)
+    }
+
+    fn parse_RawSyntaxToken(&mut self) -> Result<generated_ast::RawSyntaxToken, Self::Error> {
+        self.take_raw_syntax_token(0)
+    }
+
+    fn parse_RawDeclaration(&mut self) -> Result<generated_ast::RawDeclaration, Self::Error> {
+        self.tokens.checkpoint();
+        let start = self.now_span();
+        let category = self.raw_declaration_category();
+        let mut syntax = Vec::new();
+        let mut brace_depth = 0u32;
+        let mut paren_depth = 0u32;
+        let mut bracket_depth = 0u32;
+        let mut body_started = false;
+        let mut body_ended = false;
+        let mut semicolon_terminated = false;
+        let mut saw_function_keyword = false;
+        let mut expect_function_name = false;
+        let mut function_name_seen = false;
+        let mut function_parameters_seen = false;
+        let mut invalid_closer = false;
+        let mut invalid_token = false;
+        let mut end = start.end;
+
+        while let Some((token, span)) = self.tokens.peek(0) {
+            if token == Token::EndOfFile {
+                break;
+            }
+
+            let at_top_level = brace_depth == 0 && paren_depth == 0 && bracket_depth == 0;
+            let depth = brace_depth + paren_depth + bracket_depth;
+            if at_top_level && token == Token::Delimiter(Delimiter::LeftBrace) {
+                body_started = true;
+            }
+            if at_top_level && token == Token::Keyword(Keyword::Fn) {
+                saw_function_keyword = true;
+                expect_function_name = true;
+            } else if expect_function_name {
+                function_name_seen = matches!(token, Token::Identifier(_));
+                expect_function_name = false;
+            }
+            if at_top_level
+                && saw_function_keyword
+                && token == Token::Delimiter(Delimiter::LeftParen)
+            {
+                function_parameters_seen = true;
+            }
+            if token == Token::Invalid {
+                invalid_token = true;
+            }
+
+            syntax.push(self.take_raw_syntax_token(depth)?);
+            end = span.end;
+
+            match token {
+                Token::Delimiter(Delimiter::LeftBrace) => brace_depth += 1,
+                Token::Delimiter(Delimiter::RightBrace) => {
+                    if brace_depth == 0 {
+                        invalid_closer = true;
+                    } else {
+                        brace_depth -= 1;
+                        if body_started
+                            && brace_depth == 0
+                            && paren_depth == 0
+                            && bracket_depth == 0
+                        {
+                            body_ended = true;
+                            break;
+                        }
+                    }
+                }
+                Token::Delimiter(Delimiter::LeftParen) => paren_depth += 1,
+                Token::Delimiter(Delimiter::RightParen) => {
+                    if paren_depth == 0 {
+                        invalid_closer = true;
+                    } else {
+                        paren_depth -= 1;
+                    }
+                }
+                Token::Delimiter(Delimiter::LeftBracket) => bracket_depth += 1,
+                Token::Delimiter(Delimiter::RightBracket) => {
+                    if bracket_depth == 0 {
+                        invalid_closer = true;
+                    } else {
+                        bracket_depth -= 1;
+                    }
+                }
+                Token::Delimiter(Delimiter::Semicolon)
+                    if brace_depth == 0 && paren_depth == 0 && bracket_depth == 0 =>
+                {
+                    semicolon_terminated = true;
+                    break;
+                }
+                _ => {}
+            }
+        }
+
+        let is_function = category == "Function" || category == "ExternFunction";
+        let function_is_valid = !is_function
+            || (saw_function_keyword
+                && function_name_seen
+                && function_parameters_seen
+                && (body_ended || semicolon_terminated));
+        let delimiters_are_balanced = brace_depth == 0 && paren_depth == 0 && bracket_depth == 0;
+        if syntax.is_empty()
+            || !delimiters_are_balanced
+            || invalid_closer
+            || invalid_token
+            || !function_is_valid
+            || (body_started && !body_ended)
+        {
+            let error = ParseErr::build(false, &[], self.enviroment());
+            self.tokens.rollback();
+            return Err(error);
+        }
+
+        self.tokens.commit();
+        let syntax = self.ctx.ast_arena.alloc_iter(syntax.into_iter());
+        Ok(generated_ast::RawDeclaration {
+            category,
+            span: Span::new(start.begin as usize, end as usize),
+            syntax,
+        })
     }
 
     fn parse_Identifier(&mut self) -> Result<generated_ast::Identifier, Self::Error> {

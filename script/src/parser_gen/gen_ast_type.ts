@@ -1,5 +1,33 @@
 import { IR, BranchParserFunction, ProductParserFunction, HookParserFunction } from "./ir";
 
+function getFirst2Terminals(
+    firstTerminals: string[],
+    followTerminals: string[],
+): { terminals: string[]; includesEof: boolean } {
+    const sequences = firstTerminals.map(sequence => sequence.split(","));
+    const follow = new Set(followTerminals);
+    const ambiguousFirstTerminals = new Set(
+        sequences.map(sequence => sequence[0]).filter(first => follow.has(first)),
+    );
+    const secondTerminals = new Set<string>();
+    let includesEof = false;
+
+    // Repeat parsers need the second token only when FIRST and FOLLOW overlap.
+    // A one-token production can still be a valid repeated item when followed
+    // by a token from FOLLOW (or EOF), so include those continuations too.
+    for (const sequence of sequences) {
+        if (!ambiguousFirstTerminals.has(sequence[0])) continue;
+        if (sequence.length > 1) {
+            secondTerminals.add(sequence[1]);
+        } else {
+            followTerminals.forEach(token => secondTerminals.add(token));
+            includesEof = true;
+        }
+    }
+
+    return { terminals: [...secondTerminals], includesEof };
+}
+
 export class ASTTypeGenerator {
     public generateASTType(ir: IR): string {
         let decls = [];
@@ -27,10 +55,9 @@ export class ASTTypeGenerator {
         ret += `#![allow(non_snake_case)]\n`;
         ret += `#![allow(nonstandard_style)]\n\n`;
         ret += `use crate::compiler::arena::{ArenaBox, ArenaIter};\n`;
-        ret += `use crate::parser::ast_node::{ASTNode, Node};\n`;
-        ret += `use crate::parser::ast_node::TokenBitMap;\n`;
+        ret += `use crate::parser::ast_node::{ASTNode, Node, TokenSet};\n`;
         ret += `use crate::parser::errors::ParseErr;\n`;
-        ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator};\n\n`;
+        ret += `use crate::tokenizer::tokens::{Token, Delimiter, Keyword, Operator, Comment};\n\n`;
         ret += decls.join("");
         return ret;
     }
@@ -57,6 +84,7 @@ export class ASTTypeGenerator {
             ...func.branchesJudgebleInPeek0,
             ...func.branchesJudgebleInPeek1,
             ...(func.branchesFallbackInPeek1 || []),
+            ...(func.unmatchedFallback ? [func.unmatchedFallback] : []),
             ...func.branchesNeedBacktrack
         ];
         let dublicateRemoved = [...new Set(allVariants.map(branch => branch.astTypeName))].sort();
@@ -75,18 +103,27 @@ export class ASTTypeGenerator {
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const syncHasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
         const syncHasLiteral = func.syncPointsTerminals.some(t => t.includes("Literal"));
+        const syncHasComment = func.syncPointsTerminals.some(t => t.includes("Comment"));
         const syncPoints = [...new Set(func.syncPointsTerminals.filter(t => !t.includes("$") && !t.includes("_")))].sort().join(", ");
         const first1Sets = func.firstTerminals.map(v => v.split(",")[0]);
         const first1HasIdentifier = first1Sets.some(t => t.includes("Identifier"));
         const first1HasLiteral = first1Sets.some(t => t.includes("Literal"));
-        const first1Points = [...new Set(first1Sets.filter(t => !t.includes("$")))].sort().join(", ");
-        const first2Sets = func.firstTerminals.map(v => v.split(",")[1]).filter(v => v !== undefined);
-        const first2HasIdentifier = first2Sets.some(t => t.includes("Identifier"));
-        const first2HasLiteral = first2Sets.some(t => t.includes("Literal"));
-        const first2Points = [...new Set(first2Sets.filter(t => !t.includes("$")))].sort().join(", ");
-        ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
-        ret += `    const FIRST_1_SETS: TokenBitMap = TokenBitMap::build_map(${first1HasIdentifier}, ${first1HasLiteral}, false, &[${first1Points}]);\n`;
-        ret += `    const FIRST_2_SETS: TokenBitMap = TokenBitMap::build_map(${first2HasIdentifier}, ${first2HasLiteral}, false, &[${first2Points}]);\n\n`;
+        const first1HasComment = first1Sets.some(t => t.includes("Comment"));
+        const first1Points = [...new Set([
+            ...first1Sets.filter(t => !t.includes("$")),
+            ...(func.unmatchedFallback ? ["Token::Invalid"] : []),
+        ])].sort().join(", ");
+        const first2 = getFirst2Terminals(func.firstTerminals, func.syncPointsTerminals);
+        const first2HasIdentifier = first2.terminals.some(t => t.includes("Identifier"));
+        const first2HasLiteral = first2.terminals.some(t => t.includes("Literal"));
+        const first2HasComment = first2.terminals.some(t => t.includes("Comment"));
+        const first2Points = [...new Set([
+            ...first2.terminals.filter(t => !t.includes("$")),
+            ...(func.unmatchedFallback ? ["Token::Invalid"] : []),
+        ])].sort().join(", ");
+        ret += `    const FOLLOW_SETS: TokenSet = TokenSet::build_map(${syncHasIdentifier}, ${syncHasLiteral}, ${syncHasComment}, true, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_1_SETS: TokenSet = TokenSet::build_map(${first1HasIdentifier}, ${first1HasLiteral}, ${first1HasComment}, false, &[${first1Points}]);\n`;
+        ret += `    const FIRST_2_SETS: TokenSet = TokenSet::build_map(${first2HasIdentifier}, ${first2HasLiteral}, ${first2HasComment}, ${first2.includesEof}, &[${first2Points}]);\n\n`;
         ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        Some(Self::Invalid)\n`;
         ret += `    }\n\n`;
@@ -96,7 +133,13 @@ export class ASTTypeGenerator {
 
         ret += `impl ${func.astTypeName} {\n`;
         const everyVariants = (() => {
-            const list = [...func.branchesFallbackInPeek1, ...func.branchesJudgebleInPeek0, ...func.branchesJudgebleInPeek1, ...func.branchesNeedBacktrack];
+            const list = [
+                ...func.branchesFallbackInPeek1,
+                ...func.branchesJudgebleInPeek0,
+                ...func.branchesJudgebleInPeek1,
+                ...(func.unmatchedFallback ? [func.unmatchedFallback] : []),
+                ...func.branchesNeedBacktrack,
+            ];
             const taken = [...new Map(
                 list.map(item => {
                     const key = `${item.astTypeName}-${item.isBoxed}`;
@@ -132,7 +175,8 @@ export class ASTTypeGenerator {
 
     private generateProductASTType(func: ProductParserFunction): string {
         let ret = "";
-        const isManual = func.elements.some(element => element.kind === "terminal" && element.tokenTypeName.includes("$"));
+        const isManual = func.elements.some(element => element.kind === "terminal"
+            && (element.tokenTypeName.includes("$") || element.tokenTypeName === "Token::Invalid"));
         if (isManual) {
             ret += `pub use crate::parser::manual_ast::${func.astTypeName};\n\n`;
         } else {
@@ -162,18 +206,21 @@ export class ASTTypeGenerator {
         ret += `impl ASTNode for ${func.astTypeName} {\n`;
         const syncHasIdentifier = func.syncPointsTerminals.some(t => t.includes("Identifier"));
         const syncHasLiteral = func.syncPointsTerminals.some(t => t.includes("Literal"));
+        const syncHasComment = func.syncPointsTerminals.some(t => t.includes("Comment"));
         const syncPoints = func.syncPointsTerminals.filter(t => !t.includes("$")).join(", ");
         const first1Sets = func.firstTerminals.map(v => v.split(",")[0]);
         const first1HasIdentifier = first1Sets.some(t => t.includes("Identifier"));
         const first1HasLiteral = first1Sets.some(t => t.includes("Literal"));
+        const first1HasComment = first1Sets.some(t => t.includes("Comment"));
         const first1Points = first1Sets.filter(t => !t.includes("$")).join(", ");
-        const first2Sets = func.firstTerminals.map(v => v.split(",")[1]).filter(v => v !== undefined);
-        const first2HasIdentifier = first2Sets.some(t => t.includes("Identifier"));
-        const first2HasLiteral = first2Sets.some(t => t.includes("Literal"));
-        const first2Points = first2Sets.filter(t => !t.includes("$")).join(", ");
-        ret += `    const FOLLOW_SETS: TokenBitMap = TokenBitMap::build_map(${syncHasIdentifier}, ${syncHasLiteral}, true, &[${syncPoints}]);\n`;
-        ret += `    const FIRST_1_SETS: TokenBitMap = TokenBitMap::build_map(${first1HasIdentifier}, ${first1HasLiteral}, false, &[${first1Points}]);\n`;
-        ret += `    const FIRST_2_SETS: TokenBitMap = TokenBitMap::build_map(${first2HasIdentifier}, ${first2HasLiteral}, false, &[${first2Points}]);\n\n`;
+        const first2 = getFirst2Terminals(func.firstTerminals, func.syncPointsTerminals);
+        const first2HasIdentifier = first2.terminals.some(t => t.includes("Identifier"));
+        const first2HasLiteral = first2.terminals.some(t => t.includes("Literal"));
+        const first2HasComment = first2.terminals.some(t => t.includes("Comment"));
+        const first2Points = first2.terminals.filter(t => !t.includes("$")).join(", ");
+        ret += `    const FOLLOW_SETS: TokenSet = TokenSet::build_map(${syncHasIdentifier}, ${syncHasLiteral}, ${syncHasComment}, true, &[${syncPoints}]);\n`;
+        ret += `    const FIRST_1_SETS: TokenSet = TokenSet::build_map(${first1HasIdentifier}, ${first1HasLiteral}, ${first1HasComment}, false, &[${first1Points}]);\n`;
+        ret += `    const FIRST_2_SETS: TokenSet = TokenSet::build_map(${first2HasIdentifier}, ${first2HasLiteral}, ${first2HasComment}, ${first2.includesEof}, &[${first2Points}]);\n\n`;
         ret += `    fn get_error_situation(_: ParseErr) -> Option<Self> {\n`;
         ret += `        None\n`;
         ret += `    }\n\n`;

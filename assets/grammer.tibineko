@@ -3,34 +3,222 @@ product Module {
 }
 
 branch TopLevelStatement {
+    ImportDeclaration
     FunctionDeclaration
     ExternFunction
+    RawDeclaration
 }
 
+product ImportDeclaration {
+    docs: *DocComment
+    "import"
+    targets: ImportSpecific
+    "from"
+    path: StringLiteral
+    ";"
+}
+
+product ImportSpecific {
+    "{"
+    items: *ImportItem
+    "}"
+}
+
+product ImportItem {
+    name: Identifier
+    comma: ?Comma
+}
+
+product Comma with ","
+
 product FunctionDeclaration {
-    "fn" name: Identifier "("
-        params: *ParamWithType
+    docs: *DocComment
+    modifiers: *FunctionModifier
+    "fn"
+    name: Identifier
+    "("
+    params: *ParamWithType
     ")"
     return_type: ?ReturnType
     body: BlockExpression
 }
 
+branch FunctionModifier {
+    PubModifier
+    AsyncModifier
+    TryModifier
+}
+
+product PubModifier with "pub"
+product AsyncModifier with "async"
+product TryModifier with "try"
+
 product ExternFunction {
-    "extern" "fn" name: Identifier "("
-        params: *ParamWithType
-    ")" return_type: ?ReturnType ";"
+    docs: *DocComment
+    modifiers: *FunctionModifier
+    "extern"
+    "fn"
+    name: Identifier
+    "("
+    params: *ParamWithType
+    ")"
+    return_type: ?ReturnType
+    ending: ExternFunctionEnding
+}
+
+branch ExternFunctionEnding {
+    ExternFunctionSemicolon
+    ExternFunctionBody
+}
+
+product ExternFunctionSemicolon with ";"
+
+product ExternFunctionBody {
+    body: BlockExpression
+    semicolon: ?ExternFunctionSemicolon
 }
 
 product ReturnType {
-    ":" TypeLiteral
+    ":"
+    return_type: TypeLiteral
 }
 
 product ParamWithType {
-
+    mutable: ?MutKeyword
+    name: Identifier
+    ":"
+    parameter_type: TypeLiteral
+    default_value: ?DefaultParamValue
+    comma: ?Comma
 }
 
-product BlockExpression {
+product MutKeyword with "mut"
 
+product DefaultParamValue {
+    "="
+    value: Expression
+}
+
+branch TypeLiteral {
+    GenericType
+    Identifier
+    IntType
+    DoubleIntType
+    FloatType
+    DoubleFloatType
+    BoolType
+    CharType
+    VoidType
+    UsizeType
+    NeverType
+    AnyType
+}
+
+product GenericType {
+    name: Identifier
+    "<"
+    arguments: *TypeArgument
+    ">"
+}
+
+product TypeArgument {
+    value: TypeLiteral
+    comma: ?Comma
+}
+
+product IntType with "Int"
+product DoubleIntType with "DoubleInt"
+product FloatType with "Float"
+product DoubleFloatType with "DoubleFloat"
+product BoolType with "Bool"
+product CharType with "Char"
+product VoidType with "Void"
+product UsizeType with "Usize"
+product NeverType with "Never"
+product AnyType with "Any"
+
+product BlockExpression {
+    "{"
+    statements: *Statement
+    "}"
+}
+
+branch Statement {
+    LetStatement
+    ReturnStatement
+    ExpressionStatement
+}
+
+product LetStatement {
+    "let"
+    mutable: ?MutKeyword
+    name: Identifier
+    type_annotation: ?TypeAnnotation
+    initializer: ?Initializer
+    ";"
+}
+
+product TypeAnnotation {
+    ":"
+    value: TypeLiteral
+}
+
+product Initializer {
+    "="
+    value: Expression
+}
+
+product ReturnStatement {
+    "return"
+    value: ?Expression
+    ";"
+}
+
+product ExpressionStatement {
+    value: Expression
+    ";"
+}
+
+branch Expression {
+    CallExpression
+    GroupedExpression
+    StringLiteral
+    IntLiteral
+    DoubleIntLiteral
+    FloatLiteral
+    DoubleFloatLiteral
+    CharLiteral
+    BoolLiteral
+    Identifier
+}
+
+product CallExpression {
+    callee: Identifier
+    "("
+    arguments: *CallArgument
+    ")"
+}
+
+product CallArgument {
+    value: Expression
+    comma: ?Comma
+}
+
+product GroupedExpression {
+    "("
+    value: Expression
+    ")"
 }
 
 product Identifier with "#identifier"
+product StringLiteral with "#string"
+product IntLiteral with "#int"
+product DoubleIntLiteral with "#double_int"
+product FloatLiteral with "#float"
+product DoubleFloatLiteral with "#double_float"
+product CharLiteral with "#char"
+product BoolLiteral with "#bool"
+product DocComment with "#doc_comment"
+
+product RawDeclaration with "#fallback"
+product RawSyntaxToken with "#raw_token"

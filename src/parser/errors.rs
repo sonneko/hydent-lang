@@ -7,6 +7,16 @@ pub struct ParseErr {
     found: Enviroment,
 }
 
+impl ParseErr {
+    pub fn expected(&self) -> &'static [Token] {
+        self.expected
+    }
+
+    pub fn found(&self) -> Enviroment {
+        self.found
+    }
+}
+
 pub trait IParseErr {
     fn build(identifier: bool, expected: &'static [Token], found: Enviroment) -> Self;
     fn is_endoffile_error(&self) -> bool;

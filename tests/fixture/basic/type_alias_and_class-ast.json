@@ -1,0 +1,800 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "TypeAlias",
+        "source": "type NodePtr<T> = ClassNode<T>;",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "type",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "NodePtr",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Class",
+        "source": "class ClassNode<T> {\n    pub val: T;\n    pub next: NodePtr<T>;\n\n    pub fn new(v: T) : ClassNode<T> {\n        return ClassNode { val: v, next: None };\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "class",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "next",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "NodePtr",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "next",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "None",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn length<T>(node: NodePtr<T>) : Int {\n    return match node {\n        Some { n } => 1 + length(n.next),\n        None => 0,\n    };\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "length",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "node",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "NodePtr",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "T",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "match",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "node",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Some",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "length",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "next",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "None",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let mut head = ClassNode::new(10);\n    let second = ClassNode::new(20);\n    head.next = Some(second);\n\n    let len = length(Some(head));\n    print(len);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "head",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "10",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "second",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "ClassNode",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "20",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "head",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "next",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Some",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "second",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "len",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "length",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Some",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "head",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "len",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

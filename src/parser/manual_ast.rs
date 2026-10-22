@@ -1,5 +1,5 @@
 use crate::{
-    compiler::{span::Span, symbol::Symbol},
+    compiler::{arena::ArenaIter, span::Span, symbol::Symbol},
     utility::hashable_float::HashableFloat,
 };
 
@@ -53,3 +53,20 @@ pub struct LineComment {}
 
 #[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
 pub struct BlockComment {}
+
+/// Lossless token entry used when a top-level declaration is outside the
+/// currently structured grammar. The original source slice is retained too.
+#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
+pub struct RawSyntaxToken {
+    pub(super) kind: &'static str,
+    pub(super) identifier: Option<Symbol>,
+    pub(super) span: Span,
+    pub(super) depth: u32,
+}
+
+#[derive(Debug, Copy, Clone, std::hash::Hash, PartialEq, Eq)]
+pub struct RawDeclaration {
+    pub(super) category: &'static str,
+    pub(super) span: Span,
+    pub(super) syntax: ArenaIter<RawSyntaxToken>,
+}

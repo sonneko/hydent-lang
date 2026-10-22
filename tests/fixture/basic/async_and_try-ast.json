@@ -1,1 +1,570 @@
-{"type":"Module","TopLevelStatement":[{"kind":"Annotation","value":{"type":"Annotation","Identifier":{"type":"Identifier","value":"MockNetwork"},"LiteralNode":[]}}]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Annotation",
+        "source": "@MockNetwork;",
+        "syntax": [
+          {
+            "type": "Operator",
+            "value": "@",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "MockNetwork",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Module",
+        "source": "module Network {\n    pub struct Response {\n        final code: Int;\n        final body: String;\n    }\n\n    pub extern async fn fetch(url: String) : Response;\n\n    async fn handle_request(url: String) : Void {\n        let resp = try await fetch(url);\n        \n        match resp {\n            (200, b) => {\n                print(\"Success: \" + b);\n            }\n            (n, _ ) => {\n                print(\"Server Error\");\n            }\n            _ => print(\"Unknown error\");\n        }\n    }\n\n    fn main() {\n        ignore await handle_request(\"https://api.example.com\");\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "module",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Network",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Response",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "code",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "body",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "extern",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "async",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "fetch",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "url",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Response",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "async",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "handle_request",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "url",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "resp",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "try",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "await",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "fetch",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "url",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "match",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "resp",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "200",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "\"Success: \"",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "\"Server Error\"",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"Unknown error\"",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "ignore",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "await",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "handle_request",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"https://api.example.com\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

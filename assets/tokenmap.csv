@@ -100,4 +100,6 @@
 "#line_comment", "Token::Comment(Comment::LineComment)"
 "#block_comment", "Token::Comment(Comment::BlockComment)"
 "#identifier", "Token::Identifier($Span$)"
+"#fallback", "Token::Invalid"
+"#raw_token", "Token::Invalid"
 "_", "Token::Operator(Operator::Wildcard)"

@@ -1,0 +1,3140 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Annotation",
+        "source": "@ModuleConfig \"FactoryOS\" \"2.0.1\";",
+        "syntax": [
+          {
+            "type": "Operator",
+            "value": "@",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "ModuleConfig",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "\"FactoryOS\"",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "\"2.0.1\"",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Module",
+        "source": "module FactoryManager {\n    import { Serializer, Logger } from \"std:utils\";\n\n    // ------------------------------------------\n    // 定数と型エイリアスの定義\n    // ------------------------------------------\n    static MAX_RETRY = 3;\n    static TOTAL_PROCESSED: Usize = 0;\n    \n    type DeviceId = Int;\n    type HealthScore = Float;\n\n    // ------------------------------------------\n    // プロトコルと列挙型の定義\n    // ------------------------------------------\n    pub protocol Diagnostic {\n        fn check_health(this) : HealthScore;\n        fn reset(mut this) : Void;\n    }\n\n    pub enum DeviceStatus {\n        Idle,\n        Running(Float), // 出力パワー\n        Error(String, Int), // エラーメッセージ, エラーコード\n    }\n\n    // ------------------------------------------\n    // 構造体とクラスの定義\n    // ------------------------------------------\n    pub struct SensorData {\n        final id: DeviceId;\n        final value: DoubleInt;\n        mut timestamp: Usize;\n    }\n\n    class RobotArm : Diagnostic {\n        pub mut status: DeviceStatus;\n        final name: Identifier;\n\n        pub fn new(name: Identifier) : RobotArm {\n            return RobotArm { \n                status: DeviceStatus::Idle, \n                name: name \n            };\n        }\n\n        pub fn check_health(this) : HealthScore {\n            return match this.status {\n                DeviceStatus::Idle => 1.0,\n                DeviceStatus::Running(p) if p > 0.8 => 0.6,\n                DeviceStatus::Running(_) => 0.9,\n                DeviceStatus::Error(_, _) => 0.1,\n            };\n        }\n\n        pub fn reset(mut this) : Void {\n            this.status = DeviceStatus::Idle;\n        }\n\n        pub async fn process(mut this, data: SensorData) : Result<Void, String> panics {\n            if data.value < 0 {\n                return Result::Err(\"Negative reading\");\n            }\n            this.status = DeviceStatus::Running(0.5);\n            return Result::Ok(void);\n        }\n    }\n\n    // ------------------------------------------\n    // 高度な処理 (Piping, Flow Control, Closures)\n    // ------------------------------------------\n    pub async fn run_factory_loop(mut arm: RobotArm, stream: Vec<SensorData>) : Void {\n        loop \"factory_main\" {\n            for data in stream {\n                // パイプライン処理: データの正規化とチェック\n                let processed = pipe data {\n                    |> SensorData { value: v, .. } if v == 0 => {\n                        Logger::warn(\"Empty data detected\");\n                        v\n                    }\n                    |> SensorData { value: v, .. } => v * 2\n                };\n\n                // ビット演算によるフラグチェック\n                const MASK: Usize = 0b1111_0000;\n                let flags = (data.timestamp & MASK) >> 4;\n\n                if flags != 0 {\n                    let result = try await arm.process(data);\n                    \n                    match result {\n                        Result::Ok(_) => {\n                            TOTAL_PROCESSED += 1;\n                        }\n                        Result::Err(msg) => {\n                            arm.status = DeviceStatus::Error(msg, 500);\n                            break \"factory_main\"; // 致命的なエラー\n                        }\n                    }\n                }\n\n                // 特殊な「for-pipeline」構文によるフィルタリングとログ\n                for i in vec(1, 2, 3) {\n                    |> n if n % 2 == 0 => Logger::info(\"Even iteration\");\n                    |> _ => continue;\n                }\n            }\n\n            if arm.check_health() < 0.2 {\n                arm.reset();\n            } else {\n                return; // 正常終了\n            }\n        }\n    }\n\n    // ------------------------------------------\n    // メインエントリーポイント\n    // ------------------------------------------\n    fn main() {\n        let mut arm = RobotArm::new(\"ARM_01\");\n        \n        let test_data = vec(\n            SensorData { id: 101, value: 50, timestamp: 0xF0 },\n            SensorData { id: 102, value: 100, timestamp: 0x00 }\n        );\n\n        // 匿名関数の利用と型のキャスト\n        let log_fn = (mut msg: String) -> {\n            let prefix = \"[FACTORY]\";\n            Logger::info(prefix + msg);\n        };\n\n        log_fn(\"Starting simulation...\");\n        ignore await run_factory_loop(arm, test_data);\n\n        // typeofとasによる動的な判定\n        let x = 10.5;\n        type ScoreType = typeof x;\n        let final_score = arm.check_health() as ScoreType;\n\n        if final_score >= 0.8 {\n            print(\"Factory is healthy!\");\n        } else {\n            print(\"Maintenance required.\");\n        }\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "module",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "FactoryManager",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "import",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Serializer",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Logger",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "from",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "\"std:utils\"",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "static",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "MAX_RETRY",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "3",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "static",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "TOTAL_PROCESSED",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Usize",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "type",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceId",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "type",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "HealthScore",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "protocol",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Diagnostic",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "check_health",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "HealthScore",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "reset",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "enum",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Idle",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Running",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Float",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Error",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "struct",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "id",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceId",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "DoubleInt",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "timestamp",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Usize",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "class",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "RobotArm",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Diagnostic",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "final",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "name",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Identifier",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "name",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Identifier",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "RobotArm",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "RobotArm",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Idle",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "name",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "name",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "check_health",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "HealthScore",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "match",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Idle",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "1.0",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Running",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "p",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "p",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0.8",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0.6",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Running",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0.9",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Error",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0.1",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "reset",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Idle",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "async",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "process",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Result",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "panics",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Result",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "Err",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "\"Negative reading\"",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "this",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Running",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0.5",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Result",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Ok",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "void",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "pub",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "async",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "run_factory_loop",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "RobotArm",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "stream",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "Vec",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Void",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "loop",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"factory_main\"",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "for",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "in",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "stream",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "processed",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "pipe",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "..",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 6
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "==",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "Logger",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "warn",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 6
+          },
+          {
+            "type": "Literal",
+            "value": "\"Empty data detected\"",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "..",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "v",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "*",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "const",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "MASK",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "Usize",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0b1111_0000",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "flags",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "timestamp",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "&",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "MASK",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": ">>",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "4",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "flags",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "!=",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "try",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "await",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "process",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "match",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "Result",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "Ok",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "TOTAL_PROCESSED",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": "+=",
+            "depth": 7
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 7
+          },
+          {
+            "type": "Identifier",
+            "value": "Result",
+            "depth": 6
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "Err",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "msg",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 6
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 7
+          },
+          {
+            "type": "Identifier",
+            "value": "status",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 7
+          },
+          {
+            "type": "Identifier",
+            "value": "DeviceStatus",
+            "depth": 7
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 7
+          },
+          {
+            "type": "Identifier",
+            "value": "Error",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 7
+          },
+          {
+            "type": "Identifier",
+            "value": "msg",
+            "depth": 8
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 8
+          },
+          {
+            "type": "Literal",
+            "value": "500",
+            "depth": 8
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 8
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 7
+          },
+          {
+            "type": "Keyword",
+            "value": "break",
+            "depth": 7
+          },
+          {
+            "type": "Literal",
+            "value": "\"factory_main\"",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 7
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "for",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "i",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "in",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "vec",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "3",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "n",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "%",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "==",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "Logger",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "info",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 5
+          },
+          {
+            "type": "Literal",
+            "value": "\"Even iteration\"",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 6
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 5
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 5
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 5
+          },
+          {
+            "type": "Keyword",
+            "value": "continue",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "check_health",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0.2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "reset",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 5
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Keyword",
+            "value": "else",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "RobotArm",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"ARM_01\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "test_data",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "vec",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "id",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "101",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "50",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "timestamp",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0xF0",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "SensorData",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "id",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "102",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "value",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "100",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "timestamp",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 4
+          },
+          {
+            "type": "Literal",
+            "value": "0x00",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "log_fn",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "msg",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "String",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "->",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "prefix",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"[FACTORY]\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "Logger",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "info",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "prefix",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "+",
+            "depth": 4
+          },
+          {
+            "type": "Identifier",
+            "value": "msg",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "log_fn",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"Starting simulation...\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "ignore",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "await",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "run_factory_loop",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "test_data",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "10.5",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "type",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "ScoreType",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "typeof",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "final_score",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "arm",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "check_health",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "as",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "ScoreType",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "final_score",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ">=",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0.8",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"Factory is healthy!\"",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Keyword",
+            "value": "else",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "\"Maintenance required.\"",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

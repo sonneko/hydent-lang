@@ -11,6 +11,7 @@ export function it(name: string, fn: () => void) {
     } catch (e) {
         console.error(`❌ ${name}`);
         console.error(e);
+        process.exitCode = 1;
     }
 }
 

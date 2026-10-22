@@ -1,1 +1,635 @@
-{"type":"Module","TopLevelStatement":[{"kind":"ItemWithModifiers","value":{"type":"ItemWithModifiers","DocComment":[],"PubKeyword":null,"ItemDeclaration":{"kind":"TypeAliasDeclaration","value":{"type":"TypeAliasDeclaration","Identifier":{"type":"Identifier","value":"Flags"},"TypeLiteral":{"kind":"UsizeType","value":{"type":"UsizeType"}}}}}}]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "TypeAlias",
+        "source": "type Flags = Usize;",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "type",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Usize",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Constant",
+        "source": "const READ: Flags = 1 << 0;",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "const",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "READ",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<<",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Constant",
+        "source": "const WRITE: Flags = 1 << 1;",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "const",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "WRITE",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<<",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Constant",
+        "source": "const EXEC: Flags = 1 << 2;",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "const",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "EXEC",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<<",
+            "depth": 0
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 0
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn check_permission(current: Flags, required: Flags) : Bool {\n    let masked = current & required;\n    return masked == required;\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "check_permission",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "current",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "required",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Bool",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "masked",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "current",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "&",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "required",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "masked",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "==",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "required",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let mut my_perms: Flags = READ | WRITE;\n    \n    if check_permission(my_perms, READ) {\n        print(\"Can read\");\n    }\n\n    my_perms = my_perms ^ WRITE; // Toggle write\n    \n    let combined = (READ | WRITE) & ~READ;\n    print(combined as Int);\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "my_perms",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Flags",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "READ",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "|",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "WRITE",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "check_permission",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "my_perms",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "READ",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"Can read\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "my_perms",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "my_perms",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "^",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "WRITE",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "combined",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "READ",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "|",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "WRITE",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "&",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "~",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "READ",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "combined",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "as",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

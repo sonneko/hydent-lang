@@ -22,8 +22,7 @@ export class ASTPrinterGenerator {
         ret += "\n";
         ret += "impl<'a, 'f, 'b, 'src> ASTPrinter<'a, 'f, 'b, 'src> {\n";
         ret += "    fn write(&mut self, s: &str) -> Result<(), std::fmt::Error> {\n";
-        ret += "        self.writer.write_str(s);\n";
-        ret += "        Ok(())\n";
+        ret += "        self.writer.write_str(s)\n";
         ret += "    }";
         ret += "}\n\n";
 
@@ -50,9 +49,27 @@ export class ASTPrinterGenerator {
                 ret += `        }\n`;
 
             } else if (func.kind === "product") {
-                const isManual = func.elements.some(el => el.kind === "terminal" && el.tokenTypeName.includes("$"));
+                const isManual = func.elements.some(el => el.kind === "terminal"
+                    && (el.tokenTypeName.includes("$") || el.tokenTypeName === "Token::Invalid"));
 
-                if (isManual) {
+                if (func.astTypeName === "RawDeclaration") {
+                    ret += `        self.write("{\\\"type\\\":\\\"RawDeclaration\\\",\\\"category\\\":")?;\n`;
+                    ret += `        self.write(&format!("{:?}", node.category))?;\n`;
+                    ret += `        self.write(",\\\"source\\\":")?;\n`;
+                    ret += `        self.write(&format!("{:?}", node.span.into(self.source_holder.get())))?;\n`;
+                    ret += `        self.write(",\\\"syntax\\\":[")?;\n`;
+                    ret += `        let mut first = true;\n`;
+                    ret += `        for item in node.syntax.into_ref(self.arena) {\n`;
+                    ret += `            if !first { self.write(",")?; }\n`;
+                    ret += `            item.accept(self)?;\n`;
+                    ret += `            first = false;\n`;
+                    ret += `        }\n`;
+                    ret += `        self.write("]}")?;\n`;
+                } else if (func.astTypeName === "RawSyntaxToken") {
+                    ret += `        let raw_text = node.span.into(self.source_holder.get());\n`;
+                    ret += `        let value = node.identifier.map(|symbol| self.symbols.get(&symbol)).unwrap_or(raw_text);\n`;
+                    ret += `        self.write(&format!("{{\\\"type\\\":{:?},\\\"value\\\":{:?},\\\"depth\\\":{}}}", node.kind, value, node.depth))?;\n`;
+                } else if (isManual) {
                     ret += `        self.write(r#"{"type":"${func.astTypeName}","value":"#)?;\n`;
 
                     // WARNING: hardcode identifier and string literal behavior

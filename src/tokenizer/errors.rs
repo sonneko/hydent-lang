@@ -23,4 +23,12 @@ impl TokenizeErr {
     pub fn new(kind: TokenizeErrKind, span: Span) -> Self {
         Self { kind, span }
     }
+
+    pub fn kind(&self) -> &TokenizeErrKind {
+        &self.kind
+    }
+
+    pub fn span(&self) -> Span {
+        self.span
+    }
 }

@@ -23,10 +23,12 @@ pub struct CompilerFrontendContext<'ctx, 'src> {
 impl Mergeble for CompilerFrontendContext<'_, '_> {
     /// Merges this context with another `CompilerFrontendContext`.
     ///
-    /// The specific merging logic is currently unimplemented.
+    /// Frontend contexts are borrowed views over a source, symbol factory, and
+    /// arena; they do not own independent results that can be combined. Keep
+    /// this context as the merge target so its symbol IDs and arena handles
+    /// remain stable.
     fn merge(self, _other: Self) -> Self {
-        // TODO: merge ctx
-        unimplemented!()
+        self
     }
 }
 
@@ -39,11 +41,9 @@ impl<'src> CompilerContext for CompilerFrontendContext<'_, 'src> {
     type NextFase = CompilerMiddleendContext;
 
     /// Transitions the current frontend context to the next compilation phase, which is the middle-end.
-    ///
-    /// The specific transition logic is currently unimplemented.
     fn next_fase(self) -> Self::NextFase {
-        // TODO
-        unimplemented!()
+        let _ = self;
+        CompilerMiddleendContext {}
     }
 }
 

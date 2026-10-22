@@ -1,0 +1,715 @@
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn process_data(input: Vec<Int>) : Vec<Int> {\n    let result = pipe input {\n        |> list => list.filter((x) -> x > 0)\n        |> filtered => filtered.map((x) -> x * 2)\n    };\n\n    let mut final_list = Vec::new();\n    for x in result {\n        |> val if val % 4 == 0 => final_list.push(val);\n        |> _ => continue;\n    }\n\n    return final_list;\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "process_data",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "input",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Vec",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "Vec",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": "<",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 0
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "pipe",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "input",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "list",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "list",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "filter",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "->",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": ">",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "filtered",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "filtered",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "map",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 4
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 4
+          },
+          {
+            "type": "Operator",
+            "value": "->",
+            "depth": 3
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 3
+          },
+          {
+            "type": "Operator",
+            "value": "*",
+            "depth": 3
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "mut",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "final_list",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "Vec",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "::",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "new",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "for",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "x",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "in",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "result",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "%",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "4",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "==",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "final_list",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": ".",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "push",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "val",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "|>",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "_",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "=>",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "continue",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "final_list",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn main() {\n    let data = vec(1, -2, 3, -4, 5);\n    let processed = process_data(data);\n    \n    for i in processed {\n        print(i);\n    }\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "main",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "vec",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "1",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "-",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "2",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "3",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Operator",
+            "value": "-",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "4",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "5",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "let",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "processed",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "=",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "process_data",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "data",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "for",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "i",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "in",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "processed",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "print",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "i",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    }
+  ]
+}

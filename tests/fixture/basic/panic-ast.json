@@ -1,1 +1,471 @@
-{"type":"Module","TopLevelStatement":[{"kind":"ItemWithModifiers","value":{"type":"ItemWithModifiers","DocComment":[],"PubKeyword":null,"ItemDeclaration":{"kind":"FunctionDeclaration","value":{"type":"FunctionDeclaration","ExternKeyword":{"type":"ExternKeyword"},"AsyncKeyword":null,"Identifier":{"type":"Identifier","value":"system_abort"},"ParamsWithTypes":null,"ReturnType":null,"PanicsKeyword":null,"BlockExpression":null}}}}]}
+{
+  "type": "Module",
+  "TopLevelStatement": [
+    {
+      "kind": "ExternFunction",
+      "value": {
+        "type": "ExternFunction",
+        "DocComment": [],
+        "FunctionModifier": [],
+        "Identifier": {
+          "type": "Identifier",
+          "value": "system_abort"
+        },
+        "ParamWithType": [],
+        "ReturnType": {
+          "type": "ReturnType",
+          "TypeLiteral": {
+            "kind": "NeverType",
+            "value": {
+              "type": "NeverType"
+            }
+          }
+        },
+        "ExternFunctionEnding": {
+          "kind": "ExternFunctionBody",
+          "value": {
+            "type": "ExternFunctionBody",
+            "BlockExpression": {
+              "type": "BlockExpression",
+              "Statement": []
+            },
+            "ExternFunctionSemicolon": {
+              "type": "ExternFunctionSemicolon"
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn divide(a: Int, b: Int) : Int panics {\n    if b == 0 {\n        panic(\"Division by zero\");\n    }\n    return a / b;\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "divide",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "panics",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "if",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "==",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "panic",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 2
+          },
+          {
+            "type": "Literal",
+            "value": "\"Division by zero\"",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 3
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": "/",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "RawDeclaration",
+      "value": {
+        "type": "RawDeclaration",
+        "category": "Function",
+        "source": "fn safe_divide(a: Int, b: Int) : Int {\n    return try divide(a, b) else 0;\n}",
+        "syntax": [
+          {
+            "type": "Keyword",
+            "value": "fn",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "safe_divide",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 0
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 1
+          },
+          {
+            "type": "Operator",
+            "value": ":",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "Int",
+            "depth": 0
+          },
+          {
+            "type": "Delimiter",
+            "value": "{",
+            "depth": 0
+          },
+          {
+            "type": "Keyword",
+            "value": "return",
+            "depth": 1
+          },
+          {
+            "type": "Keyword",
+            "value": "try",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "divide",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "(",
+            "depth": 1
+          },
+          {
+            "type": "Identifier",
+            "value": "a",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ",",
+            "depth": 2
+          },
+          {
+            "type": "Identifier",
+            "value": "b",
+            "depth": 2
+          },
+          {
+            "type": "Delimiter",
+            "value": ")",
+            "depth": 2
+          },
+          {
+            "type": "Keyword",
+            "value": "else",
+            "depth": 1
+          },
+          {
+            "type": "Literal",
+            "value": "0",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": ";",
+            "depth": 1
+          },
+          {
+            "type": "Delimiter",
+            "value": "}",
+            "depth": 1
+          }
+        ]
+      }
+    },
+    {
+      "kind": "FunctionDeclaration",
+      "value": {
+        "type": "FunctionDeclaration",
+        "DocComment": [],
+        "FunctionModifier": [],
+        "Identifier": {
+          "type": "Identifier",
+          "value": "main"
+        },
+        "ParamWithType": [],
+        "ReturnType": null,
+        "BlockExpression": {
+          "type": "BlockExpression",
+          "Statement": [
+            {
+              "kind": "LetStatement",
+              "value": {
+                "type": "LetStatement",
+                "MutKeyword": null,
+                "Identifier": {
+                  "type": "Identifier",
+                  "value": "result"
+                },
+                "TypeAnnotation": null,
+                "Initializer": {
+                  "type": "Initializer",
+                  "Expression": {
+                    "kind": "CallExpression",
+                    "value": {
+                      "type": "CallExpression",
+                      "Identifier": {
+                        "type": "Identifier",
+                        "value": "safe_divide"
+                      },
+                      "CallArgument": [
+                        {
+                          "type": "CallArgument",
+                          "Expression": {
+                            "kind": "IntLiteral",
+                            "value": {
+                              "type": "IntLiteral",
+                              "value": "IntLiteral { value: 10 }"
+                            }
+                          },
+                          "Comma": {
+                            "type": "Comma"
+                          }
+                        },
+                        {
+                          "type": "CallArgument",
+                          "Expression": {
+                            "kind": "IntLiteral",
+                            "value": {
+                              "type": "IntLiteral",
+                              "value": "IntLiteral { value: 2 }"
+                            }
+                          },
+                          "Comma": null
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "kind": "LetStatement",
+              "value": {
+                "type": "LetStatement",
+                "MutKeyword": null,
+                "Identifier": {
+                  "type": "Identifier",
+                  "value": "error"
+                },
+                "TypeAnnotation": null,
+                "Initializer": {
+                  "type": "Initializer",
+                  "Expression": {
+                    "kind": "CallExpression",
+                    "value": {
+                      "type": "CallExpression",
+                      "Identifier": {
+                        "type": "Identifier",
+                        "value": "divide"
+                      },
+                      "CallArgument": [
+                        {
+                          "type": "CallArgument",
+                          "Expression": {
+                            "kind": "IntLiteral",
+                            "value": {
+                              "type": "IntLiteral",
+                              "value": "IntLiteral { value: 5 }"
+                            }
+                          },
+                          "Comma": {
+                            "type": "Comma"
+                          }
+                        },
+                        {
+                          "type": "CallArgument",
+                          "Expression": {
+                            "kind": "IntLiteral",
+                            "value": {
+                              "type": "IntLiteral",
+                              "value": "IntLiteral { value: 0 }"
+                            }
+                          },
+                          "Comma": null
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
